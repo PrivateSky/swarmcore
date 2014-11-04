@@ -1,0 +1,55 @@
+{
+  "name": "swarmcore",
+  "description": "Elements for creating swarm 2.0 adapters .",
+  "version": "2.0.1",
+  "homepage": "https://github.com/salboaie/swarmcore",
+  "author": {
+    "name": "Alboaie Sinica",
+    "email": "salboaie@gmail.com"
+  },
+  "contributors": [
+    {
+      "name": "Alboaie Sinica",
+      "email": "salboaie@gmail.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/salboaie/swarmcore.git"
+  },
+  "bugs": {
+    "email": "salboaie@gmail.com",
+    "url": "https://github.com/salboaie/swarmcore/issues"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "engines": {
+
+    "node": ">=0.6.0"
+  },
+  "devDependencies": {
+    "tap": "0.2"
+  },
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "main": "./lib/swarmcores.js",
+  "licenses": [
+    {
+      "type": "LGPL",
+      "url": "http://www.gnu.org/licenses/lgpl.html"
+    }
+  ],
+  "_id": "swarmcore@2.0.1",
+  "dependencies": {},
+  "optionalDependencies": {},
+  "_engineSupported": true,
+  "_npmVersion": "2.0.1",
+  "_nodeVersion": "v0.12.0",
+  "_defaultsLoaded": true,
+  "dist": {
+    
+  },
+  "_from": "swarmcore"
+}
