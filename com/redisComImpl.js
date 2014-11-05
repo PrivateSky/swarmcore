@@ -6,7 +6,19 @@
 var redis = require("redis");
 
 function RedisComImpl(){
-    var pubsubRedisClient = redis.createClient(thisAdapter.redisPort, thisAdapter.redisHost);
+
+    var redisHost = thisAdapter.config.Core.redisHost;
+    var redisPort = thisAdapter.config.Core.redisPort;
+
+    var redisClient = redis.createClient(redisPort, redisHost);
+    redisClient.retry_delay = 2000;
+    redisClient.max_attempts = 20;
+    redisClient.on("error", onRedisError);
+    redisClient.on("reconnecting", onRedisReconnecting);
+    redisClient.on("ready", onCmdRedisReady);
+
+
+    var pubsubRedisClient = redis.createClient(redisPort, redisHost);
     //TODO: add these in configurations
     pubsubRedisClient.retry_delay = 1000;
     pubsubRedisClient.max_attempts = 100;
@@ -39,7 +51,7 @@ function RedisComImpl(){
         });
 
         pubsubRedisClient.on("message", function (channel, message){
-
+            callback(message);
         });
     }
 
