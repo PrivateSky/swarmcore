@@ -3,8 +3,12 @@
  */
 //All proper adapters using SwarmCore should provide a set of functions in the globalObject: swarmComImpl
 
-var redis = require("redis");
+var redis   = require("redis");
+var dslUtil = require("SwarmDSL");
 
+/* encapsulate as many details about communication, error recovery and distributed transactions
+*  different communication middleware and different tradeoffs on error recovery and transactions could be implemented
+* */
 function RedisComImpl(){
 
     var redisHost = thisAdapter.config.Core.redisHost;
@@ -40,7 +44,41 @@ function RedisComImpl(){
 
     /* create with uuid v4*/
     this.createSwarmIdentity = function(){
-        return generateUID();
+        return generateUUID();
+    }
+
+    /* pendingSwarm is an array containing swarms generated in current swarm and required to be sent asap */
+    /* this function get called when the execution of a phase is done (including all the asynchronous calls)*/
+    this.sendPendingSwarms = function(currentSwarm, pendingSwarms){
+        try{
+            pendingSwarms.map(function (swarm){
+                if(dslUtil.requireResponse(swarm)){
+                    updateSwarm(swarm);
+                }
+                sendSwarm(swarm.meta.targetNode, swarm);
+            });
+        } catch(err){
+            currentSwarm.meta.failed = false;
+        }
+
+        if(dslUtil.requireResponse(currentSwarm)){
+            if(!currentSwarm.meta.failed){
+                startSwarm("SwarmConfirmation","phaseExecuted", currentSwarm.meta.identity);
+            } else {
+                startSwarm("SwarmConfirmation","phaseFailed", currentSwarm.meta.identity);
+            }
+        }
+    }
+
+    /* abort transaction or notify upstream about errors */
+    this.phaseExecutionFailed = function(err, swarmingPhase){
+        swarmingPhase.meta.failed = true;
+        swarmingPhase.meta.failedErr = err;
+    }
+
+    /* additional locking verifications before executing a received swarm */
+    this.asyncExecute = function(swarm, callback){
+        callback.apply(swarm);
     }
 
     /* wait for swarms on the queue named uuidName*/
@@ -56,9 +94,9 @@ function RedisComImpl(){
     }
 
     /*
-     * publish a swarm in that que
-     * the callback(err,ret)  get called with error if nobody is listening on that queue*/
-    this.publish = function(queueName, swarm, callback){
+     * publish a swarm in the required queue
+     * */
+    function sendSwarm(queueName, swarm){
 
     }
 
@@ -69,17 +107,17 @@ function RedisComImpl(){
 
 
     /* save the swarm state and if transactionId is not false or undefined, register in the new transaction*/
-    this.persistSwarmState = function( groupName, targetNode, swarmIdentity, swarm, transactionId){
+    function persistSwarmState( groupName, targetNode, swarmIdentity, swarm, transactionId){
 
     }
 
     /* get the swarm state from execution */
-    this.getSwarmState = function(groupName, swarmIdentity){
+     function getSwarmState(groupName, swarmIdentity){
 
     }
 
     /* remove swarm state */
-    this.removeSwarm = function(groupName, swarmIdentity){
+    function removeSwarm(groupName, swarmIdentity){
 
     }
 
@@ -93,11 +131,6 @@ function RedisComImpl(){
 
     /* remove the lock for current adapter*/
     this.removeLock = function(key){
-
-    }
-
-    /* get a list with current swarms waiting execution */
-    this.getPendingSwarms = function(groupName){
 
     }
 
@@ -188,4 +221,10 @@ function RedisComImpl(){
 
 }
 
-swarmComImpl = new RedisComImpl();
+var swarmComImpl = null;
+exports.init = function(){
+        if(!swarmComImpl){
+        swarmComImpl = new RedisComImpl();
+        }
+        return swarmComImpl;
+    };
