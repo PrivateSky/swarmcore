@@ -43,8 +43,8 @@ function RedisComImpl(){
     pubsubRedisClient.on("reconnecting", onRedisReconnecting);
 
     /* create with uuid v4*/
-    this.createSwarmIdentity = function(){
-        return generateUUID();
+    this.createSwarmIdentity = function(swarm){
+        return swarm.meta.identity+"/" + swarm.meta.currentPhase + generateUUID();
     }
 
     /* pendingSwarm is an array containing swarms generated in current swarm and required to be sent asap */
@@ -97,17 +97,62 @@ function RedisComImpl(){
      * publish a swarm in the required queue
      * */
     function sendSwarm(queueName, swarm){
+        function doSend(){
+            if(dslUtil.requireResponse(swarm)){
+                persistSwarmState(swarm);
+            }
+            redisClient.publish.async(queueName, J(swarm));
+        }
 
+        if(!isNodeName(queueName)){
+            var targetNodeName  = chooseOneFromGroup.async(queueName);
+            (function(targetNodeName ){
+                doSend(targetNodeName);
+            }).swait(nodeName);
+        } else {
+            doSend(queueName);
+        }
+    }
+
+    var mainGroupPrefix = "UNDEFINED";
+    /**
+     *Make channels REDIS keys relative to current coreId
+     * @param nodeName
+     * @return {String}
+     */
+    this.mkAdapterId = function (groupName) {
+        mainGroupPrefix = groupName+"://";
+        return mainGroupPrefix + generateUUID();
     }
 
     /* get a dictionary of the the registered nodes in group and their current load*/
-    this.getGroupNodes = function(groupName){
-
+    this.getGroupNodes = function(groupName, callback){
+        var redisKey = mkKeyUri("groupMembers","set",groupName);
+        var values = redisClient.hgetall.async(redisKey);
+        (function(values){
+            console.log("FIX HERE (make a list with values and return):",values)
+        }).swait(values);
     }
 
+    function isNodeName(queueName){
+        return queueName.indexOf("://") != -1;
+    }
+
+    function chooseOneFromGroup(groupName, callback){
+        var redisKey = mkKeyUri("groupMembers","set",groupName);
+        var values = redisClient.hgetall.async(redisKey);
+        (function(values){
+            console.log("FIX HERE (chose the min value, report issues):",values)
+        }).swait(values);
+    }
+
+    this.joinGroup = function(groupName, nodeName){
+        var redisKey = mkKeyUri("groupMembers","set",groupName);
+        redisClient.hset.async(redisKey, nodeName, 0);
+    }
 
     /* save the swarm state and if transactionId is not false or undefined, register in the new transaction*/
-    function persistSwarmState( groupName, targetNode, swarmIdentity, swarm, transactionId){
+    function persistSwarmState( targetNode, swarm){
 
     }
 
@@ -211,6 +256,18 @@ function RedisComImpl(){
                 }
             });
     }
+    /**
+     *  Make REDIS keys relative to current coreId
+     * @param type
+     * @param value
+     * @return {String}
+     */
+    function mkKeyUri(type, value) {
+        var uri = thisAdapter.coreId + ":" + type + ":" + value;
+        //cprint("URI: " + uri);
+        return uri;
+    }
+
 
 
     AdapterBase.prototype.reloadSwarm = function (swarmName) {
