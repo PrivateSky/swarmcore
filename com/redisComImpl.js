@@ -4,13 +4,14 @@
 //All proper adapters using SwarmCore should provide a set of functions in the globalObject: swarmComImpl
 
 var redis   = require("redis");
-var dslUtil = require("SwarmDSL");
+var dslUtil = require("../lib/SwarmDSL.js");
+var fs = require("fs");
 
 /* encapsulate as many details about communication, error recovery and distributed transactions
 *  different communication middleware and different tradeoffs on error recovery and transactions could be implemented
 * */
 function RedisComImpl(){
-
+    var self = this;
     var redisHost = thisAdapter.config.Core.redisHost;
     var redisPort = thisAdapter.config.Core.redisPort;
 
@@ -21,14 +22,26 @@ function RedisComImpl(){
     redisClient.on("reconnecting", onRedisReconnecting);
     redisClient.on("ready", onCmdRedisReady);
 
+    function onRedisError(error){
+        errLog("Redis error", error);
+    }
+
+    function onCmdRedisReady(error){
+        console.log("Node " + thisAdapter.nodeName + " ready for swarms!");
+        bindAllMembers(redisClient);
+        if(self.uploadDescriptionsRequired){
+            uploadDescriptionsImpl();
+        } else {
+            self.reloadAllSwarms();
+        }
+        self.redisReady = true;
+    }
 
     var pubsubRedisClient = redis.createClient(redisPort, redisHost);
     //TODO: add these in configurations
     pubsubRedisClient.retry_delay = 1000;
     pubsubRedisClient.max_attempts = 100;
-    pubsubRedisClient.on("error", function(err){
-        logErr("Redis error ", err);
-    });
+    pubsubRedisClient.on("error", onRedisError);
 
     function onRedisReconnecting(event) {
         //cprint("Redis reconnecting attempt [" + event.attempt + "] with delay [" + event.delay + "] !");
@@ -42,9 +55,15 @@ function RedisComImpl(){
 
     pubsubRedisClient.on("reconnecting", onRedisReconnecting);
 
-    /* create with uuid v4*/
+    /* generate swarm message identity*/
     this.createSwarmIdentity = function(swarm){
+        /* create with uuid v4*/
         return swarm.meta.identity+"/" + swarm.meta.currentPhase + generateUUID();
+    }
+
+    /* generate unique names */
+    this.generateNodeName = function(mainGroup){
+        return mainGroup + "["+generateUUID()+"]";
     }
 
     /* pendingSwarm is an array containing swarms generated in current swarm and required to be sent asap */
@@ -83,7 +102,7 @@ function RedisComImpl(){
 
     /* wait for swarms on the queue named uuidName*/
     this.subscribe = function(uuidName, callback){
-        pubsubRedisClient.subscribe(channel);
+        pubsubRedisClient.subscribe(uuidName);
         pubsubRedisClient.on("subscribe", function(){
 
         });
@@ -127,7 +146,7 @@ function RedisComImpl(){
 
     /* get a dictionary of the the registered nodes in group and their current load*/
     this.getGroupNodes = function(groupName, callback){
-        var redisKey = mkKeyUri("groupMembers","set",groupName);
+        var redisKey = makeRedisKey("groupMembers","set",groupName);
         var values = redisClient.hgetall.async(redisKey);
         (function(values){
             console.log("FIX HERE (make a list with values and return):",values)
@@ -139,7 +158,7 @@ function RedisComImpl(){
     }
 
     function chooseOneFromGroup(groupName, callback){
-        var redisKey = mkKeyUri("groupMembers","set",groupName);
+        var redisKey = makeRedisKey("groupMembers","set",groupName);
         var values = redisClient.hgetall.async(redisKey);
         (function(values){
             console.log("FIX HERE (chose the min value, report issues):",values)
@@ -147,7 +166,7 @@ function RedisComImpl(){
     }
 
     this.joinGroup = function(groupName, nodeName){
-        var redisKey = mkKeyUri("groupMembers","set",groupName);
+        var redisKey = makeRedisKey("groupMembers","set",groupName);
         redisClient.hset.async(redisKey, nodeName, 0);
     }
 
@@ -180,9 +199,15 @@ function RedisComImpl(){
     }
 
 
-
-    function uploadDescriptions() {
-
+    this.uploadDescriptions = function(){
+        if(self.redisReady){
+            console.log("Redis ready...");
+            uploadDescriptionsImpl();
+        } else {
+            self.uploadDescriptionsRequired = true;
+        }
+    }
+    function uploadDescriptionsImpl() {
         var folders = thisAdapter.config.Core.paths;
 
         for (var i = 0; i < folders.length; i++) {
@@ -192,13 +217,15 @@ function RedisComImpl(){
 
                 var files = fs.readdirSync(getSwarmFilePath(descriptionsFolder));
                 files.forEach(function (fileName, index, array) {
-
                     var fullFileName = getSwarmFilePath(descriptionsFolder + "/" + fileName);
+
                     fs.watch(fullFileName, function (event, fileName) {
                         if (uploadFile(fullFileName, fileName)) {
+
                             startSwarm("CodeUpdate.js", "swarmChanged", fileName);
                         }
                     });
+
                     uploadFile(fullFileName, fileName);
                 });
             }
@@ -206,23 +233,38 @@ function RedisComImpl(){
         //startSwarm("NodeStart.js","boot");
     }
 
+    /**
+     *  Make REDIS keys relative to current coreId
+     * @param type
+     * @param value
+     * @return {String}
+     */
+    function makeRedisKey(type, mainBranch,subBranch){
+        if(subBranch){
+            return thisAdapter.coreId+"/"+type+"/"+ mainBranch + "/" + subBranch;
+        }
+        return thisAdapter.coreId+"/"+type+"/"+ mainBranch;
+    }
+
+
+
     function uploadFile(fullFileName, fileName) {
         try {
             var content = fs.readFileSync(fullFileName);
-            redisClient.hset(util.mkUri("system", "code"), fileName, content);
-            dprint("Uploading swarm: " + fileName);
-            compileSwarm(fileName, content.toString());
-            //cprint(fileName + " \n "+ content);
+            console.log("Uploading swarm in: " + makeRedisKey("system", "code"), fileName);
+
+            redisClient.hset.async(makeRedisKey("system", "code"), fileName, content.toString());
+            dslUtil.repository.compileSwarm(fileName, content.toString());
+
         }
         catch (err) {
-            return false;
+            console.log("Failed uploading swarm file ", err, err.stack);
             //logErr("Failed uploading swarm file ", err);
         }
         return true;
     }
 
-
-    function loadSwarms() {
+    /*function loadSwarms() {
         if (thisAdapter.swarmingCodeLoaded == false) {
             loadSwarmingCode(function () {
                 startSwarm("CodeUpdate.js", "register", thisAdapter.nodeName);
@@ -241,47 +283,38 @@ function RedisComImpl(){
         }, 500);
     }
 
-    function loadSwarmingCode(onEndFunction) {
-        redisClient.hgetall(util.mkUri("system", "code"),
+    function loadSwarmingCode() {
+        redisClient.hgetall(makeRedisKey("system", "code"),
             function (err, hash) {
                 if (err != null) {
                     logErr("Error loading swarms descriptions\n", err);
                 }
 
                 for (var i in hash) {
-                    compileSwarm(i, hash[i]);
-                }
-                if (onEndFunction != undefined) {
-                    onEndFunction();
+                    dslUtil.repository.compileSwarm(i, hash[i]);
                 }
             });
-    }
-    /**
-     *  Make REDIS keys relative to current coreId
-     * @param type
-     * @param value
-     * @return {String}
-     */
-    function mkKeyUri(type, value) {
-        var uri = thisAdapter.coreId + ":" + type + ":" + value;
-        //cprint("URI: " + uri);
-        return uri;
-    }
+    }*/
 
 
 
-    AdapterBase.prototype.reloadSwarm = function (swarmName) {
-        redisClient.hget(util.mkUri("system", "code"), swarmName, function (err, value) {
-            compileSwarm(swarmName, value, true);
-        });
+    this.reloadAllSwarms = function () {
+
+        var swarmCode = redisClient.hgetall.async(makeRedisKey("system", "code"));
+        (function (swarmCode) {
+            for (var i in swarmCode) {
+                dslUtil.repository.compileSwarm(i, swarmCode[i]);
+            }
+        }).wait(swarmCode);
     }
+
 
 }
 
 var swarmComImpl = null;
-exports.init = function(){
+exports.implemenation = (function(){
         if(!swarmComImpl){
         swarmComImpl = new RedisComImpl();
         }
         return swarmComImpl;
-    };
+    })();
