@@ -1,0 +1,15 @@
+{
+ "logsPath":"etc/localLogs",
+ "verbose":false,
+ "pingTimeout":500,
+ "Core":{
+     "coreId":"TestCore",
+     "redisHost":"localhost",
+     "redisPort":6379,
+     "paths":[
+        {"folder":"etc/coreSwarms"      ,"enabled":true},
+        {"folder":"etc/testSwarms"      ,"enabled":true}
+     ]
+  },
+ "Logger":{}
+}

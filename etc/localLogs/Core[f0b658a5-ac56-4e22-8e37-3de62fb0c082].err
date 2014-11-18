@@ -1,0 +1,143 @@
+[17-11,17:31][Core[f0b658a5-ac56-4e22-8e37-3de62fb0c082]] Failed uploading swarm file 
+     Err: TypeError: Object #<Object> has no method 'send_command'
+     Stack: TypeError: Object #<Object> has no method 'send_command'
+    at RedisClient.(anonymous function) (c:\work\node_modules\redis\index.js:959:25)
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:129:22)
+    at Function.async (c:\work\node_modules\asynchron\lib\asynchron.js:133:13)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:234:30)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:215:21
+    at Array.forEach (native)
+    at RedisComImpl.uploadDescriptions (c:\work\node_modules\SwarmCore\com\redisComImpl.js:205:23)
+    at Object.<anonymous> (c:\work\node_modules\SwarmCore\etc\adapters\Core.js:7:30)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+[17-11,17:31][Core[f0b658a5-ac56-4e22-8e37-3de62fb0c082]] Error starting new swarm log.js ctor:err
+     Err: ReferenceError: util is not defined
+     Stack: ReferenceError: util is not defined
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:210:24)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:241:13)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:215:21
+    at Array.forEach (native)
+    at RedisComImpl.uploadDescriptions (c:\work\node_modules\SwarmCore\com\redisComImpl.js:205:23)
+    at Object.<anonymous> (c:\work\node_modules\SwarmCore\etc\adapters\Core.js:7:30)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+    at Module.load (module.js:356:32)
+[17-11,17:31][Core[f0b658a5-ac56-4e22-8e37-3de62fb0c082]] Error starting new swarm log.js ctor:err
+     Err: ReferenceError: util is not defined
+     Stack: ReferenceError: util is not defined
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:210:24)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:240:9)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:241:13)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:215:21
+    at Array.forEach (native)
+    at RedisComImpl.uploadDescriptions (c:\work\node_modules\SwarmCore\com\redisComImpl.js:205:23)
+    at Object.<anonymous> (c:\work\node_modules\SwarmCore\etc\adapters\Core.js:7:30)
+    at Module._compile (module.js:456:26)
+[17-11,17:31][Core[f0b658a5-ac56-4e22-8e37-3de62fb0c082]] Failed uploading swarm file 
+     Err: TypeError: Object #<Object> has no method 'send_command'
+     Stack: TypeError: Object #<Object> has no method 'send_command'
+    at RedisClient.(anonymous function) (c:\work\node_modules\redis\index.js:959:25)
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:129:22)
+    at Function.async (c:\work\node_modules\asynchron\lib\asynchron.js:133:13)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:234:30)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:215:21
+    at Array.forEach (native)
+    at RedisComImpl.uploadDescriptions (c:\work\node_modules\SwarmCore\com\redisComImpl.js:205:23)
+    at Object.<anonymous> (c:\work\node_modules\SwarmCore\etc\adapters\Core.js:7:30)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+[17-11,17:31][Core[f0b658a5-ac56-4e22-8e37-3de62fb0c082]] Error starting new swarm log.js ctor:err
+     Err: ReferenceError: util is not defined
+     Stack: ReferenceError: util is not defined
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:210:24)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:241:13)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:215:21
+    at Array.forEach (native)
+    at RedisComImpl.uploadDescriptions (c:\work\node_modules\SwarmCore\com\redisComImpl.js:205:23)
+    at Object.<anonymous> (c:\work\node_modules\SwarmCore\etc\adapters\Core.js:7:30)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+    at Module.load (module.js:356:32)
+[17-11,17:31][Core[f0b658a5-ac56-4e22-8e37-3de62fb0c082]] Failed uploading swarm file 
+     Err: TypeError: Object #<Object> has no method 'send_command'
+     Stack: TypeError: Object #<Object> has no method 'send_command'
+    at RedisClient.(anonymous function) (c:\work\node_modules\redis\index.js:959:25)
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:129:22)
+    at Function.async (c:\work\node_modules\asynchron\lib\asynchron.js:133:13)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:234:30)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:215:21
+    at Array.forEach (native)
+    at RedisComImpl.uploadDescriptions (c:\work\node_modules\SwarmCore\com\redisComImpl.js:205:23)
+    at Object.<anonymous> (c:\work\node_modules\SwarmCore\etc\adapters\Core.js:7:30)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+[17-11,17:31][Core[f0b658a5-ac56-4e22-8e37-3de62fb0c082]] Failed uploading swarm file 
+     Err: TypeError: Object #<Object> has no method 'send_command'
+     Stack: TypeError: Object #<Object> has no method 'send_command'
+    at RedisClient.(anonymous function) (c:\work\node_modules\redis\index.js:959:25)
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:129:22)
+    at Function.async (c:\work\node_modules\asynchron\lib\asynchron.js:133:13)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:234:30)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:215:21
+    at Array.forEach (native)
+    at RedisComImpl.uploadDescriptions (c:\work\node_modules\SwarmCore\com\redisComImpl.js:205:23)
+    at Object.<anonymous> (c:\work\node_modules\SwarmCore\etc\adapters\Core.js:7:30)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+[17-11,17:31][Core[f0b658a5-ac56-4e22-8e37-3de62fb0c082]] Failed uploading swarm file 
+     Err: TypeError: Object #<Object> has no method 'send_command'
+     Stack: TypeError: Object #<Object> has no method 'send_command'
+    at RedisClient.(anonymous function) (c:\work\node_modules\redis\index.js:959:25)
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:129:22)
+    at Function.async (c:\work\node_modules\asynchron\lib\asynchron.js:133:13)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:234:30)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:215:21
+    at Array.forEach (native)
+    at RedisComImpl.uploadDescriptions (c:\work\node_modules\SwarmCore\com\redisComImpl.js:205:23)
+    at Object.<anonymous> (c:\work\node_modules\SwarmCore\etc\adapters\Core.js:7:30)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+[17-11,17:31][Core[f0b658a5-ac56-4e22-8e37-3de62fb0c082]] Failed uploading swarm file 
+     Err: TypeError: Object #<Object> has no method 'send_command'
+     Stack: TypeError: Object #<Object> has no method 'send_command'
+    at RedisClient.(anonymous function) (c:\work\node_modules\redis\index.js:959:25)
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:129:22)
+    at Function.async (c:\work\node_modules\asynchron\lib\asynchron.js:133:13)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:234:30)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:215:21
+    at Array.forEach (native)
+    at RedisComImpl.uploadDescriptions (c:\work\node_modules\SwarmCore\com\redisComImpl.js:205:23)
+    at Object.<anonymous> (c:\work\node_modules\SwarmCore\etc\adapters\Core.js:7:30)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+[17-11,17:31][Core[f0b658a5-ac56-4e22-8e37-3de62fb0c082]] Failed uploading swarm file 
+     Err: TypeError: Object #<Object> has no method 'send_command'
+     Stack: TypeError: Object #<Object> has no method 'send_command'
+    at RedisClient.(anonymous function) (c:\work\node_modules\redis\index.js:959:25)
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:129:22)
+    at Function.async (c:\work\node_modules\asynchron\lib\asynchron.js:133:13)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:234:30)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:215:21
+    at Array.forEach (native)
+    at RedisComImpl.uploadDescriptions (c:\work\node_modules\SwarmCore\com\redisComImpl.js:205:23)
+    at Object.<anonymous> (c:\work\node_modules\SwarmCore\etc\adapters\Core.js:7:30)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+[17-11,17:31][Core[f0b658a5-ac56-4e22-8e37-3de62fb0c082]] Failed uploading swarm file 
+     Err: TypeError: Object #<Object> has no method 'send_command'
+     Stack: TypeError: Object #<Object> has no method 'send_command'
+    at RedisClient.(anonymous function) (c:\work\node_modules\redis\index.js:959:25)
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:129:22)
+    at Function.async (c:\work\node_modules\asynchron\lib\asynchron.js:133:13)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:234:30)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:215:21
+    at Array.forEach (native)
+    at RedisComImpl.uploadDescriptions (c:\work\node_modules\SwarmCore\com\redisComImpl.js:205:23)
+    at Object.<anonymous> (c:\work\node_modules\SwarmCore\etc\adapters\Core.js:7:30)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)

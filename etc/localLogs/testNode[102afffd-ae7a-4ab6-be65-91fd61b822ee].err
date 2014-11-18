@@ -1,0 +1,26 @@
+[17-11,18:43][testNode[102afffd-ae7a-4ab6-be65-91fd61b822ee]] Failed to load swarming description: undefined[17-11,18:43][testNode[102afffd-ae7a-4ab6-be65-91fd61b822ee]] Error starting new swarm log.js ctor:err
+     Err: ReferenceError: swarmDSL is not defined
+     Stack: ReferenceError: swarmDSL is not defined
+    at new SwarmingPhase (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:14:9)
+    at exports.newSwarmPhase (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:162:12)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:210:24)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at CompiledSwarmRepository.compileSwarm (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:13:64)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:307:32
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:67:26)
+    at c:\work\node_modules\asynchron\lib\asynchron.js:79:21
+    at _fulfilled (c:\work\node_modules\asynchron\node_modules\q\q.js:787:54)
+    at self.promiseDispatch.done (c:\work\node_modules\asynchron\node_modules\q\q.js:816:30)
+[17-11,18:43][testNode[102afffd-ae7a-4ab6-be65-91fd61b822ee]] Error starting new swarm log.js ctor:err
+     Err: ReferenceError: swarmDSL is not defined
+     Stack: ReferenceError: swarmDSL is not defined
+    at new SwarmingPhase (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:14:9)
+    at exports.newSwarmPhase (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:162:12)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:210:24)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:240:9)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at CompiledSwarmRepository.compileSwarm (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:13:64)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:307:32
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:67:26)
+    at c:\work\node_modules\asynchron\lib\asynchron.js:79:21

@@ -1,0 +1,39 @@
+[17-11,18:38][testNode[054d38c6-616a-47e9-8d5e-73c29282f532]] Redis error
+     Err: TypeError: Cannot call method 'use' of null
+     Stack: TypeError: Cannot call method 'use' of null
+    at createSwarmCallback (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:127:17)
+    at Function.swait (c:\work\node_modules\asynchron\lib\asynchron.js:57:24)
+    at RedisComImpl.reloadAllSwarms (c:\work\node_modules\SwarmCore\com\redisComImpl.js:308:12)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:35:18)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+    at RedisClient.on_info_cmd (c:\work\node_modules\redis\index.js:394:14)
+    at c:\work\node_modules\redis\index.js:418:14
+    at try_callback (c:\work\node_modules\redis\index.js:573:9)
+    at RedisClient.return_reply (c:\work\node_modules\redis\index.js:661:13)
+[17-11,18:38][testNode[054d38c6-616a-47e9-8d5e-73c29282f532]] Error starting new swarm log.js ctor:err
+     Err: ReferenceError: util is not defined
+     Stack: ReferenceError: util is not defined
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:210:24)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at RedisClient.onRedisError (c:\work\node_modules\SwarmCore\com\redisComImpl.js:26:9)
+    at RedisClient.EventEmitter.emit (events.js:95:17)
+    at try_callback (c:\work\node_modules\redis\index.js:579:20)
+    at RedisClient.return_reply (c:\work\node_modules\redis\index.js:661:13)
+    at ReplyParser.<anonymous> (c:\work\node_modules\redis\index.js:309:14)
+    at ReplyParser.EventEmitter.emit (events.js:95:17)
+    at ReplyParser.send_reply (c:\work\node_modules\redis\lib\parser\javascript.js:300:10)
+    at ReplyParser.execute (c:\work\node_modules\redis\lib\parser\javascript.js:203:22)
+[17-11,18:38][testNode[054d38c6-616a-47e9-8d5e-73c29282f532]] Error starting new swarm log.js ctor:err
+     Err: ReferenceError: util is not defined
+     Stack: ReferenceError: util is not defined
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:210:24)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:240:9)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at RedisClient.onRedisError (c:\work\node_modules\SwarmCore\com\redisComImpl.js:26:9)
+    at RedisClient.EventEmitter.emit (events.js:95:17)
+    at try_callback (c:\work\node_modules\redis\index.js:579:20)
+    at RedisClient.return_reply (c:\work\node_modules\redis\index.js:661:13)
+    at ReplyParser.<anonymous> (c:\work\node_modules\redis\index.js:309:14)
+    at ReplyParser.EventEmitter.emit (events.js:95:17)

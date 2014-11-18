@@ -1,0 +1,143 @@
+[17-11,18:0][Core[18f1bdb1-f19e-4b66-bb34-3df30e05d12f]] Failed uploading swarm file 
+     Err: TypeError: Object #<Object> has no method 'send_command'
+     Stack: TypeError: Object #<Object> has no method 'send_command'
+    at RedisClient.(anonymous function) (c:\work\node_modules\redis\index.js:959:25)
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:129:22)
+    at Function.async (c:\work\node_modules\asynchron\lib\asynchron.js:133:13)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:254:30)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+[17-11,18:0][Core[18f1bdb1-f19e-4b66-bb34-3df30e05d12f]] Error starting new swarm log.js ctor:err
+     Err: ReferenceError: util is not defined
+     Stack: ReferenceError: util is not defined
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:210:24)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:261:13)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+    at RedisClient.on_info_cmd (c:\work\node_modules\redis\index.js:394:14)
+[17-11,18:0][Core[18f1bdb1-f19e-4b66-bb34-3df30e05d12f]] Error starting new swarm log.js ctor:err
+     Err: ReferenceError: util is not defined
+     Stack: ReferenceError: util is not defined
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:210:24)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:240:9)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:261:13)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+[17-11,18:0][Core[18f1bdb1-f19e-4b66-bb34-3df30e05d12f]] Failed uploading swarm file 
+     Err: TypeError: Object #<Object> has no method 'send_command'
+     Stack: TypeError: Object #<Object> has no method 'send_command'
+    at RedisClient.(anonymous function) (c:\work\node_modules\redis\index.js:959:25)
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:129:22)
+    at Function.async (c:\work\node_modules\asynchron\lib\asynchron.js:133:13)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:254:30)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+[17-11,18:0][Core[18f1bdb1-f19e-4b66-bb34-3df30e05d12f]] Error starting new swarm log.js ctor:err
+     Err: ReferenceError: util is not defined
+     Stack: ReferenceError: util is not defined
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:210:24)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:261:13)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+    at RedisClient.on_info_cmd (c:\work\node_modules\redis\index.js:394:14)
+[17-11,18:0][Core[18f1bdb1-f19e-4b66-bb34-3df30e05d12f]] Failed uploading swarm file 
+     Err: TypeError: Object #<Object> has no method 'send_command'
+     Stack: TypeError: Object #<Object> has no method 'send_command'
+    at RedisClient.(anonymous function) (c:\work\node_modules\redis\index.js:959:25)
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:129:22)
+    at Function.async (c:\work\node_modules\asynchron\lib\asynchron.js:133:13)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:254:30)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+[17-11,18:0][Core[18f1bdb1-f19e-4b66-bb34-3df30e05d12f]] Failed uploading swarm file 
+     Err: TypeError: Object #<Object> has no method 'send_command'
+     Stack: TypeError: Object #<Object> has no method 'send_command'
+    at RedisClient.(anonymous function) (c:\work\node_modules\redis\index.js:959:25)
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:129:22)
+    at Function.async (c:\work\node_modules\asynchron\lib\asynchron.js:133:13)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:254:30)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+[17-11,18:0][Core[18f1bdb1-f19e-4b66-bb34-3df30e05d12f]] Failed uploading swarm file 
+     Err: TypeError: Object #<Object> has no method 'send_command'
+     Stack: TypeError: Object #<Object> has no method 'send_command'
+    at RedisClient.(anonymous function) (c:\work\node_modules\redis\index.js:959:25)
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:129:22)
+    at Function.async (c:\work\node_modules\asynchron\lib\asynchron.js:133:13)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:254:30)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+[17-11,18:0][Core[18f1bdb1-f19e-4b66-bb34-3df30e05d12f]] Failed uploading swarm file 
+     Err: TypeError: Object #<Object> has no method 'send_command'
+     Stack: TypeError: Object #<Object> has no method 'send_command'
+    at RedisClient.(anonymous function) (c:\work\node_modules\redis\index.js:959:25)
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:129:22)
+    at Function.async (c:\work\node_modules\asynchron\lib\asynchron.js:133:13)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:254:30)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+[17-11,18:0][Core[18f1bdb1-f19e-4b66-bb34-3df30e05d12f]] Failed uploading swarm file 
+     Err: TypeError: Object #<Object> has no method 'send_command'
+     Stack: TypeError: Object #<Object> has no method 'send_command'
+    at RedisClient.(anonymous function) (c:\work\node_modules\redis\index.js:959:25)
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:129:22)
+    at Function.async (c:\work\node_modules\asynchron\lib\asynchron.js:133:13)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:254:30)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+[17-11,18:0][Core[18f1bdb1-f19e-4b66-bb34-3df30e05d12f]] Failed uploading swarm file 
+     Err: TypeError: Object #<Object> has no method 'send_command'
+     Stack: TypeError: Object #<Object> has no method 'send_command'
+    at RedisClient.(anonymous function) (c:\work\node_modules\redis\index.js:959:25)
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:129:22)
+    at Function.async (c:\work\node_modules\asynchron\lib\asynchron.js:133:13)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:254:30)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)

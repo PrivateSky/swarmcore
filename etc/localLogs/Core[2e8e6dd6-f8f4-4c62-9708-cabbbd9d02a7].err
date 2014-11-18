@@ -1,0 +1,69 @@
+[18-11,13:52][Core[2e8e6dd6-f8f4-4c62-9708-cabbbd9d02a7]] Unknown error in phase {dispatchRefresh} nodeHint is {Core} Dump: undefined
+     Err: ReferenceError: swarm is not defined
+     Stack: ReferenceError: swarm is not defined
+    at newPendingSwarm (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:89:39)
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:115:13)
+    at SwarmingPhase.codeUpdateSwarming.swarmChanged (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:16:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:52][Core[2e8e6dd6-f8f4-4c62-9708-cabbbd9d02a7]] Unknown error in phase {doLog} nodeHint is {Logger} Dump: undefined
+     Err: ReferenceError: swarm is not defined
+     Stack: ReferenceError: swarm is not defined
+    at newPendingSwarm (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:89:39)
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:115:13)
+    at SwarmingPhase.logSwarming.err (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:23:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:301:17)
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:122:9)
+    at SwarmingPhase.codeUpdateSwarming.swarmChanged (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:16:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+[18-11,13:52][Core[2e8e6dd6-f8f4-4c62-9708-cabbbd9d02a7]] Unknown error in phase {doLog} nodeHint is {Logger} Dump: undefined
+     Err: ReferenceError: swarm is not defined
+     Stack: ReferenceError: swarm is not defined
+    at newPendingSwarm (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:89:39)
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:115:13)
+    at SwarmingPhase.logSwarming.err (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:23:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:301:17)
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:122:9)
+    at SwarmingPhase.logSwarming.err (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:23:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:301:17)
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:122:9)
+[18-11,13:52][Core[2e8e6dd6-f8f4-4c62-9708-cabbbd9d02a7]] Unknown error in phase {dispatchRefresh} nodeHint is {Core} Dump: undefined
+     Err: ReferenceError: swarm is not defined
+     Stack: ReferenceError: swarm is not defined
+    at newPendingSwarm (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:89:39)
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:115:13)
+    at SwarmingPhase.codeUpdateSwarming.swarmChanged (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:16:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:52][Core[2e8e6dd6-f8f4-4c62-9708-cabbbd9d02a7]] Unknown error in phase {doLog} nodeHint is {Logger} Dump: undefined
+     Err: ReferenceError: swarm is not defined
+     Stack: ReferenceError: swarm is not defined
+    at newPendingSwarm (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:89:39)
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:115:13)
+    at SwarmingPhase.logSwarming.err (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:23:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:301:17)
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:122:9)
+    at SwarmingPhase.codeUpdateSwarming.swarmChanged (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:16:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+[18-11,13:52][Core[2e8e6dd6-f8f4-4c62-9708-cabbbd9d02a7]] Unknown error in phase {dispatchRefresh} nodeHint is {Core} Dump: undefined
+     Err: ReferenceError: swarm is not defined
+     Stack: ReferenceError: swarm is not defined
+    at newPendingSwarm (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:89:39)
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:115:13)
+    at SwarmingPhase.codeUpdateSwarming.swarmChanged (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:16:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)

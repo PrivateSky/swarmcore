@@ -1,0 +1,26 @@
+[17-11,18:44][testNode[381917ae-8a41-4762-8e38-563cb66e46b5]] Failed to load swarming description: undefined[17-11,18:44][testNode[381917ae-8a41-4762-8e38-563cb66e46b5]] Error starting new swarm log.js ctor:err
+     Err: TypeError: Property 'swarmExist' of object #<Object> is not a function
+     Stack: TypeError: Property 'swarmExist' of object #<Object> is not a function
+    at new SwarmingPhase (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:16:18)
+    at exports.newSwarmPhase (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:164:12)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:210:24)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at CompiledSwarmRepository.compileSwarm (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:13:64)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:307:32
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:67:26)
+    at c:\work\node_modules\asynchron\lib\asynchron.js:79:21
+    at _fulfilled (c:\work\node_modules\asynchron\node_modules\q\q.js:787:54)
+    at self.promiseDispatch.done (c:\work\node_modules\asynchron\node_modules\q\q.js:816:30)
+[17-11,18:44][testNode[381917ae-8a41-4762-8e38-563cb66e46b5]] Error starting new swarm log.js ctor:err
+     Err: TypeError: Property 'swarmExist' of object #<Object> is not a function
+     Stack: TypeError: Property 'swarmExist' of object #<Object> is not a function
+    at new SwarmingPhase (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:16:18)
+    at exports.newSwarmPhase (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:164:12)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:210:24)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:240:9)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at CompiledSwarmRepository.compileSwarm (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:13:64)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:307:32
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:67:26)
+    at c:\work\node_modules\asynchron\lib\asynchron.js:79:21

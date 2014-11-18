@@ -1,0 +1,143 @@
+[18-11,13:48][Core[842765fa-e1e2-4d33-9ea1-b96d6e6e0ac4]] Failed uploading swarm file 
+     Err: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+     Stack: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+    at Object.fs.openSync (fs.js:427:18)
+    at Object.fs.readFileSync (fs.js:284:15)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:252:30)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:223:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:48][Core[842765fa-e1e2-4d33-9ea1-b96d6e6e0ac4]] Security warning: code executing outside of a swarm context
+     Err: Error
+    at getCurrentSession (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:146:82)
+    at SwarmingPhase.logSwarming.err (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:18:27)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:301:17)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:258:13)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:223:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)[18-11,13:48][Core[842765fa-e1e2-4d33-9ea1-b96d6e6e0ac4]] Security warning: code executing outside of a swarm context
+     Err: Error
+    at getCurrentSession (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:146:82)
+    at SwarmingPhase.logSwarming.err (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:18:27)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:301:17)
+    at getCurrentSession (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:146:13)
+    at SwarmingPhase.logSwarming.err (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:18:27)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:301:17)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:258:13)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:223:29)[18-11,13:48][Core[842765fa-e1e2-4d33-9ea1-b96d6e6e0ac4]] Unknown error in phase {doLog} nodeHint is {Logger} Dump: undefined
+     Err: ReferenceError: swarmComImpl is not defined
+     Stack: ReferenceError: swarmComImpl is not defined
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:111:38)
+    at SwarmingPhase.logSwarming.err (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:24:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:301:17)
+    at getCurrentSession (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:146:13)
+    at SwarmingPhase.logSwarming.err (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:18:27)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:301:17)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:258:13)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:223:29)
+[18-11,13:48][Core[842765fa-e1e2-4d33-9ea1-b96d6e6e0ac4]] Unknown error in phase {doLog} nodeHint is {Logger} Dump: undefined
+     Err: ReferenceError: swarmComImpl is not defined
+     Stack: ReferenceError: swarmComImpl is not defined
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:111:38)
+    at SwarmingPhase.logSwarming.err (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:24:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:301:17)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:258:13)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:223:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:48][Core[842765fa-e1e2-4d33-9ea1-b96d6e6e0ac4]] Unknown error in phase {dispatchRefresh} nodeHint is {Core} Dump: undefined
+     Err: ReferenceError: swarmComImpl is not defined
+     Stack: ReferenceError: swarmComImpl is not defined
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:111:38)
+    at SwarmingPhase.codeUpdateSwarming.swarmChanged (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:16:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:48][Core[842765fa-e1e2-4d33-9ea1-b96d6e6e0ac4]] Unknown error in phase {dispatchRefresh} nodeHint is {Core} Dump: undefined
+     Err: ReferenceError: swarmComImpl is not defined
+     Stack: ReferenceError: swarmComImpl is not defined
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:111:38)
+    at SwarmingPhase.codeUpdateSwarming.swarmChanged (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:16:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:48][Core[842765fa-e1e2-4d33-9ea1-b96d6e6e0ac4]] Unknown error in phase {dispatchRefresh} nodeHint is {Core} Dump: undefined
+     Err: ReferenceError: swarmComImpl is not defined
+     Stack: ReferenceError: swarmComImpl is not defined
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:111:38)
+    at SwarmingPhase.codeUpdateSwarming.swarmChanged (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:16:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:50][Core[842765fa-e1e2-4d33-9ea1-b96d6e6e0ac4]] Failed uploading swarm file 
+     Err: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\log.js'
+     Stack: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\log.js'
+    at Object.fs.openSync (fs.js:427:18)
+    at Object.fs.readFileSync (fs.js:284:15)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:252:30)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:223:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:50][Core[842765fa-e1e2-4d33-9ea1-b96d6e6e0ac4]] Unknown error in phase {dispatchRefresh} nodeHint is {Core} Dump: undefined
+     Err: ReferenceError: swarmComImpl is not defined
+     Stack: ReferenceError: swarmComImpl is not defined
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:111:38)
+    at SwarmingPhase.codeUpdateSwarming.swarmChanged (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:16:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:50][Core[842765fa-e1e2-4d33-9ea1-b96d6e6e0ac4]] Unknown error in phase {dispatchRefresh} nodeHint is {Core} Dump: undefined
+     Err: ReferenceError: swarmComImpl is not defined
+     Stack: ReferenceError: swarmComImpl is not defined
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:111:38)
+    at SwarmingPhase.codeUpdateSwarming.swarmChanged (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:16:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:50][Core[842765fa-e1e2-4d33-9ea1-b96d6e6e0ac4]] Unknown error in phase {dispatchRefresh} nodeHint is {Core} Dump: undefined
+     Err: ReferenceError: swarmComImpl is not defined
+     Stack: ReferenceError: swarmComImpl is not defined
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:111:38)
+    at SwarmingPhase.codeUpdateSwarming.swarmChanged (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:16:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:50][Core[842765fa-e1e2-4d33-9ea1-b96d6e6e0ac4]] Unknown error in phase {dispatchRefresh} nodeHint is {Core} Dump: undefined
+     Err: ReferenceError: swarmComImpl is not defined
+     Stack: ReferenceError: swarmComImpl is not defined
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:111:38)
+    at SwarmingPhase.codeUpdateSwarming.swarmChanged (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:16:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:50][Core[842765fa-e1e2-4d33-9ea1-b96d6e6e0ac4]] Unknown error in phase {dispatchRefresh} nodeHint is {Core} Dump: undefined
+     Err: ReferenceError: swarmComImpl is not defined
+     Stack: ReferenceError: swarmComImpl is not defined
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:111:38)
+    at SwarmingPhase.codeUpdateSwarming.swarmChanged (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:16:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:50][Core[842765fa-e1e2-4d33-9ea1-b96d6e6e0ac4]] Unknown error in phase {dispatchRefresh} nodeHint is {Core} Dump: undefined
+     Err: ReferenceError: swarmComImpl is not defined
+     Stack: ReferenceError: swarmComImpl is not defined
+    at SwarmingPhase.swarm (c:\work\node_modules\SwarmCore\lib\SwarmingPhase.js:111:38)
+    at SwarmingPhase.codeUpdateSwarming.swarmChanged (eval at <anonymous> (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:8:28), <anonymous>:16:14)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:237:15)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)

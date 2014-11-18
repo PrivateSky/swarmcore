@@ -1,0 +1,143 @@
+[17-11,18:6][Core[13b16b0f-4d9d-42a7-b941-d54989d1909e]] Failed uploading swarm file 
+     Err: TypeError: Cannot call method 'compileSwarm' of undefined
+     Stack: TypeError: Cannot call method 'compileSwarm' of undefined
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:255:32)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+    at RedisClient.on_info_cmd (c:\work\node_modules\redis\index.js:394:14)
+    at c:\work\node_modules\redis\index.js:418:14
+    at try_callback (c:\work\node_modules\redis\index.js:573:9)
+[17-11,18:6][Core[13b16b0f-4d9d-42a7-b941-d54989d1909e]] Error starting new swarm log.js ctor:err
+     Err: ReferenceError: util is not defined
+     Stack: ReferenceError: util is not defined
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:210:24)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:261:13)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+    at RedisClient.on_info_cmd (c:\work\node_modules\redis\index.js:394:14)
+[17-11,18:6][Core[13b16b0f-4d9d-42a7-b941-d54989d1909e]] Error starting new swarm log.js ctor:err
+     Err: ReferenceError: util is not defined
+     Stack: ReferenceError: util is not defined
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:210:24)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:240:9)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:261:13)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+[17-11,18:6][Core[13b16b0f-4d9d-42a7-b941-d54989d1909e]] Failed uploading swarm file 
+     Err: TypeError: Cannot call method 'compileSwarm' of undefined
+     Stack: TypeError: Cannot call method 'compileSwarm' of undefined
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:255:32)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+    at RedisClient.on_info_cmd (c:\work\node_modules\redis\index.js:394:14)
+    at c:\work\node_modules\redis\index.js:418:14
+    at try_callback (c:\work\node_modules\redis\index.js:573:9)
+[17-11,18:6][Core[13b16b0f-4d9d-42a7-b941-d54989d1909e]] Error starting new swarm log.js ctor:err
+     Err: ReferenceError: util is not defined
+     Stack: ReferenceError: util is not defined
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:210:24)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:261:13)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+    at RedisClient.on_info_cmd (c:\work\node_modules\redis\index.js:394:14)
+[17-11,18:6][Core[13b16b0f-4d9d-42a7-b941-d54989d1909e]] Failed uploading swarm file 
+     Err: TypeError: Cannot call method 'compileSwarm' of undefined
+     Stack: TypeError: Cannot call method 'compileSwarm' of undefined
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:255:32)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+    at RedisClient.on_info_cmd (c:\work\node_modules\redis\index.js:394:14)
+    at c:\work\node_modules\redis\index.js:418:14
+    at try_callback (c:\work\node_modules\redis\index.js:573:9)
+[17-11,18:6][Core[13b16b0f-4d9d-42a7-b941-d54989d1909e]] Failed uploading swarm file 
+     Err: TypeError: Cannot call method 'compileSwarm' of undefined
+     Stack: TypeError: Cannot call method 'compileSwarm' of undefined
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:255:32)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+    at RedisClient.on_info_cmd (c:\work\node_modules\redis\index.js:394:14)
+    at c:\work\node_modules\redis\index.js:418:14
+    at try_callback (c:\work\node_modules\redis\index.js:573:9)
+[17-11,18:6][Core[13b16b0f-4d9d-42a7-b941-d54989d1909e]] Failed uploading swarm file 
+     Err: TypeError: Cannot call method 'compileSwarm' of undefined
+     Stack: TypeError: Cannot call method 'compileSwarm' of undefined
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:255:32)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+    at RedisClient.on_info_cmd (c:\work\node_modules\redis\index.js:394:14)
+    at c:\work\node_modules\redis\index.js:418:14
+    at try_callback (c:\work\node_modules\redis\index.js:573:9)
+[17-11,18:6][Core[13b16b0f-4d9d-42a7-b941-d54989d1909e]] Failed uploading swarm file 
+     Err: TypeError: Cannot call method 'compileSwarm' of undefined
+     Stack: TypeError: Cannot call method 'compileSwarm' of undefined
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:255:32)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+    at RedisClient.on_info_cmd (c:\work\node_modules\redis\index.js:394:14)
+    at c:\work\node_modules\redis\index.js:418:14
+    at try_callback (c:\work\node_modules\redis\index.js:573:9)
+[17-11,18:6][Core[13b16b0f-4d9d-42a7-b941-d54989d1909e]] Failed uploading swarm file 
+     Err: TypeError: Cannot call method 'compileSwarm' of undefined
+     Stack: TypeError: Cannot call method 'compileSwarm' of undefined
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:255:32)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+    at RedisClient.on_info_cmd (c:\work\node_modules\redis\index.js:394:14)
+    at c:\work\node_modules\redis\index.js:418:14
+    at try_callback (c:\work\node_modules\redis\index.js:573:9)
+[17-11,18:6][Core[13b16b0f-4d9d-42a7-b941-d54989d1909e]] Failed uploading swarm file 
+     Err: TypeError: Cannot call method 'compileSwarm' of undefined
+     Stack: TypeError: Cannot call method 'compileSwarm' of undefined
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:255:32)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:228:21
+    at Array.forEach (native)
+    at uploadDescriptionsImpl (c:\work\node_modules\SwarmCore\com\redisComImpl.js:218:23)
+    at RedisClient.onCmdRedisReady (c:\work\node_modules\SwarmCore\com\redisComImpl.js:31:13)
+    at RedisClient.EventEmitter.emit (events.js:92:17)
+    at RedisClient.on_ready (c:\work\node_modules\redis\index.js:361:10)
+    at RedisClient.on_info_cmd (c:\work\node_modules\redis\index.js:394:14)
+    at c:\work\node_modules\redis\index.js:418:14
+    at try_callback (c:\work\node_modules\redis\index.js:573:9)

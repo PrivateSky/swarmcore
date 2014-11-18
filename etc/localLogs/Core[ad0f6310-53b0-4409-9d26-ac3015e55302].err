@@ -1,0 +1,98 @@
+[18-11,13:43][Core[ad0f6310-53b0-4409-9d26-ac3015e55302]] Failed uploading swarm file 
+     Err: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+     Stack: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+    at Object.fs.openSync (fs.js:427:18)
+    at Object.fs.readFileSync (fs.js:284:15)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:252:30)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:223:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:43][Core[ad0f6310-53b0-4409-9d26-ac3015e55302]] Error starting new swarm log.js ctor:err
+     Err: TypeError: Cannot read property 'tenantId' of null
+     Stack: TypeError: Cannot read property 'tenantId' of null
+    at getCurrentTenant (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:158:28)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:218:43)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:284:17)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:258:13)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:223:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:43][Core[ad0f6310-53b0-4409-9d26-ac3015e55302]] Error starting new swarm log.js ctor:err
+     Err: TypeError: Cannot read property 'tenantId' of null
+     Stack: TypeError: Cannot read property 'tenantId' of null
+    at getCurrentTenant (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:158:28)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:218:43)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:284:17)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:240:9)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:284:17)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:258:13)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:223:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:43][Core[ad0f6310-53b0-4409-9d26-ac3015e55302]] Error starting new swarm CodeUpdate.js ctor:swarmChanged
+     Err: TypeError: Cannot read property 'tenantId' of null
+     Stack: TypeError: Cannot read property 'tenantId' of null
+    at getCurrentTenant (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:158:28)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:218:43)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:43][Core[ad0f6310-53b0-4409-9d26-ac3015e55302]] Error starting new swarm log.js ctor:err
+     Err: TypeError: Cannot read property 'tenantId' of null
+     Stack: TypeError: Cannot read property 'tenantId' of null
+    at getCurrentTenant (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:158:28)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:218:43)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:284:17)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:240:9)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:43][Core[ad0f6310-53b0-4409-9d26-ac3015e55302]] Error starting new swarm CodeUpdate.js ctor:swarmChanged
+     Err: TypeError: Cannot read property 'tenantId' of null
+     Stack: TypeError: Cannot read property 'tenantId' of null
+    at getCurrentTenant (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:158:28)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:218:43)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:43][Core[ad0f6310-53b0-4409-9d26-ac3015e55302]] Error starting new swarm CodeUpdate.js ctor:swarmChanged
+     Err: TypeError: Cannot read property 'tenantId' of null
+     Stack: TypeError: Cannot read property 'tenantId' of null
+    at getCurrentTenant (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:158:28)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:218:43)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:46][Core[ad0f6310-53b0-4409-9d26-ac3015e55302]] Failed uploading swarm file 
+     Err: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+     Stack: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+    at Object.fs.openSync (fs.js:427:18)
+    at Object.fs.readFileSync (fs.js:284:15)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:252:30)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:223:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:46][Core[ad0f6310-53b0-4409-9d26-ac3015e55302]] Error starting new swarm CodeUpdate.js ctor:swarmChanged
+     Err: TypeError: Cannot read property 'tenantId' of null
+     Stack: TypeError: Cannot read property 'tenantId' of null
+    at getCurrentTenant (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:158:28)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:218:43)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:46][Core[ad0f6310-53b0-4409-9d26-ac3015e55302]] Error starting new swarm CodeUpdate.js ctor:swarmChanged
+     Err: TypeError: Cannot read property 'tenantId' of null
+     Stack: TypeError: Cannot read property 'tenantId' of null
+    at getCurrentTenant (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:158:28)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:218:43)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,13:46][Core[ad0f6310-53b0-4409-9d26-ac3015e55302]] Error starting new swarm CodeUpdate.js ctor:swarmChanged
+     Err: TypeError: Cannot read property 'tenantId' of null
+     Stack: TypeError: Cannot read property 'tenantId' of null
+    at getCurrentTenant (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:158:28)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:218:43)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:224:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)

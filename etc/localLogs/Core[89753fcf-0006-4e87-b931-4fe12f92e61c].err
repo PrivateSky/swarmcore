@@ -1,0 +1,63 @@
+[18-11,15:26][Core[89753fcf-0006-4e87-b931-4fe12f92e61c]] Failed uploading swarm file 
+     Err: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+     Stack: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+    at Object.fs.openSync (fs.js:427:18)
+    at Object.fs.readFileSync (fs.js:284:15)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:252:30)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:223:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,15:26][Core[89753fcf-0006-4e87-b931-4fe12f92e61c]] Failed uploading swarm file 
+     Err: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+     Stack: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+    at Object.fs.openSync (fs.js:427:18)
+    at Object.fs.readFileSync (fs.js:284:15)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:252:30)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:223:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,15:26][Core[89753fcf-0006-4e87-b931-4fe12f92e61c]] Failed uploading swarm file 
+     Err: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+     Stack: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+    at Object.fs.openSync (fs.js:427:18)
+    at Object.fs.readFileSync (fs.js:284:15)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:252:30)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:223:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,15:27][Core[89753fcf-0006-4e87-b931-4fe12f92e61c]] Failed uploading swarm file 
+     Err: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+     Stack: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+    at Object.fs.openSync (fs.js:427:18)
+    at Object.fs.readFileSync (fs.js:284:15)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:252:30)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:223:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,15:29][Core[89753fcf-0006-4e87-b931-4fe12f92e61c]] Failed uploading swarm file 
+     Err: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+     Stack: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+    at Object.fs.openSync (fs.js:427:18)
+    at Object.fs.readFileSync (fs.js:284:15)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:252:30)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:223:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,15:29][Core[89753fcf-0006-4e87-b931-4fe12f92e61c]] Failed uploading swarm file 
+     Err: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+     Stack: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+    at Object.fs.openSync (fs.js:427:18)
+    at Object.fs.readFileSync (fs.js:284:15)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:252:30)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:223:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)
+[18-11,15:29][Core[89753fcf-0006-4e87-b931-4fe12f92e61c]] Failed uploading swarm file 
+     Err: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+     Stack: Error: ENOENT, no such file or directory 'C:\work\node_modules\SwarmCore\etc\coreSwarms\CodeUpdate.js'
+    at Object.fs.openSync (fs.js:427:18)
+    at Object.fs.readFileSync (fs.js:284:15)
+    at uploadFile (c:\work\node_modules\SwarmCore\com\redisComImpl.js:252:30)
+    at FSWatcher.<anonymous> (c:\work\node_modules\SwarmCore\com\redisComImpl.js:223:29)
+    at FSWatcher.EventEmitter.emit (events.js:98:17)
+    at FSEvent.FSWatcher._handle.onchange (fs.js:1039:12)

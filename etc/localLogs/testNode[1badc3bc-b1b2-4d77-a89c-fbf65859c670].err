@@ -1,0 +1,26 @@
+[17-11,18:42][testNode[1badc3bc-b1b2-4d77-a89c-fbf65859c670]] Failed to load swarming description: undefined[17-11,18:42][testNode[1badc3bc-b1b2-4d77-a89c-fbf65859c670]] Error starting new swarm log.js ctor:err
+     Err: ReferenceError: util is not defined
+     Stack: ReferenceError: util is not defined
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:210:24)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at CompiledSwarmRepository.compileSwarm (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:13:64)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:307:32
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:67:26)
+    at c:\work\node_modules\asynchron\lib\asynchron.js:79:21
+    at _fulfilled (c:\work\node_modules\asynchron\node_modules\q\q.js:787:54)
+    at self.promiseDispatch.done (c:\work\node_modules\asynchron\node_modules\q\q.js:816:30)
+    at Promise.promise.promiseDispatch (c:\work\node_modules\asynchron\node_modules\q\q.js:749:13)
+    at c:\work\node_modules\asynchron\node_modules\q\q.js:557:44
+[17-11,18:42][testNode[1badc3bc-b1b2-4d77-a89c-fbf65859c670]] Error starting new swarm log.js ctor:err
+     Err: ReferenceError: util is not defined
+     Stack: ReferenceError: util is not defined
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:210:24)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at startSwarm (c:\work\node_modules\SwarmCore\lib\Adapter.js:240:9)
+    at logErr (c:\work\node_modules\SwarmCore\lib\SwarmCore.js:278:17)
+    at CompiledSwarmRepository.compileSwarm (c:\work\node_modules\SwarmCore\lib\SwarmDSL.js:13:64)
+    at c:\work\node_modules\SwarmCore\com\redisComImpl.js:307:32
+    at callItFinally (c:\work\node_modules\asynchron\lib\asynchron.js:67:26)
+    at c:\work\node_modules\asynchron\lib\asynchron.js:79:21
+    at _fulfilled (c:\work\node_modules\asynchron\node_modules\q\q.js:787:54)
+    at self.promiseDispatch.done (c:\work\node_modules\asynchron\node_modules\q\q.js:816:30)
