@@ -89,6 +89,31 @@ function RedisComImpl(){
         }
     }
 
+    /*
+        Save all global contexts
+     */
+    this.saveSharedContexts = function(arr){
+        for(var i = 0,l = arr.length; i<l; i++){
+            var ctxt = arr[i];
+            var redisKey = makeRedisKey("sharedContexts", ctxt.contextId);
+            ctxt.diff(function(propertyName, value){
+                redisClient.hset.async(redisKey,propertyName,value);
+             });
+         }
+    }
+
+    /*
+        get a global context
+     */
+    this.getContext = function(contextId, callback){
+        var redisKey = makeRedisKey("sharedContexts",contextId);
+        var values = redisClient.hgetall.async(redisKey);
+        (function(values){
+            var ctxt = require("./SharedContext.js").newContext(contextId,values);
+            callback(null, ctxt);
+        }).swait(values);
+    }
+
     /* abort transaction or notify upstream about errors */
     this.phaseExecutionFailed = function(err, swarmingPhase){
         swarmingPhase.meta.failed = true;
@@ -219,9 +244,9 @@ function RedisComImpl(){
                 files.forEach(function (fileName, index, array) {
                     var fullFileName = getSwarmFilePath(descriptionsFolder + "/" + fileName);
 
-                    fs.watch(fullFileName, function (event, fileName) {
+                    fs.watch(fullFileName, function (event, chFileName) {
+                        if(event != "change") return;
                         if (uploadFile(fullFileName, fileName)) {
-
                             startSwarm("CodeUpdate.js", "swarmChanged", fileName);
                         }
                     });
@@ -236,10 +261,11 @@ function RedisComImpl(){
     /**
      *  Make REDIS keys relative to current coreId
      * @param type
-     * @param value
+     * @param mainBranch
+     * @param subBranch
      * @return {String}
      */
-    function makeRedisKey(type, mainBranch,subBranch){
+    function makeRedisKey(type, mainBranch, subBranch){
         if(subBranch){
             return thisAdapter.coreId+"/"+type+"/"+ mainBranch + "/" + subBranch;
         }
@@ -247,59 +273,21 @@ function RedisComImpl(){
     }
 
 
-
     function uploadFile(fullFileName, fileName) {
         try {
-            var content = fs.readFileSync(fullFileName);
-            console.log("Uploading swarm in: " + makeRedisKey("system", "code"), fileName);
-
-            redisClient.hset.async(makeRedisKey("system", "code"), fileName, content.toString());
-            dslUtil.repository.compileSwarm(fileName, content.toString());
-
+            var content = fs.readFileSync(fullFileName).toString();
+            dprint("Uploading swarm: " + fullFileName);
+            redisClient.hset.async(makeRedisKey("system", "code"), fileName, content);
+            dslUtil.repository.compileSwarm(fileName, content);
         }
         catch (err) {
-            console.log("Failed uploading swarm file ", err, err.stack);
-            //logErr("Failed uploading swarm file ", err);
+            logErr("Failed uploading swarm file ", err);
         }
         return true;
     }
 
-    /*function loadSwarms() {
-        if (thisAdapter.swarmingCodeLoaded == false) {
-            loadSwarmingCode(function () {
-                startSwarm("CodeUpdate.js", "register", thisAdapter.nodeName);
-                startSwarm("NodeStart.js", "boot");
-                if (thisAdapter.onReadyCallback) {
-                    thisAdapter.onReadyCallback();
-                }
-                thisAdapter.swarmingCodeLoaded = true;
-            });
-        }
-
-        setTimeout(function () {
-            if (thisAdapter.swarmingCodeLoaded == false) {
-                loadSwarms();
-            }
-        }, 500);
-    }
-
-    function loadSwarmingCode() {
-        redisClient.hgetall(makeRedisKey("system", "code"),
-            function (err, hash) {
-                if (err != null) {
-                    logErr("Error loading swarms descriptions\n", err);
-                }
-
-                for (var i in hash) {
-                    dslUtil.repository.compileSwarm(i, hash[i]);
-                }
-            });
-    }*/
-
-
 
     this.reloadAllSwarms = function () {
-
         var swarmCode = redisClient.hgetall.async(makeRedisKey("system", "code"));
         (function (swarmCode) {
             for (var i in swarmCode) {
