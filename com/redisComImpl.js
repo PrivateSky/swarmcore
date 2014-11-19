@@ -32,9 +32,10 @@ function RedisComImpl(){
         if(self.uploadDescriptionsRequired){
             uploadDescriptionsImpl();
         } else {
-            self.reloadAllSwarms();
+            self.reloadAllSwarms(true);
         }
         self.redisReady = true;
+        self.joinGroup(thisAdapter.mainGroup);
     }
 
     var pubsubRedisClient = redis.createClient(redisPort, redisHost);
@@ -56,9 +57,15 @@ function RedisComImpl(){
     pubsubRedisClient.on("reconnecting", onRedisReconnecting);
 
     /* generate swarm message identity*/
-    this.createSwarmIdentity = function(swarm){
+    this.createPhaseIdentity = function(swarm){
         /* create with uuid v4*/
-        return swarm.meta.identity+"/" + swarm.meta.currentPhase + generateUUID();
+        return swarm.meta.processIdentity+"/Phase:" + swarm.meta.currentPhase + "/" + generateUUID();
+    }
+
+    /* generate swarm message identity*/
+    this.createProcessIdentity = function(){
+        /* create with uuid v4*/
+        return "Process:" + generateUUID();
     }
 
     /* generate unique names */
@@ -74,7 +81,7 @@ function RedisComImpl(){
                 if(dslUtil.requireResponse(swarm)){
                     updateSwarm(swarm);
                 }
-                sendSwarm(swarm.meta.targetNode, swarm);
+                sendSwarm(swarm.meta.targetNodeName, swarm);
             });
         } catch(err){
             currentSwarm.meta.failed = false;
@@ -82,9 +89,9 @@ function RedisComImpl(){
 
         if(dslUtil.requireResponse(currentSwarm)){
             if(!currentSwarm.meta.failed){
-                startSwarm("SwarmConfirmation","phaseExecuted", currentSwarm.meta.identity);
+                startSwarm("SwarmConfirmation","phaseExecuted", currentSwarm.meta.phaseIdentity);
             } else {
-                startSwarm("SwarmConfirmation","phaseFailed", currentSwarm.meta.identity);
+                startSwarm("SwarmConfirmation","phaseFailed", currentSwarm.meta.phaseIdentity);
             }
         }
     }
@@ -94,10 +101,16 @@ function RedisComImpl(){
      */
     this.saveSharedContexts = function(arr){
         for(var i = 0,l = arr.length; i<l; i++){
+
             var ctxt = arr[i];
-            var redisKey = makeRedisKey("sharedContexts", ctxt.contextId);
+            var redisKey = makeRedisKey("sharedContexts", ctxt.__meta.contextId);
             ctxt.diff(function(propertyName, value){
-                redisClient.hset.async(redisKey,propertyName,value);
+                if(value === undefined){
+                    redisClient.hdel.async(redisKey,propertyName);
+                } else {
+                    redisClient.hset.async(redisKey,propertyName,value);
+                }
+
              });
          }
     }
@@ -105,11 +118,12 @@ function RedisComImpl(){
     /*
         get a global context
      */
-    this.getContext = function(contextId, callback){
+    this.getSharedContext = function(contextId, callback){
         var redisKey = makeRedisKey("sharedContexts",contextId);
         var values = redisClient.hgetall.async(redisKey);
         (function(values){
             var ctxt = require("./SharedContext.js").newContext(contextId,values);
+
             callback(null, ctxt);
         }).swait(values);
     }
@@ -133,7 +147,11 @@ function RedisComImpl(){
         });
 
         pubsubRedisClient.on("message", function (channel, message){
-            callback(message);
+            try{
+                callback(JSON.parse(message));
+            } catch(err){
+                errLog("Malformed JSON response received");
+            }
         });
     }
 
@@ -141,18 +159,18 @@ function RedisComImpl(){
      * publish a swarm in the required queue
      * */
     function sendSwarm(queueName, swarm){
-        function doSend(){
+        function doSend(specificNodeName){
             if(dslUtil.requireResponse(swarm)){
                 persistSwarmState(swarm);
             }
-            redisClient.publish.async(queueName, J(swarm));
+            redisClient.publish.async(specificNodeName, J(swarm));
         }
 
         if(!isNodeName(queueName)){
             var targetNodeName  = chooseOneFromGroup.async(queueName);
             (function(targetNodeName ){
                 doSend(targetNodeName);
-            }).swait(nodeName);
+            }).wait(targetNodeName);
         } else {
             doSend(queueName);
         }
@@ -175,7 +193,7 @@ function RedisComImpl(){
         var values = redisClient.hgetall.async(redisKey);
         (function(values){
             console.log("FIX HERE (make a list with values and return):",values)
-        }).swait(values);
+        }).wait(values);
     }
 
     function isNodeName(queueName){
@@ -186,13 +204,23 @@ function RedisComImpl(){
         var redisKey = makeRedisKey("groupMembers","set",groupName);
         var values = redisClient.hgetall.async(redisKey);
         (function(values){
-            console.log("FIX HERE (chose the min value, report issues):",values)
-        }).swait(values);
+            var sortable = [];
+            for (var v in values){
+                sortable.push([v, values[v]]);
+            }
+
+            if(sortable.length >0){
+                sortable.sort(function(a, b) {return a[1] - b[1]});
+                callback(null,sortable[0][0]);
+            } else {
+              errLog("Missing any node in group [" + groupName + "]")
+            }
+        }).wait(values);
     }
 
-    this.joinGroup = function(groupName, nodeName){
+    this.joinGroup = function(groupName){
         var redisKey = makeRedisKey("groupMembers","set",groupName);
-        redisClient.hset.async(redisKey, nodeName, 0);
+        redisClient.hset.async(redisKey, thisAdapter.nodeName, 0);
     }
 
     /* save the swarm state and if transactionId is not false or undefined, register in the new transaction*/
@@ -247,7 +275,7 @@ function RedisComImpl(){
                     fs.watch(fullFileName, function (event, chFileName) {
                         if(event != "change") return;
                         if (uploadFile(fullFileName, fileName)) {
-                            startSwarm("CodeUpdate.js", "swarmChanged", fileName);
+                            startSwarm("CoreWork.js", "swarmChanged", fileName);
                         }
                     });
 
@@ -287,15 +315,24 @@ function RedisComImpl(){
     }
 
 
-    this.reloadAllSwarms = function () {
+    this.reloadAllSwarms = function (registerCore) {
         var swarmCode = redisClient.hgetall.async(makeRedisKey("system", "code"));
         (function (swarmCode) {
             for (var i in swarmCode) {
                 dslUtil.repository.compileSwarm(i, swarmCode[i]);
             }
+            if(registerCore) {
+                startSwarm("CoreWork.js", "register", thisAdapter.mainGroup,thisAdapter.nodeName);
+            }
         }).wait(swarmCode);
     }
 
+    this.reloadSwarm = function(swarmName){
+        var swarmCode = redisClient.hget.async(makeRedisKey("system", "code"), swarmName);
+        (function (swarmCode) {
+            dslUtil.repository.compileSwarm(swarmName, swarmCode);
+        }).wait(swarmCode);
+    }
 
 }
 

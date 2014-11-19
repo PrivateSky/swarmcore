@@ -1,5 +1,5 @@
 {
- "logsPath":"etc/localLogs",
+ "logsPath":"logs",
  "verbose":false,
  "pingTimeout":500,
  "Core":{

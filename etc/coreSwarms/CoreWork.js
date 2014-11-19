@@ -7,7 +7,8 @@
 var codeUpdateSwarming =
 {
     meta:{
-        name:"CodeUpdate.js"
+        name:"CoreWork.js",
+        debug:true
     },
     vars:{
     },
@@ -23,37 +24,38 @@ var codeUpdateSwarming =
     doRegister:{
         node:"Core",
         code : function (){
-            var ctxt = getGlobalContext.async("System:RegisteredNodes");
+            console.log("CW:doRegister");
+            var self = this;
+            var ctxt = getSharedContext.async("System:RegisteredNodes");
             (function(ctxt){
-                ctxt[this.adapterName] = this.adapterName;
-            }).swait(ctxt);
-
-            var ctxt = getGlobalContext.async("System:GroupNodes:"+this.mainGroup);
-            (function(ctxt){
-                ctxt[this.adapterName] = this.adapterName;
+                ctxt[self.adapterName] = self.mainGroup;
+                ctxt.test = "test";
+                ctxt.test1 = "test1";
+                delete ctxt.test;
             }).swait(ctxt);
         }
     },
     dispatchRefresh:{
     node:"Core",
         code : function (){
-            var ctxt = getGlobalContext.async("System:RegisteredNodes");
+            var self = this;
+            var ctxt = getSharedContext.async("System:RegisteredNodes");
             (function(ctxt){
+                console.log(ctxt);
                 for(var key in ctxt){
-                    if(ctxt.hasOwnProperty(key)){
-                        this.swarm("reloadSwarm",key);
+                    if(key != "__meta"){
+                        self.swarm("reloadSwarm", key);
                     }
                 }
             }).swait(ctxt);
-
         }
     },
     reloadSwarm:{ //running in all adapters
         node:"",
         code : function (){
-            thisAdapter.reloadSwarm(this.reloadingSwarmName );
+            thisAdapter.nativeMiddleware.reloadSwarm(this.reloadingSwarmName );
         }
     }
-};  /* s*/
+};  /* s */
 
 codeUpdateSwarming;
