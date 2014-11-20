@@ -16,7 +16,7 @@ var WatchNodes = {
     },
     alivePulse:function(timeOut){
         this.timeOut = timeOut;
-        this.swarm("doAlivePulse");
+        this.swarm("doAlivePulse", thisAdapter.nodeName);
     },
     doAlivePulse:{
         node:"Logger",
@@ -24,9 +24,13 @@ var WatchNodes = {
             var self = this;
             var ctxt = getSharedContext.async("System:RegisteredNodes");
             (function(ctxt){
-                self.ctxt = ctxt;
-                console.log("doCleanings ", ctxt);
-                self.swarm("doCleanings");
+                self.ctxt = {};
+                for(var v in ctxt){
+                    if(ctxt.hasOwnProperty(v) && v != "__meta"){
+                        self.ctxt[v] = ctxt[v];
+                    }
+                }
+                self.swarm("doCleanings", thisAdapter.nodeName);
             }).swait(ctxt);
         }
     },
@@ -35,32 +39,39 @@ var WatchNodes = {
         code : function (){
             var self = this;
             this.randomUUID = "CleaningZone/"+generateUUID();
-
             var ctxt = this.ctxt;
-            delete this.ctxt;
+            delete this.ctxt; //do not share in all nodes
             for(var v in ctxt){
-                console.log("confirmAlive? ", v);
+                console.log("Checking ", v);
                 this.swarm("confirmAlive", v);
             }
 
-            this.ctxt = ctxt;
             setTimeout(function(){
-                var aliveCtxt = getSharedContext.async(self.randomUUID);
-                (function(aliveCtxt){
-                    for(var v in self.ctxt){
-                        if(ctxt[v]){
-                            delete self.ctxt[v];
+                try{
+                    var aliveCtxt = getDisconectedSharedContext.async(self.randomUUID); //manual saving required
+                    var rnContext = getDisconectedSharedContext.async("System:RegisteredNodes");
+                    (function(aliveCtxt, rnContext){
+                        console.log("Alive nodes:", aliveCtxt);
+                        for(var v in ctxt){
+                            if(!aliveCtxt[v]){
+                                console.log("Cleaning informations about dead node: ", v);
+                                rnContext.deleteProperty(v);
+                                thisAdapter.nativeMiddleware.forceblyCleanNode(v,ctxt[v])
+                            }
                         }
-                    }
-                    thisAdapter.nativeMiddleware.saveSharedContexts([self.ctxt]);
-                    //thisAdapter.nativeMiddleware.deleteContext(aliveCtxt);
-                }).wait(aliveCtxt);
+                        thisAdapter.nativeMiddleware.saveSharedContexts([rnContext]);
+                        thisAdapter.nativeMiddleware.deleteContext(aliveCtxt);
+                    }).wait(aliveCtxt, rnContext);
+                }catch(err){
+                    console.log(err);
+                }
             }, this.timeOut);
         }
     },
     confirmAlive: { //running in all adapters
         node:"",
         code : function (){
+            console.log("I'm alive...");
             var ctxt = getSharedContext.async(this.randomUUID);
             (function(ctxt){
                 ctxt[thisAdapter.nodeName] = thisAdapter.mainGroup;

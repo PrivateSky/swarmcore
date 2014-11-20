@@ -1,14 +1,17 @@
 var jsondiffpatch = require('jsondiffpatch').create();
 
-function SharedContext(contextId, values){
+function SharedContext(contextId, startValues){
+    if(!startValues){
+        startValues = {};
+    }
     this.__meta = {
         contextId      : contextId,
-        initialValues  : values
+        initialValues  : startValues
     }
-
-    for(var v in values){
-        this[v] = values[v];
+    for(var v in startValues){
+        this[v] = startValues[v];
     }
+    console.log("Creating context ",contextId);
 }
 
 /*
@@ -17,20 +20,31 @@ function SharedContext(contextId, values){
 SharedContext.prototype.diff = function(propertyHandler) {
     var newThis = {};
     for(var v in this){
-        if(v != "__meta" && v != "diff") {
+        if(v != "__meta" && typeof this[v] != "function") {
             newThis[v] = this[v];
         }
     }
     var diffLocal      = jsondiffpatch.diff(this.__meta.initialValues, newThis);
-    console.log("Diff found", diffLocal);
+    //console.log("Diff found", diffLocal);
     for(var v in diffLocal){
-        console.log(v, this[v]);
+            //console.log(v, this[v]);
             propertyHandler(v, this[v]);
     }
 }
 
+SharedContext.prototype.deleteProperty = function(name){
+    if(this.hasOwnProperty(name) || name != "__meta"){
+        delete this[name];
+    }
+}
+
+SharedContext.prototype.deleteProperty = function(name){
+    if(this.hasOwnProperty(name) || name != "__meta"){
+        delete this[name];
+    }
+}
+
 exports.newContext = function(contextId, values){
-    console.log("Initial values", values);
     return new SharedContext(contextId, values);
 }
 

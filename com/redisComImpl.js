@@ -15,12 +15,19 @@ function RedisComImpl(){
     var redisHost = thisAdapter.config.Core.redisHost;
     var redisPort = thisAdapter.config.Core.redisPort;
 
-    var redisClient = redis.createClient(redisPort, redisHost);
-    redisClient.retry_delay = 2000;
-    redisClient.max_attempts = 20;
-    redisClient.on("error", onRedisError);
-    redisClient.on("reconnecting", onRedisReconnecting);
-    redisClient.on("ready", onCmdRedisReady);
+    var pubsubRedisClient = redis.createClient(redisPort, redisHost);
+    var redisClient  = null;
+    pubsubRedisClient.retry_delay = 1000;
+    pubsubRedisClient.max_attempts = 100;
+    pubsubRedisClient.on("error", onRedisError);
+    pubsubRedisClient.on("ready", function(){
+        redisClient = redis.createClient(redisPort, redisHost);
+        redisClient.retry_delay = 2000;
+        redisClient.max_attempts = 20;
+        redisClient.on("error", onRedisError);
+        redisClient.on("reconnecting", onRedisReconnecting);
+        redisClient.on("ready", onCmdRedisReady);
+    });
 
     function onRedisError(error){
         errLog("Redis error", error);
@@ -31,18 +38,16 @@ function RedisComImpl(){
         bindAllMembers(redisClient);
         if(self.uploadDescriptionsRequired){
             uploadDescriptionsImpl();
+            registerInSharedDB();
         } else {
-            self.reloadAllSwarms(true);
+            self.reloadAllSwarms();
         }
         self.redisReady = true;
-        self.joinGroup(thisAdapter.mainGroup);
+        self.joinGroup(thisAdapter.mainGroup, true);
+        self.joinGroup("All");
     }
 
-    var pubsubRedisClient = redis.createClient(redisPort, redisHost);
-    //TODO: add these in configurations
-    pubsubRedisClient.retry_delay = 1000;
-    pubsubRedisClient.max_attempts = 100;
-    pubsubRedisClient.on("error", onRedisError);
+
 
     function onRedisReconnecting(event) {
         //cprint("Redis reconnecting attempt [" + event.attempt + "] with delay [" + event.delay + "] !");
@@ -70,7 +75,7 @@ function RedisComImpl(){
 
     /* generate unique names */
     this.generateNodeName = function(mainGroup){
-        return mainGroup + "["+generateUUID()+"]";
+        return "_"+mainGroup + "("+generateUUID()+")";
     }
 
     /* pendingSwarm is an array containing swarms generated in current swarm and required to be sent asap */
@@ -101,18 +106,23 @@ function RedisComImpl(){
      */
     this.saveSharedContexts = function(arr){
         for(var i = 0,l = arr.length; i<l; i++){
-
             var ctxt = arr[i];
             var redisKey = makeRedisKey("sharedContexts", ctxt.__meta.contextId);
             ctxt.diff(function(propertyName, value){
                 if(value === undefined){
-                    redisClient.hdel.async(redisKey,propertyName);
+                    console.log("Deleting in ", redisKey, propertyName);
+                    redisClient.hdel.async(redisKey, propertyName);
                 } else {
-                    redisClient.hset.async(redisKey,propertyName,value);
+                    console.log("Adding in ", redisKey, propertyName);
+                    redisClient.hset.async(redisKey, propertyName, value);
                 }
-
              });
          }
+    }
+
+    this.deleteContext = function(ctxt){
+        var redisKey = makeRedisKey("sharedContexts", ctxt.__meta.contextId);
+        redisClient.del.async(redisKey);
     }
 
     /*
@@ -123,9 +133,8 @@ function RedisComImpl(){
         var values = redisClient.hgetall.async(redisKey);
         (function(values){
             var ctxt = require("./SharedContext.js").newContext(contextId,values);
-
             callback(null, ctxt);
-        }).swait(values);
+        }).wait(values);
     }
 
     /* abort transaction or notify upstream about errors */
@@ -163,7 +172,25 @@ function RedisComImpl(){
             if(dslUtil.requireResponse(swarm)){
                 persistSwarmState(swarm);
             }
-            redisClient.publish.async(specificNodeName, J(swarm));
+            redisClient.publish(specificNodeName, J(swarm), function(error,result){
+                if(result == 0){
+                    // the fucking node is down, force cleaning and retry to send
+                    console.log("Node ", specificNodeName, " is dead...");
+                    var success = self.waitToForceblyCleanNode.async(specificNodeName);
+                    (function(success){
+                            if(!isNodeName(queueName)){
+                                var alternative = chooseOneFromGroup.async(queueName);
+                                (function(alternative){
+                                    console.log("Node ", specificNodeName, " alternative is ", alternative);
+                                    doSend(alternative);
+                                }).wait(alternative);
+
+                            } else {
+                                errLog("Dropping swarm targeted towards dead node ",specificNodeName);
+                            }
+                    }).wait(success);
+                }
+            });
         }
 
         if(!isNodeName(queueName)){
@@ -183,44 +210,106 @@ function RedisComImpl(){
      * @return {String}
      */
     this.mkAdapterId = function (groupName) {
-        mainGroupPrefix = groupName+"://";
+        mainGroupPrefix = groupName+"#";
         return mainGroupPrefix + generateUUID();
     }
 
     /* get a dictionary of the the registered nodes in group and their current load*/
     this.getGroupNodes = function(groupName, callback){
-        var redisKey = makeRedisKey("groupMembers","set",groupName);
+        var redisKey = makeRedisKey("groupMembers",groupName);
         var values = redisClient.hgetall.async(redisKey);
         (function(values){
-            console.log("FIX HERE (make a list with values and return):",values)
+            callback(null, values);
         }).wait(values);
     }
 
     function isNodeName(queueName){
-        return queueName.indexOf("://") != -1;
+        return queueName[0] == '_';
     }
 
     function chooseOneFromGroup(groupName, callback){
-        var redisKey = makeRedisKey("groupMembers","set",groupName);
+        if(groupName == thisAdapter.mainGroup){
+            //allays send to the same node if a message is requested for the same group from the same group
+            callback(null,thisAdapter.nodeName);
+            return ;
+        }
+
+        var redisKey = makeRedisKey("groupMembers",groupName);
         var values = redisClient.hgetall.async(redisKey);
         (function(values){
             var sortable = [];
             for (var v in values){
                 sortable.push([v, values[v]]);
-            }
+7            }
 
             if(sortable.length >0){
                 sortable.sort(function(a, b) {return a[1] - b[1]});
                 callback(null,sortable[0][0]);
             } else {
-              errLog("Missing any node in group [" + groupName + "]")
+                if(groupName != "Logger"){
+                    errLog("Missing any node in group [" + groupName + "]")
+                } else{
+                    localLog("Error: Missing logger nodes!!!");
+                }
+
             }
         }).wait(values);
     }
 
-    this.joinGroup = function(groupName){
-        var redisKey = makeRedisKey("groupMembers","set",groupName);
+    this.joinGroup = function(groupName, isMain){
+        var redisKey = makeRedisKey("groupMembers",groupName);
         redisClient.hset.async(redisKey, thisAdapter.nodeName, 0);
+
+        redisKey = makeRedisKey("groupsForNode", thisAdapter.nodeName);
+        var groupNameValue = groupName;
+        if(isMain){
+            groupNameValue = "mainGroup";
+        }
+        redisClient.hset.async(redisKey, groupName, groupNameValue);
+    }
+
+    function getNodeGroups(nodeName, callback){
+        var redisKey = makeRedisKey("groupsForNode", nodeName);
+        redisClient.hgetall(redisKey,callback);
+    }
+
+    function registerInSharedDB(){
+        startSwarm("CoreWork.js", "register", thisAdapter.mainGroup, thisAdapter.nodeName);
+    }
+
+    this.waitToForceblyCleanNode = function(nodeName, callback){
+        var nodes = getNodeGroups.async(nodeName);
+        (function(nodes){
+            console.log("Clearing redis information about dead node ", nodeName);
+            for(var groupName in nodes){
+                var redisKey = makeRedisKey("groupMembers",groupName);
+                var res = redisClient.hdel.async(redisKey, nodeName);
+                if(nodes[groupName] == "mainGroup"){
+                    (function(res){
+                        //return result
+                        callback(null, true);
+                    }).wait(res);
+                }
+            }
+            //clean group information for the dead node
+            var redisKey = makeRedisKey("groupsForNode", nodeName);
+            redisClient.del.async(redisKey);
+            //clean RegisteredNodes key
+            redisKey = makeRedisKey("sharedContexts","System:RegisteredNodes");
+            redisClient.del.async(redisKey, nodeName);
+        }).wait(nodes);
+    }
+
+    this.findMainGroup = function(nodeName, callback){
+        var nodes = getNodeGroups.async(nodeName);
+        (function(nodes){
+            for(var v in nodes){
+                if(nodes[v] == "mainGroup"){
+                    callback(null,v);
+                }
+            }
+            callback(new Error("No main group for " + nodeName), null);
+        }).wait(nodes);
     }
 
     /* save the swarm state and if transactionId is not false or undefined, register in the new transaction*/
@@ -295,9 +384,9 @@ function RedisComImpl(){
      */
     function makeRedisKey(type, mainBranch, subBranch){
         if(subBranch){
-            return thisAdapter.coreId+"/"+type+"/"+ mainBranch + "/" + subBranch;
+            return thisAdapter.coreId+":"+type+":"+ mainBranch + ":" + subBranch;
         }
-        return thisAdapter.coreId+"/"+type+"/"+ mainBranch;
+        return thisAdapter.coreId+":"+type+":"+ mainBranch;
     }
 
 
@@ -315,15 +404,14 @@ function RedisComImpl(){
     }
 
 
-    this.reloadAllSwarms = function (registerCore) {
+    this.reloadAllSwarms = function () {
         var swarmCode = redisClient.hgetall.async(makeRedisKey("system", "code"));
         (function (swarmCode) {
             for (var i in swarmCode) {
                 dslUtil.repository.compileSwarm(i, swarmCode[i]);
             }
-            if(registerCore) {
-                startSwarm("CoreWork.js", "register", thisAdapter.mainGroup,thisAdapter.nodeName);
-            }
+
+            registerInSharedDB();
         }).wait(swarmCode);
     }
 

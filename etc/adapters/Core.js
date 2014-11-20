@@ -3,5 +3,5 @@
  */
 var core = require ("../../lib/SwarmCore.js");
 thisAdapter = core.createAdapter("Core");
-globalVerbosity = true;
+//globalVerbosity = true;
 thisAdapter.nativeMiddleware.uploadDescriptions();

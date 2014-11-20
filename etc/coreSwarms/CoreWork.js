@@ -4,17 +4,16 @@
  * useful while developing, a bit dangerous in production!
  *
  */
-var codeUpdateSwarming =
-{
+var codeUpdateSwarming = {
     meta:{
         name:"CoreWork.js",
-        debug:true
+        debug:false
     },
     vars:{
     },
     swarmChanged:function(swarmName){
         this.reloadingSwarmName = swarmName;
-        this.swarm("dispatchRefresh");
+        this.broadcast("reloadSwarm");
     },
     register:function(mainGroup, adapterName){
         this.adapterName = adapterName;
@@ -24,36 +23,16 @@ var codeUpdateSwarming =
     doRegister:{
         node:"Core",
         code : function (){
-            console.log("CW:doRegister");
-            var self = this;
-            var ctxt = getSharedContext.async("System:RegisteredNodes");
-            (function(ctxt){
-                ctxt[self.adapterName] = self.mainGroup;
-                ctxt.test = "test";
-                ctxt.test1 = "test1";
-                delete ctxt.test;
-            }).swait(ctxt);
-        }
-    },
-    dispatchRefresh:{
-    node:"Core",
-        code : function (){
-            var self = this;
-            var ctxt = getSharedContext.async("System:RegisteredNodes");
-            (function(ctxt){
-                console.log(ctxt);
-                for(var key in ctxt){
-                    if(key != "__meta"){
-                        self.swarm("reloadSwarm", key);
-                    }
-                }
-            }).swait(ctxt);
+            console.log("Registering node ", this.adapterName);
+            //do nothing.. the node is by default registered in group "All"
+            //particular implementations could require more complex monitoring,etc
         }
     },
     reloadSwarm:{ //running in all adapters
-        node:"",
+        node:"All",
         code : function (){
-            thisAdapter.nativeMiddleware.reloadSwarm(this.reloadingSwarmName );
+            console.log("Reloading ", this.reloadingSwarmName);
+            thisAdapter.nativeMiddleware.reloadSwarm(this.reloadingSwarmName);
         }
     }
 };  /* s */
