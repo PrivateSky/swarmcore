@@ -175,18 +175,24 @@ function RedisComImpl(){
             redisClient.publish(specificNodeName, J(swarm), function(error,result){
                 if(result == 0){
                     // the fucking node is down, force cleaning and retry to send
-                    console.log("Node ", specificNodeName, " is dead...");
                     var success = self.waitToForceblyCleanNode.async(specificNodeName);
                     (function(success){
+                            if(!success){
+                                errLog("Dropping swarm targeted towards dead node or group: " + queueName + M(swarm));
+                                return ;
+                            }
                             if(!isNodeName(queueName)){
                                 var alternative = chooseOneFromGroup.async(queueName);
                                 (function(alternative){
-                                    console.log("Node ", specificNodeName, " alternative is ", alternative);
-                                    doSend(alternative);
+                                    if(alternative  == "null"){
+                                        errLog("Dropping swarm targeted towards dead node: " + specificNodeName);
+                                    } else {
+                                        doSend(alternative);
+                                    }
                                 }).wait(alternative);
 
                             } else {
-                                errLog("Dropping swarm targeted towards dead node ",specificNodeName);
+                                errLog("Dropping swarm targeted towards dead node: " + specificNodeName);
                             }
                     }).wait(success);
                 }
@@ -246,6 +252,7 @@ function RedisComImpl(){
                 sortable.sort(function(a, b) {return a[1] - b[1]});
                 callback(null,sortable[0][0]);
             } else {
+                callback(null,"null");
                 if(groupName != "Logger"){
                     errLog("Missing any node in group [" + groupName + "]")
                 } else{
@@ -278,6 +285,11 @@ function RedisComImpl(){
     }
 
     this.waitToForceblyCleanNode = function(nodeName, callback){
+        if(nodeName == "null"){
+            callback(null, false);
+            return ;
+        }
+
         var nodes = getNodeGroups.async(nodeName);
         (function(nodes){
             console.log("Clearing redis information about dead node ", nodeName);
