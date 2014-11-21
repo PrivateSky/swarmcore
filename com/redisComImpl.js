@@ -47,8 +47,6 @@ function RedisComImpl(){
         self.joinGroup("All");
     }
 
-
-
     function onRedisReconnecting(event) {
         //cprint("Redis reconnecting attempt [" + event.attempt + "] with delay [" + event.delay + "] !");
         pubsubRedisClient.retry_delay += 1000;
@@ -148,6 +146,11 @@ function RedisComImpl(){
         callback.apply(swarm);
     }
 
+    var homeHandler;
+    this.registerHomeSwarmHandler = function(callback){
+        homeHandler = callback;
+    }
+
     /* wait for swarms on the queue named uuidName*/
     this.subscribe = function(uuidName, callback){
         pubsubRedisClient.subscribe(uuidName);
@@ -157,7 +160,12 @@ function RedisComImpl(){
 
         pubsubRedisClient.on("message", function (channel, message){
             try{
-                callback(JSON.parse(message));
+                var msg = JSON.parse(message);
+                if(homeHandler && msg.meta.honeyRequest){
+                    homeHandler(msg);
+                } else {
+                    callback(msg);
+                }
             } catch(err){
                 errLog("Malformed JSON response received");
             }

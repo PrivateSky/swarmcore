@@ -8,6 +8,7 @@
      "redisPort":6379,
      "paths":[
         {"folder":"etc/coreSwarms"      ,"enabled":true},
+	{"folder":"etc/xSwarms"      ,"enabled":true},
         {"folder":"etc/testSwarms"      ,"enabled":true}
      ]
   },
