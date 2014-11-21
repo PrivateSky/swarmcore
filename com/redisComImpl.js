@@ -271,7 +271,7 @@ function RedisComImpl(){
                 if(groupName != "Logger"){
                     errLog("Missing any node in group [" + groupName + "]")
                 } else{
-                    localLog("Error: Missing logger nodes!!!");
+                    localLog("missing","Error: Missing logger nodes!!!");
                 }
 
             }

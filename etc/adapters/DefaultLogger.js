@@ -6,6 +6,7 @@ thisAdapter = core.createAdapter("Logger");
 
 doLog = function(level, nodeName, message){
  console.log(level, nodeName, message);
+ localLog("NetworkLog",message);
 }
 
 /*
