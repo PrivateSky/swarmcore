@@ -29,6 +29,8 @@ function RedisComImpl(){
         redisClient.on("ready", onCmdRedisReady);
     });
 
+    var pendingInitialisationCalls = [];
+
     function onRedisError(error){
         errLog("Redis error", error);
     }
@@ -45,6 +47,11 @@ function RedisComImpl(){
         self.redisReady = true;
         self.joinGroup(thisAdapter.mainGroup, true);
         self.joinGroup("All");
+        for(var i = 0, l = pendingInitialisationCalls.length; i<l; i++){
+            var call =  pendingInitialisationCalls[i];
+            call();
+        }
+        pendingInitialisationCalls = null;
     }
 
     function onRedisReconnecting(event) {
@@ -90,7 +97,7 @@ function RedisComImpl(){
             currentSwarm.meta.failed = false;
         }
 
-        if(dslUtil.requireResponse(currentSwarm)){
+        if(!currentSwarm.meta.honeyRequest && dslUtil.requireResponse(currentSwarm)){
             if(!currentSwarm.meta.failed){
                 startSwarm("SwarmConfirmation","phaseExecuted", currentSwarm.meta.phaseIdentity);
             } else {
@@ -271,7 +278,7 @@ function RedisComImpl(){
         }).wait(values);
     }
 
-    this.joinGroup = function(groupName, isMain){
+    function doJoin(groupName, isMain){
         var redisKey = makeRedisKey("groupMembers",groupName);
         redisClient.hset.async(redisKey, thisAdapter.nodeName, 0);
 
@@ -281,6 +288,16 @@ function RedisComImpl(){
             groupNameValue = "mainGroup";
         }
         redisClient.hset.async(redisKey, groupName, groupNameValue);
+    }
+
+    this.joinGroup = function(groupName, isMain){
+        if(self.redisReady){
+            doJoin(groupName, isMain);
+        } else {
+         pendingInitialisationCalls.push(function(){
+             doJoin(groupName, isMain);
+         });
+        }
     }
 
     function getNodeGroups(nodeName, callback){
