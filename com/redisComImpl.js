@@ -88,7 +88,7 @@ function RedisComImpl(){
     this.sendPendingSwarms = function(currentSwarm, pendingSwarms){
         try{
             pendingSwarms.map(function (swarm){
-                if(dslUtil.requireResponse(swarm)){
+                if(dslUtil.handleErrors(swarm)){
                     updateSwarm(swarm);
                 }
                 sendSwarm(swarm.meta.targetNodeName, swarm);
@@ -97,15 +97,36 @@ function RedisComImpl(){
             currentSwarm.meta.failed = false;
         }
 
-        if(!currentSwarm.meta.honeyRequest && dslUtil.requireResponse(currentSwarm)){
-            if(!currentSwarm.meta.failed){
-                startSwarm("SwarmConfirmation","phaseExecuted", currentSwarm.meta.phaseIdentity);
+        if(dslUtil.handleErrors(currentSwarm)){
+            if(currentSwarm.meta.failed){
+                if(currentSwarm.inTransaction()){
+                    //currentSwarm.meta.stage = "abort";
+                    abortTransaction(currentSwarm);
+                } else {
+                    currentSwarm.executeFailStage();
+                    removeSwarmState(currentSwarm);
+                }
             } else {
-                startSwarm("SwarmConfirmation","phaseFailed", currentSwarm.meta.phaseIdentity);
+                if(currentSwarm.inTransaction()){
+                    continueTransaction(currentSwarm);
+                } else {
+                    currentSwarm.executeFinishBlock();
+                    removeSwarmState(currentSwarm);
+                }
+
+                updateSwarmExecutionStatus(currentSwarm);
             }
         }
     }
 
+    /*
+        current swarm finished successfully (without exceptions
+     */
+    function updateSwarmExecutionStatus(swarm){
+
+
+
+    }
     /*
         Save all global contexts
      */
@@ -148,7 +169,7 @@ function RedisComImpl(){
         swarmingPhase.meta.failedErr = err;
     }
 
-    /* additional locking verifications before executing a received swarm */
+    /* pottentia to add additional locking/verifications before executing a received swarm */
     this.asyncExecute = function(swarm, callback){
         callback.apply(swarm);
     }
@@ -183,14 +204,15 @@ function RedisComImpl(){
      * publish a swarm in the required queue
      * */
     function sendSwarm(queueName, swarm){
+
         function doSend(specificNodeName){
-            if(dslUtil.requireResponse(swarm)){
+            if(dslUtil.handleErrors(swarm)){
                 persistSwarmState(swarm);
             }
             redisClient.publish(specificNodeName, J(swarm), function(error,result){
                 if(result == 0){
-                    // the fucking node is down, force cleaning and retry to send
-                    var success = self.waitToForceblyCleanNode.async(specificNodeName);
+                    // the node is down, force cleaning and retry the send
+                    var success = waitToForceblyCleanNode.async(specificNodeName);
                     (function(success){
                             if(!success){
                                 errLog("Dropping swarm targeted towards dead node or group: " + queueName + M(swarm));
@@ -273,7 +295,6 @@ function RedisComImpl(){
                 } else{
                     localLog("missing","Error: Missing logger nodes!!!");
                 }
-
             }
         }).wait(values);
     }
@@ -309,7 +330,7 @@ function RedisComImpl(){
         startSwarm("CoreWork.js", "register", thisAdapter.mainGroup, thisAdapter.nodeName);
     }
 
-    this.waitToForceblyCleanNode = function(nodeName, callback){
+    function waitToForceblyCleanNode(nodeName, callback){
         if(nodeName == "null"){
             callback(null, false);
             return ;
@@ -337,7 +358,7 @@ function RedisComImpl(){
         }).wait(nodes);
     }
 
-    this.findMainGroup = function(nodeName, callback){
+    function findMainGroup(nodeName, callback){
         var nodes = getNodeGroups.async(nodeName);
         (function(nodes){
             for(var v in nodes){
@@ -350,17 +371,17 @@ function RedisComImpl(){
     }
 
     /* save the swarm state and if transactionId is not false or undefined, register in the new transaction*/
-    function persistSwarmState( targetNode, swarm){
+    function persistSwarmState( swarm){
 
     }
 
     /* get the swarm state from execution */
-     function getSwarmState(groupName, swarmIdentity){
+     function getSwarmState(swarm){
 
     }
 
     /* remove swarm state */
-    function removeSwarm(groupName, swarmIdentity){
+    function removeSwarmState(swarm){
 
     }
 
