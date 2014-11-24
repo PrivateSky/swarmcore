@@ -8,13 +8,3 @@ doLog = function(level, nodeName, message){
  console.log(level, nodeName, message);
  localLog("NetworkLog",message);
 }
-
-/*
- function triggerCleanings(){
-  startSwarm("WatchNodes.js","alivePulse", 3000);
-  //setTimeout(triggerCleanings, 4000);
- }
-
- setTimeout(triggerCleanings, 2000);
-
-*/

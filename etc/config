@@ -8,9 +8,19 @@
      "redisPort":6379,
      "paths":[
         {"folder":"etc/coreSwarms"      ,"enabled":true},
-	{"folder":"etc/xSwarms"      ,"enabled":true},
+	    {"folder":"etc/xSwarms"      ,"enabled":true},
         {"folder":"etc/testSwarms"      ,"enabled":true}
      ]
   },
- "Logger":{}
+ "Logger":{},
+ "Launcher":{
+            "autorun":[
+                        {"node":"etc/adapters/SharedAdapter.js",         "enabled":false  },
+                        {"node":"etc/adapters/DefaultLogger.js",         "enabled":false  },
+                        {"node":"etc/adapters/TestAdapter.js"  ,         "enabled":false  },
+                        {"node":"etc/adapters/WSServer.js",              "enabled":false },
+                        {"node":"adapters/UsersRepo.js",                 "enabled":false }
+
+            ]
+   }
 }
