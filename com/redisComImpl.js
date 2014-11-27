@@ -86,34 +86,35 @@ function RedisComImpl(){
     /* pendingSwarm is an array containing swarms generated in current swarm and required to be sent asap */
     /* this function get called when the execution of a phase is done (including all the asynchronous calls)*/
     this.sendPendingSwarms = function(currentSwarm, pendingSwarms){
-        try{
-            pendingSwarms.map(function (swarm){
-                if(dslUtil.handleErrors(swarm)){
-                    persistSwarmState(swarm);
-                }
-                sendSwarm(swarm.meta.targetNodeName, swarm);
-            });
-        } catch(err){
-            currentSwarm.meta.failed = false;
+        if(!currentSwarm.meta.failed){
+            try{
+                executeBlock(currentSwarm, "finish");
+
+                pendingSwarms.map(function (swarm){
+                    if(dslUtil.handleErrors(swarm)){
+                        persistSwarmState(swarm);
+                    }
+                    sendSwarm(swarm.meta.targetNodeName, swarm);
+                });
+            } catch(err){
+                currentSwarm.meta.failed = false;
+            }
         }
 
         if(dslUtil.handleErrors(currentSwarm)){
             if(currentSwarm.meta.failed) {
+                executeBlock(currentSwarm, "fail");
                 if(inTransaction(currentSwarm)){
-                    //currentSwarm.meta.stage = "abort";
                     abortTransaction(currentSwarm);
                 } else {
-                    currentSwarm.executeFailStage();
                     removeSwarmState(currentSwarm);
                 }
             } else {
                 if(inTransaction(currentSwarm)){
                     continueTransaction(currentSwarm);
                 } else {
-                    executeFinishBlock(currentSwarm);
                     removeSwarmState(currentSwarm);
                 }
-                updateSwarmExecutionStatus(currentSwarm);
             }
         }
     }
@@ -150,7 +151,7 @@ function RedisComImpl(){
         return swarm.meta.transactionId && swarm.meta.stage == "transaction";
     }
 
-    function executeFinishBlock(swarm, type){
+    function executeBlock(swarm, type){
         swarm.stage = type;  // "finish", "failed";
     }
 
@@ -163,11 +164,7 @@ function RedisComImpl(){
     function abortTransaction(currentSwarm){
 
     }
-    /*
-        current swarm finished successfully (without exceptions
-     */
-    function updateSwarmExecutionStatus(swarm){
-    }
+
     /*
         Save all global contexts
      */
