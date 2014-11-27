@@ -89,7 +89,7 @@ function RedisComImpl(){
         try{
             pendingSwarms.map(function (swarm){
                 if(dslUtil.handleErrors(swarm)){
-                    updateSwarm(swarm);
+                    persistSwarmState(swarm);
                 }
                 sendSwarm(swarm.meta.targetNodeName, swarm);
             });
@@ -98,8 +98,8 @@ function RedisComImpl(){
         }
 
         if(dslUtil.handleErrors(currentSwarm)){
-            if(currentSwarm.meta.failed){
-                if(currentSwarm.inTransaction()){
+            if(currentSwarm.meta.failed) {
+                if(inTransaction(currentSwarm)){
                     //currentSwarm.meta.stage = "abort";
                     abortTransaction(currentSwarm);
                 } else {
@@ -107,25 +107,66 @@ function RedisComImpl(){
                     removeSwarmState(currentSwarm);
                 }
             } else {
-                if(currentSwarm.inTransaction()){
+                if(inTransaction(currentSwarm)){
                     continueTransaction(currentSwarm);
                 } else {
-                    currentSwarm.executeFinishBlock();
+                    executeFinishBlock(currentSwarm);
                     removeSwarmState(currentSwarm);
                 }
-
                 updateSwarmExecutionStatus(currentSwarm);
             }
         }
     }
 
+    /* save the swarm state and if transactionId is not false or undefined, register in the new transaction*/
+    function persistSwarmState( swarm){
+        var group = swarm.meta.targetNodeName;
+        if(isNodeName(group)){
+            group = thisAdapter.mainGroup;
+        }
+        swarm.meta.targetGroup = group;
+        var redisKey = makeRedisKey("savedCurrentlyExecutingPhases", group);
+        redisClient.hset.async(redisKey,swarm.meta.phaseIdentity,J(swarm));
+    }
+
+    /* remove swarm state */
+    function removeSwarmState(swarm){
+        var group = swarm.meta.targetGroup;
+        if(group){
+            swarm.meta.targetGroup = group;
+            var redisKey = makeRedisKey("savedCurrentlyExecutingPhases", group);
+            redisClient.hdel.async(redisKey,swarm.meta.phaseIdentity);
+        } else {
+            errLog("Failed to remove saved swarm execution");
+        }
+    }
+
+    /* get the swarm state from execution */
+    function getSwarmState(swarm){
+
+    }
+    /* is in transaction? */
+    function inTransaction(swarm){
+        return swarm.meta.transactionId && swarm.meta.stage == "transaction";
+    }
+
+    function executeFinishBlock(swarm, type){
+        swarm.stage = type;  // "finish", "failed";
+    }
+
+    /* progress and eventually trigger end */
+    function continueTransaction(currentSwarm){
+
+    }
+
+    /* notify all about abortion */
+    function abortTransaction(currentSwarm){
+
+    }
     /*
         current swarm finished successfully (without exceptions
      */
     function updateSwarmExecutionStatus(swarm){
-
-
-
     }
     /*
         Save all global contexts
@@ -227,7 +268,6 @@ function RedisComImpl(){
                                         doSend(alternative);
                                     }
                                 }).wait(alternative);
-
                             } else {
                                 errLog("Dropping swarm targeted towards dead node: " + specificNodeName);
                             }
@@ -370,20 +410,6 @@ function RedisComImpl(){
         }).wait(nodes);
     }
 
-    /* save the swarm state and if transactionId is not false or undefined, register in the new transaction*/
-    function persistSwarmState( swarm){
-
-    }
-
-    /* get the swarm state from execution */
-     function getSwarmState(swarm){
-
-    }
-
-    /* remove swarm state */
-    function removeSwarmState(swarm){
-
-    }
 
     /*
     callback(err,res)
@@ -407,6 +433,7 @@ function RedisComImpl(){
             self.uploadDescriptionsRequired = true;
         }
     }
+
     function uploadDescriptionsImpl() {
         var folders = thisAdapter.config.Core.paths;
 
