@@ -88,7 +88,7 @@ function RedisComImpl(){
     this.sendPendingSwarms = function(currentSwarm, pendingSwarms){
         if(!currentSwarm.meta.failed){
             try{
-                executeBlock(currentSwarm, "finish");
+                executeBlock(currentSwarm, "complete");
 
                 pendingSwarms.map(function (swarm){
                     if(dslUtil.handleErrors(swarm)){
@@ -105,7 +105,7 @@ function RedisComImpl(){
             if(currentSwarm.meta.failed) {
                 executeBlock(currentSwarm, "fail");
                 if(inTransaction(currentSwarm)){
-                    abortTransaction(currentSwarm);
+                    finishTransaction(currentSwarm, "abort");
                 } else {
                     removeSwarmState(currentSwarm);
                 }
@@ -120,14 +120,95 @@ function RedisComImpl(){
     }
 
     /* save the swarm state and if transactionId is not false or undefined, register in the new transaction*/
-    function persistSwarmState( swarm){
+    function persistSwarmState( swarm, callback){
         var group = swarm.meta.targetNodeName;
         if(isNodeName(group)){
             group = thisAdapter.mainGroup;
         }
         swarm.meta.targetGroup = group;
         var redisKey = makeRedisKey("savedCurrentlyExecutingPhases", group);
-        redisClient.hset.async(redisKey,swarm.meta.phaseIdentity,J(swarm));
+        if(willNotBeInTransaction(swarm)){
+            delete swarm.meta.transactionId;
+        } else
+        if(willStartTransaction(swarm)){
+            swarm.meta.transactionId = generateUUID();
+        }
+
+        var ret = redisClient.hset.async(redisKey,swarm.meta.phaseIdentity,J(swarm));
+        (function(ret){
+            //add a member or start a transaction
+            if(swarm.meta.transactionId){
+                redisKey = makeRedisKey("transactionStart", swarm.meta.transactionId);
+                var ret = redisClient.hset.async(redisKey,swarm.meta.phaseIdentity, swarm.meta.targetGroup);
+                (function(ret){
+                    callback(null,true);
+                }).wait(ret);
+            }  else {
+                callback(null,true);
+            }
+            redisKey = makeRedisKey("groupMembers", group);
+            redisClient.hincrby.async(redisKey,swarm.meta.targetNodeName, 1);
+        }).wait(ret);
+    }
+
+    /* is in transaction? */
+    function inTransaction(swarm){
+        return swarm.meta.transactionId;
+    }
+
+
+    /* progress and eventually trigger end */
+    function continueTransaction(swarm){
+        var stepKey = makeRedisKey("transactionStep", swarm.meta.transactionId);
+        swarm.meta.currentStage = "executed";
+        persistSwarmState(swarm);
+        var counterAdded = redisClient.hset.async(stepKey,swarm.meta.phaseIdentity,swarm.meta.targetGroup);
+        (function(counterAdded){
+            var startKey = makeRedisKey("transactionStart", swarm.meta.transactionId);
+            var counterStarted   = redisClient.hlen.async(redisKey);
+            var counterCompleted = redisClient.hset.async(stepKey);
+            (function(counterStarted,counterCompleted){
+                if(counterStarted == counterCompleted){
+                    finishTransaction(swarm,"success", function(){
+                        //everything is fine, delete both keys
+                        redisClient.del.async(startKey);
+                        redisClient.del.async(stepKey);
+                    });
+                    //any need to notify all
+                }
+            }).wait(counterStarted,counterCompleted);
+        }).wait(counterAdded);
+    }
+
+    /* notify all about abortion or success*/
+    function finishTransaction(swarm, how, endFunction){
+        var startKey = makeRedisKey("transactionStart", swarm.meta.transactionId);
+        var members = redisClient.hgetall.async(startKey, swarm.meta.phaseIdentity);
+        (function(members){
+                for(var p in members){
+                self.restartSwarm(members[p], p, how);
+            }
+            endFunction();
+        }).wait(members);
+    }
+
+    function willNotBeInTransaction(swarm){
+        var phase = swarm[swarm.meta.currentPhase];
+        if(phase["code"]){
+            return true;
+        }
+        return false;
+    }
+
+    function willStartTransaction(swarm){
+        if(swarm.meta.transactionId){
+            return false;
+        }
+        var phase = swarm[swarm.meta.currentPhase];
+        if(phase["transaction"]){
+            return true;
+        }
+        return false;
     }
 
     /* remove swarm state */
@@ -137,33 +218,84 @@ function RedisComImpl(){
             swarm.meta.targetGroup = group;
             var redisKey = makeRedisKey("savedCurrentlyExecutingPhases", group);
             redisClient.hdel.async(redisKey,swarm.meta.phaseIdentity);
+            redisKey = makeRedisKey("groupMembers", group);
+            redisClient.hincrby.async(redisKey,swarm.meta.targetNodeName, -1);
         } else {
             errLog("Failed to remove saved swarm execution");
         }
     }
 
-    /* get the swarm state from execution */
-    function getSwarmState(swarm){
-
+    /* restart swarm */
+    this.restartSwarm = function(group, phaseIdentity, stage){
+        var redisKey = makeRedisKey("savedCurrentlyExecutingPhases", group);
+        var swarm = redisClient.hget.async(redisKey,phaseIdentity);
+        (function(swarm){
+            var state = JSON.parse(swarm);
+            if(stage){
+                state.meta.currentStage = stage;
+            }
+            state.meta.restarted = true;
+            sendSwarm(group, state);
+        }).wait(swarm);
     }
-    /* is in transaction? */
-    function inTransaction(swarm){
-        return swarm.meta.transactionId && swarm.meta.stage == "transaction";
+
+    var previousKnown = {};
+    /*
+        detect all swarm phases previously seen
+        This functions should be called in a periodical timer from monitoring system with timeouts depending on SLA, QOS...
+     */
+    this.tickForStaleSwarms = function(handleStale){
+        function mkObjectFromArray(arr){
+            var ret = {}
+            for(var i = 0,l = arr.length;i<l;i++){
+                ret[i] = i;
+            }
+            return ret;
+        }
+
+        if(!handleStale){
+            handleStale = this.restartSwarm;
+        }
+        var oldPrevious = previousKnown;
+        previousKnown = {};
+        var groupsKey = makeRedisKey("groupMembers", "*");
+        var keys = redisClient.keys.async(groupsKey);
+        (function(){
+            keys.map(function(k){
+                var key = makeRedisKey("groupMembers", k);
+                var swarmKeys = redisClient.hkeys.async(key);
+                (function(swarmKeys){
+                    var swarms = mkObjectFromArray(swarmKeys);
+                    previousKnown[k] = swarms;
+                    for(var s in swarms){
+                        if(oldPrevious[k][s]){
+                            //in both lists  means thai it is a stale swarm phase or very slow execution..
+                            handleStale(h);
+                        }
+                    }
+                }).wait(swarmKeys);
+            })
+        }).wait(keys);
+    }
+
+
+    function currentBlockExist (swarm){
+        try{
+            var phaseFunction = swarm[swarm.meta.currentPhase][swarm.meta.currentStage];
+            return phaseFunction != undefined;
+        } catch(err){
+
+        }
+        return false;
     }
 
     function executeBlock(swarm, type){
-        swarm.stage = type;  // "finish", "failed";
+        swarm.currentStage = type;  // "complete", "fail", "abort";
+        if(currentBlockExist(swarm)){
+            thisAdapter.executeMessage(swarm);
+        }
     }
 
-    /* progress and eventually trigger end */
-    function continueTransaction(currentSwarm){
-
-    }
-
-    /* notify all about abortion */
-    function abortTransaction(currentSwarm){
-
-    }
 
     /*
         Save all global contexts
@@ -201,11 +333,6 @@ function RedisComImpl(){
         }).wait(values);
     }
 
-    /* abort transaction or notify upstream about errors */
-    this.phaseExecutionFailed = function(err, swarmingPhase){
-        swarmingPhase.meta.failed = true;
-        swarmingPhase.meta.failedErr = err;
-    }
 
     /* pottentia to add additional locking/verifications before executing a received swarm */
     this.asyncExecute = function(swarm, callback){
@@ -408,20 +535,6 @@ function RedisComImpl(){
     }
 
 
-    /*
-    callback(err,res)
-    try to get the lock or call with err if is already locked  */
-    this.waitSharedLock = function(key, callback){
-
-
-    }
-
-    /* remove the lock for current adapter*/
-    this.removeLock = function(key){
-
-    }
-
-
     this.uploadDescriptions = function(){
         if(self.redisReady){
             console.log("Redis ready...");
@@ -433,9 +546,7 @@ function RedisComImpl(){
 
     function uploadDescriptionsImpl() {
         var folders = thisAdapter.config.Core.paths;
-
         for (var i = 0; i < folders.length; i++) {
-
             if (folders[i].enabled == undefined || folders[i].enabled == true) {
                 var descriptionsFolder = folders[i].folder;
 
@@ -503,7 +614,6 @@ function RedisComImpl(){
             dslUtil.repository.compileSwarm(swarmName, swarmCode);
         }).wait(swarmCode);
     }
-
 }
 
 var swarmComImpl = null;
@@ -513,3 +623,4 @@ exports.implemenation = (function(){
         }
         return swarmComImpl;
     })();
+
