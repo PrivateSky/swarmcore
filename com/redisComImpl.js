@@ -15,6 +15,8 @@ function RedisComImpl(){
     var redisHost = thisAdapter.config.Core.redisHost;
     var redisPort = thisAdapter.config.Core.redisPort;
 
+    var MAX_REBORNCOUNTER = 100;
+
     var pubsubRedisClient = redis.createClient(redisPort, redisHost);
     var redisClient  = null;
     pubsubRedisClient.retry_delay = 1000;
@@ -69,7 +71,7 @@ function RedisComImpl(){
     /* generate swarm message identity*/
     this.createPhaseIdentity = function(swarm){
         /* create with uuid v4*/
-        return swarm.meta.processIdentity+"/Phase:" + swarm.meta.currentPhase + "/" + generateUUID();
+        return swarm.meta.processIdentity + "/Phase:" + swarm.meta.currentPhase + "/" + generateUUID();
     }
 
     /* generate swarm message identity*/
@@ -86,14 +88,16 @@ function RedisComImpl(){
     /* pendingSwarm is an array containing swarms generated in current swarm and required to be sent asap */
     /* this function get called when the execution of a phase is done (including all the asynchronous calls)*/
     this.sendPendingSwarms = function(currentSwarm, pendingSwarms){
+
+
         if(!currentSwarm.meta.failed){
             try{
-                executeBlock(currentSwarm, "complete");
-
+                executeBlock(currentSwarm, "done");
                 pendingSwarms.map(function (swarm){
                     if(dslUtil.handleErrors(swarm)){
-                        persistSwarmState(swarm);
+                        persistSwarmState.async(swarm);
                     }
+
                     sendSwarm(swarm.meta.targetNodeName, swarm);
                 });
             } catch(err){
@@ -103,9 +107,9 @@ function RedisComImpl(){
 
         if(dslUtil.handleErrors(currentSwarm)){
             if(currentSwarm.meta.failed) {
-                executeBlock(currentSwarm, "fail");
+                executeBlock(currentSwarm, "failed");
                 if(inTransaction(currentSwarm)){
-                    finishTransaction(currentSwarm, "abort");
+                    finishTransaction(currentSwarm, "aborted");
                 } else {
                     removeSwarmState(currentSwarm);
                 }
@@ -125,14 +129,17 @@ function RedisComImpl(){
         if(isNodeName(group)){
             group = thisAdapter.mainGroup;
         }
+
         swarm.meta.targetGroup = group;
         var redisKey = makeRedisKey("savedCurrentlyExecutingPhases", group);
+
+        /*
         if(willNotBeInTransaction(swarm)){
             delete swarm.meta.transactionId;
         } else
         if(willStartTransaction(swarm)){
             swarm.meta.transactionId = generateUUID();
-        }
+        } */
 
         var ret = redisClient.hset.async(redisKey,swarm.meta.phaseIdentity,J(swarm));
         (function(ret){
@@ -146,7 +153,8 @@ function RedisComImpl(){
             }  else {
                 callback(null,true);
             }
-            redisKey = makeRedisKey("groupMembers", group);
+            redisKey = makeRedisKey("groupMembers", swarm.meta.targetNodeName);
+
             redisClient.hincrby.async(redisKey,swarm.meta.targetNodeName, 1);
         }).wait(ret);
     }
@@ -160,8 +168,8 @@ function RedisComImpl(){
     /* progress and eventually trigger end */
     function continueTransaction(swarm){
         var stepKey = makeRedisKey("transactionStep", swarm.meta.transactionId);
-        swarm.meta.currentStage = "executed";
-        persistSwarmState(swarm);
+        swarm.meta.currentStage = "done";
+        persistSwarmState.async(swarm);
         var counterAdded = redisClient.hset.async(stepKey,swarm.meta.phaseIdentity,swarm.meta.targetGroup);
         (function(counterAdded){
             var startKey = makeRedisKey("transactionStart", swarm.meta.transactionId);
@@ -169,7 +177,7 @@ function RedisComImpl(){
             var counterCompleted = redisClient.hset.async(stepKey);
             (function(counterStarted,counterCompleted){
                 if(counterStarted == counterCompleted){
-                    finishTransaction(swarm,"success", function(){
+                    finishTransaction(swarm,"finished", function(){
                         //everything is fine, delete both keys
                         redisClient.del.async(startKey);
                         redisClient.del.async(stepKey);
@@ -234,8 +242,19 @@ function RedisComImpl(){
             if(stage){
                 state.meta.currentStage = stage;
             }
-            state.meta.restarted = true;
-            sendSwarm(group, state);
+            var counter;
+            if(state.meta.rebornCounter){
+                counter = parseInt(state.meta.rebornCounter);
+                counter++;
+            } else {
+                counter = 0;
+            }
+            state.meta.rebornCounter = counter;
+            if(counter < MAX_REBORNCOUNTER){
+                sendSwarm(group, state);
+            } else {
+                errLog("Exceptional error: a swarm got restarted ", MAX_REBORNCOUNTER, " times and will not be restarted anymore. Developer intervention is required to understand what happens!");
+            }
         }).wait(swarm);
     }
 
@@ -279,20 +298,13 @@ function RedisComImpl(){
     }
 
 
-    function currentBlockExist (swarm){
-        try{
-            var phaseFunction = swarm[swarm.meta.currentPhase][swarm.meta.currentStage];
-            return phaseFunction != undefined;
-        } catch(err){
 
-        }
-        return false;
-    }
-
-    function executeBlock(swarm, type){
-        swarm.currentStage = type;  // "complete", "fail", "abort";
-        if(currentBlockExist(swarm)){
+    function executeBlock(swarm, blockName){
+        swarm.meta.currentStage = blockName;  // "done", "failed", "aborted", "finished";
+        if(dslUtil.blockExist(swarm, blockName)){
+            console.log("Hello");
             thisAdapter.executeMessage(swarm);
+            //console.log("Executing block ", blockName, M(swarm));
         }
     }
 
@@ -354,14 +366,21 @@ function RedisComImpl(){
         pubsubRedisClient.on("message", function (channel, message){
             try{
                 var msg = JSON.parse(message);
+
+            } catch(err){
+                errLog("Malformed JSON response received\n" + message, err );
+            }
+
+            try{
                 if(homeHandler && msg.meta.honeyRequest){
                     homeHandler(msg);
                 } else {
                     callback(msg);
                 }
-            } catch(err){
-                errLog("Malformed JSON response received");
+            }catch(err){
+                errLog("Unknown error when executing\n" + message, err );
             }
+
         });
     }
 
@@ -369,10 +388,9 @@ function RedisComImpl(){
      * publish a swarm in the required queue
      * */
     function sendSwarm(queueName, swarm){
-
         function doSend(specificNodeName){
             if(dslUtil.handleErrors(swarm)){
-                persistSwarmState(swarm);
+                persistSwarmState.async(swarm);
             }
             redisClient.publish(specificNodeName, J(swarm), function(error,result){
                 if(result == 0){

@@ -17,7 +17,7 @@
             "autorun":[
                         {"node":"etc/adapters/SharedAdapter.js",         "enabled":false  },
                         {"node":"etc/adapters/DefaultLogger.js",         "enabled":false  },
-                        {"node":"etc/adapters/TestAdapter.js"  ,         "enabled":false  },
+                        {"node":"etc/adapters/TestAdapter.js"  ,         "enabled":true  },
                         {"node":"etc/adapters/WSServer.js",              "enabled":false },
                         {"node":"adapters/UsersRepo.js",                 "enabled":false }
 
