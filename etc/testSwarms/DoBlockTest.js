@@ -40,9 +40,9 @@ var doBlockTest = {
             throw new Error("Test exception!");
         },
         failed:function(err){
-            console.log("Running failed in doFail");
             this.err = err;
             this.home("successCallFail");
+            console.log("Running failed in doFail");
         }
     },
     doTestRevive:{

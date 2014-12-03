@@ -88,15 +88,29 @@ function RedisComImpl(){
     /* pendingSwarm is an array containing swarms generated in current swarm and required to be sent asap */
     /* this function get called when the execution of a phase is done (including all the asynchronous calls)*/
     this.sendPendingSwarms = function(currentSwarm, pendingSwarms){
-        if(!currentSwarm.meta.failed){
-            try {
-                executeBlock(currentSwarm, "done");
-                pendingSwarms.map(function (swarm){
+
+        function emptyPending(){
+            while(pendingSwarms.length > 0) {
+                pendingSwarms.pop();
+            }
+        }
+        function doRunPending(){
+            while(pendingSwarms.length > 0 ){
+                var arr = pendingSwarms.slice(0);
+                emptyPending();
+                arr.map(function (swarm){
                     if(dslUtil.handleErrors(swarm)){
                         persistSwarmState.async(swarm);
                     }
                     sendSwarm(swarm);
                 });
+            }
+        }
+
+        if(!currentSwarm.meta.failed){
+            try {
+                executeBlock(currentSwarm, "done");
+                doRunPending();
             } catch(err){
                 currentSwarm.meta.failed = false;
             }
@@ -104,7 +118,9 @@ function RedisComImpl(){
 
         if(dslUtil.handleErrors(currentSwarm)){
             if(currentSwarm.meta.failed) {
-                executeBlock(currentSwarm, "failed");
+                emptyPending();
+                    executeBlock(currentSwarm, "failed");
+                doRunPending();
                 if(inTransaction(currentSwarm)){
                     finishTransaction(currentSwarm, "aborted");
                 } else {
@@ -164,8 +180,8 @@ function RedisComImpl(){
         }
         assertNodeInGroup(specificNode,groupNode);
         var redisKey = makeRedisKey("groupMembers",groupNode);
-        //console.log("Modifying for ", redisKey, specificNode, offset);
-        redisClient.hincrby.async(redisKey,specificNode, 1);
+        console.log("Modifying for ", redisKey, specificNode, offset);
+        redisClient.hincrby.async(redisKey,specificNode, offset);
     }
 
     function decNodeUse(groupNode, specificNode){
