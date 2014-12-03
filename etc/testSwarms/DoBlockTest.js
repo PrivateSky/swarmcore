@@ -15,7 +15,7 @@ var doBlockTest = {
     },
     testFail:function (text) {
         console.log("run testFail ctor");
-        //this.swarm("doFail");
+        this.swarm("doFail");
     },
     testRevive:function (text) {
         console.log("run testRevive ctor");
@@ -25,22 +25,22 @@ var doBlockTest = {
     doSuccess:{
         node:"TestAdapter",
         do:function () {
-            console.log("run do in doSuccess");
+            console.log("Running do in doSuccess");
             this.doExecuted = true;
         },
         done:function(){
-            console.log("run done in doSuccess");
+            console.log("Running done in doSuccess");
             this.home("successCallDone");
         }
     },
     doFail:{
         node:"TestAdapter",
         do:function () {
-            console.log("run do in doFail");
+            console.log("Running do in doFail");
             throw new Error("Test exception!");
         },
         failed:function(err){
-            console.log("run failed in doFail");
+            console.log("Running failed in doFail");
             this.err = err;
             this.home("successCallFail");
         }

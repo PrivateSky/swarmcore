@@ -6,7 +6,7 @@ var client             = util.createClient(adapterHost, adapterPort, "TestUser",
 
 swarmHub.startSwarm("DoBlockTest.js", "testSuccess");
 swarmHub.startSwarm("DoBlockTest.js", "testFail");
-swarmHub.startSwarm("DoBlockTest.js", "testRevive");
+//swarmHub.startSwarm("DoBlockTest.js", "testRevive");
 
 swarmHub.on("DoBlockTest.js","successCallDone", countReturns);
 swarmHub.on("DoBlockTest.js","successCallFail", countReturns);

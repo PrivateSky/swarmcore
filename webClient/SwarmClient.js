@@ -328,6 +328,11 @@ function SwarmClient(host, port, userId, authToken, tenantId, loginCtor, securit
         self.writeObject(cmd);
     }
 
+    var requestCounter = 0;
+    function createRequestIdentity(){
+        requestCounter++;
+        return outletId + "/" + requestCounter;
+    }
 
     this.startSwarm = function (swarmName, ctorName) {
         var args = Array.prototype.slice.call(arguments,2);
@@ -339,6 +344,7 @@ function SwarmClient(host, port, userId, authToken, tenantId, loginCtor, securit
         var cmd = {
             meta: {
                 sessionId: sessionId,
+                processIdentity:createRequestIdentity(),
                 swarmingName: swarmName,
                 tenantId: tenantId,
                 outletId: outletId,

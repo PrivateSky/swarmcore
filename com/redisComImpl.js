@@ -88,17 +88,14 @@ function RedisComImpl(){
     /* pendingSwarm is an array containing swarms generated in current swarm and required to be sent asap */
     /* this function get called when the execution of a phase is done (including all the asynchronous calls)*/
     this.sendPendingSwarms = function(currentSwarm, pendingSwarms){
-
-
         if(!currentSwarm.meta.failed){
-            try{
+            try {
                 executeBlock(currentSwarm, "done");
                 pendingSwarms.map(function (swarm){
                     if(dslUtil.handleErrors(swarm)){
                         persistSwarmState.async(swarm);
                     }
-
-                    sendSwarm(swarm.meta.targetNodeName, swarm);
+                    sendSwarm(swarm);
                 });
             } catch(err){
                 currentSwarm.meta.failed = false;
@@ -125,12 +122,10 @@ function RedisComImpl(){
 
     /* save the swarm state and if transactionId is not false or undefined, register in the new transaction*/
     function persistSwarmState( swarm, callback){
-        var group = swarm.meta.targetNodeName;
-        if(isNodeName(group)){
-            group = thisAdapter.mainGroup;
+        var group = swarm.meta.targetGroup;
+        if(!group){
+            throw new Error("Target group can't be null " + swarm);
         }
-
-        swarm.meta.targetGroup = group;
         var redisKey = makeRedisKey("savedCurrentlyExecutingPhases", group);
 
         /*
@@ -153,10 +148,28 @@ function RedisComImpl(){
             }  else {
                 callback(null,true);
             }
-            redisKey = makeRedisKey("groupMembers", swarm.meta.targetNodeName);
 
-            redisClient.hincrby.async(redisKey,swarm.meta.targetNodeName, 1);
         }).wait(ret);
+    }
+
+    function assertNodeInGroup(node, group){
+        if(node.indexOf(group) != 1){
+            throw new Error("Invalid node " + node + " in group " + group);
+        }
+    }
+
+    function incNodeUse(groupNode, specificNode, offset){
+        if(!offset){
+            offset = 1 ;
+        }
+        assertNodeInGroup(specificNode,groupNode);
+        var redisKey = makeRedisKey("groupMembers",groupNode);
+        //console.log("Modifying for ", redisKey, specificNode, offset);
+        redisClient.hincrby.async(redisKey,specificNode, 1);
+    }
+
+    function decNodeUse(groupNode, specificNode){
+        incNodeUse(groupNode, specificNode,-1);
     }
 
     /* is in transaction? */
@@ -223,11 +236,9 @@ function RedisComImpl(){
     function removeSwarmState(swarm){
         var group = swarm.meta.targetGroup;
         if(group){
-            swarm.meta.targetGroup = group;
             var redisKey = makeRedisKey("savedCurrentlyExecutingPhases", group);
             redisClient.hdel.async(redisKey,swarm.meta.phaseIdentity);
-            redisKey = makeRedisKey("groupMembers", group);
-            redisClient.hincrby.async(redisKey,swarm.meta.targetNodeName, -1);
+            decNodeUse(group,swarm.meta.targetNodeName);
         } else {
             errLog("Failed to remove saved swarm execution");
         }
@@ -251,7 +262,7 @@ function RedisComImpl(){
             }
             state.meta.rebornCounter = counter;
             if(counter < MAX_REBORNCOUNTER){
-                sendSwarm(group, state);
+                sendSwarm(state);
             } else {
                 errLog("Exceptional error: a swarm got restarted ", MAX_REBORNCOUNTER, " times and will not be restarted anymore. Developer intervention is required to understand what happens!");
             }
@@ -302,9 +313,8 @@ function RedisComImpl(){
     function executeBlock(swarm, blockName){
         swarm.meta.currentStage = blockName;  // "done", "failed", "aborted", "finished";
         if(dslUtil.blockExist(swarm, blockName)){
-            console.log("Hello");
             thisAdapter.executeMessage(swarm);
-            //console.log("Executing block ", blockName, M(swarm));
+
         }
     }
 
@@ -387,22 +397,25 @@ function RedisComImpl(){
     /*
      * publish a swarm in the required queue
      * */
-    function sendSwarm(queueName, swarm){
+    function sendSwarm(swarm){
+
         function doSend(specificNodeName){
+            swarm.meta.targetNodeName = specificNodeName;
             if(dslUtil.handleErrors(swarm)){
                 persistSwarmState.async(swarm);
             }
+            incNodeUse(swarm.meta.targetGroup, specificNodeName);
             redisClient.publish(specificNodeName, J(swarm), function(error,result){
                 if(result == 0){
                     // the node is down, force cleaning and retry the send
                     var success = waitToForceblyCleanNode.async(specificNodeName);
                     (function(success){
                             if(!success){
-                                errLog("Dropping swarm targeted towards dead node or group: " + queueName + M(swarm));
+                                errLog("Dropping swarm targeted towards dead node or group: " + swarm.meta.targetNodeName + M(swarm));
                                 return ;
                             }
-                            if(!isNodeName(queueName)){
-                                var alternative = chooseOneFromGroup.async(queueName);
+                            if(swarm.meta.targetGroup){
+                                var alternative = chooseOneFromGroup.async(swarm.meta.targetGroup);
                                 (function(alternative){
                                     if(alternative  == "null"){
                                         errLog("Dropping swarm targeted towards dead node: " + specificNodeName);
@@ -418,13 +431,22 @@ function RedisComImpl(){
             });
         }
 
-        if(!isNodeName(queueName)){
-            var targetNodeName  = chooseOneFromGroup.async(queueName);
+        if(!swarm.meta.targetNodeName){
+            var targetNodeName  = chooseOneFromGroup.async(swarm.meta.targetGroup);
             (function(targetNodeName ){
                 doSend(targetNodeName);
             }).wait(targetNodeName);
         } else {
-            doSend(queueName);
+            if(!swarm.meta.targetGroup){
+                var nodeMainGroup = findMainGroup.async(swarm.meta.targetNodeName);
+                (function(nodeMainGroup){
+                    swarm.meta.targetGroup = nodeMainGroup;
+                    doSend(swarm.meta.targetNodeName);
+                }).wait(nodeMainGroup);
+            } else {
+                assertNodeInGroup(swarm.meta.targetNodeName, swarm.meta.targetGroup);
+                doSend(swarm.meta.targetNodeName);
+            }
         }
     }
 
@@ -464,9 +486,12 @@ function RedisComImpl(){
         (function(values){
             var sortable = [];
             for (var v in values){
-                sortable.push([v, values[v]]);
-7            }
-
+                if(v != groupName){
+                    sortable.push([v, values[v]]);
+                } else {
+                    console.log("Group found as member in group...")
+                }
+            }
             if(sortable.length >0){
                 sortable.sort(function(a, b) {return a[1] - b[1]});
                 callback(null,sortable[0][0]);
@@ -552,6 +577,15 @@ function RedisComImpl(){
         }).wait(nodes);
     }
 
+    this.setSwarmTarget = function(swarm, proposedTarget){
+        if(isNodeName(proposedTarget)){
+            swarm.meta.targetNodeName = proposedTarget;
+            swarm.meta.targetGroup = null;
+        } else {
+            swarm.meta.targetGroup =  proposedTarget;
+            swarm.meta.targetNodeName = null;
+        }
+    }
 
     this.uploadDescriptions = function(){
         if(self.redisReady){
