@@ -305,26 +305,37 @@ function RedisComImpl(){
         var oldPrevious = previousKnown;
         previousKnown = {};
         var groupsKey = makeRedisKey("groupMembers", "*");
-        var keys = redisClient.keys.async(groupsKey);
-        (function(){
-            keys.map(function(k){
-                var key = makeRedisKey("groupMembers", k);
-                var swarmKeys = redisClient.hkeys.async(key);
-                (function(swarmKeys){
-                    var swarms = mkObjectFromArray(swarmKeys);
-                    previousKnown[k] = swarms;
-                    for(var s in swarms){
-                        if(oldPrevious[k][s]){
+        var groups = redisClient.keys.async(groupsKey);
+
+        function getNodeNameFromKey(g){
+            var a = g.split(":");
+            return a[a.length-1];
+        }
+
+        (function(groups){
+            groups.map(function(g){
+                var g = getNodeNameFromKey(g);
+                var key = makeRedisKey("savedCurrentlyExecutingPhases", g);
+                var phases = redisClient.hgetall.async(key);
+                (function(phases){
+                    previousKnown[g] = phases;
+                    for(var p in phases){
+                        if(oldPrevious[g] && oldPrevious[g][p]){
                             //in both lists  means thai it is a stale swarm phase or very slow execution..
-                            handleStale(h);
+                            console.log("Restarting phase ",  p, " in ", g);
+                            try{
+                                var o = JSON.parse(oldPrevious[g][p]);
+                                o.targetNodeName = undefined;
+                                handleStale(g, p, o.meta.stage);
+                            }catch(err){
+                                errLog("Wrong swarm serialisation of " + oldPrevious[g][p], err);
+                            }
                         }
                     }
-                }).wait(swarmKeys);
+                }).wait(phases);
             })
-        }).wait(keys);
+        }).wait(groups);
     }
-
-
 
     function executeBlock(swarm, blockName){
         swarm.meta.currentStage = blockName;  // "done", "failed", "aborted", "finished";
@@ -333,7 +344,6 @@ function RedisComImpl(){
 
         }
     }
-
 
     /*
         Save all global contexts
@@ -419,8 +429,8 @@ function RedisComImpl(){
             swarm.meta.targetNodeName = specificNodeName;
             if(dslUtil.handleErrors(swarm)){
                 persistSwarmState.async(swarm);
+                incNodeUse(swarm.meta.targetGroup, specificNodeName);
             }
-            incNodeUse(swarm.meta.targetGroup, specificNodeName);
             redisClient.publish(specificNodeName, J(swarm), function(error,result){
                 if(result == 0){
                     // the node is down, force cleaning and retry the send

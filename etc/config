@@ -15,11 +15,12 @@
  "Logger":{},
  "Launcher":{
             "autorun":[
-                        {"node":"etc/adapters/SharedAdapter.js",         "enabled":false  },
+                        {"node":"etc/adapters/PhasesMonitor.js"  ,       "enabled":false   },
+                        {"node":"etc/adapters/TestAdapter.js"  ,         "enabled":true   },
+                        {"node":"etc/adapters/SharedAdapter.js",         "enabled":true  },
                         {"node":"etc/adapters/DefaultLogger.js",         "enabled":false  },
-                        {"node":"etc/adapters/TestAdapter.js"  ,         "enabled":true  },
-                        {"node":"etc/adapters/WSServer.js",              "enabled":false },
-                        {"node":"adapters/UsersRepo.js",                 "enabled":false }
+                        {"node":"etc/adapters/WSServer.js",              "enabled":false  },
+                        {"node":"adapters/UsersRepo.js",                 "enabled":false  }
 
             ]
    }

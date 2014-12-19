@@ -13,14 +13,14 @@ var doBlockTest = {
         console.log("run testSuccess ctor");
         this.swarm("doSuccess");
     },
-    testFail:function (text) {
+    testFail:function () {
         console.log("run testFail ctor");
         this.swarm("doFail");
     },
-    testRevive:function (text) {
+    testRevive:function () {
         console.log("run testRevive ctor");
         //if not a revived swarm, kill current adapter..
-        //this.swarm("doTestRevive");
+        this.swarm("doTestRevive");
     },
     doSuccess:{
         node:"TestAdapter",
@@ -49,11 +49,13 @@ var doBlockTest = {
         node:"TestAdapter",
         do:function () {
             if(!this.meta.rebornCounter){
+                console.log("Killing current process!");
                 process.exit(-1000);
                 while(true){
                     true;
                 }
             }
+            console.log("Swarm phase got revived!");
             this.home("successRevived");
         }
     }

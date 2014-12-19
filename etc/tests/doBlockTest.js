@@ -6,20 +6,26 @@ var client             = util.createClient(adapterHost, adapterPort, "TestUser",
 
 swarmHub.startSwarm("DoBlockTest.js", "testSuccess");
 swarmHub.startSwarm("DoBlockTest.js", "testFail");
-//swarmHub.startSwarm("DoBlockTest.js", "testRevive");
+
 
 swarmHub.on("DoBlockTest.js","successCallDone", countReturns);
 swarmHub.on("DoBlockTest.js","successCallFail", countReturns);
-//swarmHub.on("DoBlockTest.js","successRevived",  countReturns);
+swarmHub.on("DoBlockTest.js","successRevived",  countReturns);
 
 var counter = 0;
 function countReturns(obj){
     counter++;
+    if(counter == 2){
+        swarmHub.startSwarm("DoBlockTest.js", "testRevive");
+        setTimeout (
+            function(){
+                assert.equal(counter, 3);
+                process.exit(1);
+            }, 2000);
+    }
 }
 
 setTimeout (
     function(){
-        assert.equal(counter, 3);
-        process.exit(1);
+        assert.equal(counter, 2);
     }, 2000);
-
