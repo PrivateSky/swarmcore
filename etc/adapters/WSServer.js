@@ -1,5 +1,5 @@
 /**********************************************************************************************
- * Web Socket server side adapter for SwarmESB
+ * Init
  **********************************************************************************************/
 var sutil = require('swarmutil');
 var util = require('util');
@@ -45,12 +45,12 @@ function processConfig() {
             serverHost = null;
         }
     }
-    if (config.home != undefined && config.home != "") {
-        baseFolder = config.home;
-    } else {
-        cprint("\'home\' property should be defined for SwarmHttpServer");
-        process.exit();
-    }
+//    if (config.home != undefined && config.home != "") {
+//        baseFolder = config.home;
+//    } else {
+//        cprint("\'home\' property should be defined for SwarmHttpServer");
+//        process.exit();
+//    }
 }
 
 
@@ -111,7 +111,6 @@ function closeFunction(socket) {
         console.log("Closing socket error:" + e);
     }
 }
-
 
 //return false for failing
 adapterSecurtyStartSwarmCheck = function (swarm){

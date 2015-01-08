@@ -1,13 +1,42 @@
-var sutil = require('swarmutil');
-var go = require('../core/GenericOutlet.js');
+var go      = require('../../lib/GenericOutlet.js');
+var sutil   = require('../../lib/TCPSockUtil.js');
 
-var socketOk = true;
-var socketDetails = "";
-thisAdapter = sutil.createAdapter("ClientAdapter");
+//global sessionsRegistry object
+sessionsRegistry  = require("../../lib/SessionRegistry.js").getRegistry();
+
+var serverSocketAvailable = false;
+
+thisAdapter = require ("../../lib/SwarmCore.js").createAdapter("ClientAdapter");
 
 globalVerbosity = false;
 thisAdapter.loginSwarmingName = "login.js";
-//thisAdapter.join("@TCP-ClientAdapaters");
+thisAdapter.joinGroup("@ClientAdapters");
+
+/* for monitoring*/
+var socketDetails = "";
+
+/*
+*  enable outlet for other swarms
+*/
+enableOutlet = function(swarm){
+    var outlet = sessionsRegistry.getTemporarily(swarm.meta.outletId);
+    outlet.successfulLogin(swarm);
+}
+
+
+thisAdapter.nativeMiddleware.registerHomeSwarmHandler(function(swarm){
+        var outlet = sessionsRegistry.findOutletById(swarm.meta.outletId);
+        outlet.onHoney(swarm);
+    }
+)
+
+/*
+ *  disable outlet for other swarms
+ */
+disableOutlet = function(swarm){
+    var outlet = sessionsRegistry.findOutletById(swarm.meta.outletId);
+    outlet.destroy(outlet);
+}
 
 var myCfg = getMyConfig("ClientAdapter");
 var serverPort = 3000;
@@ -38,9 +67,9 @@ function watchSocket(socket, outlet) {
     var parser = sutil.createFastParser(outlet.executeFromSocket);
     socket.on('data', function (data) {
         var utfData = data.toString('utf8');
-        if (checkPolicy(utfData, socket)) {
+        /*if (checkPolicy(utfData, socket)) { //Point to add support for flash sockets if will be required
             return;
-        }
+        }*/
         parser.parseNewData(utfData);
     });
 }
@@ -52,11 +81,11 @@ function ClientTcpServer(port, host) {
         function (socket) {
             var outlet = go.newOutlet(socket, sendFunction, closeFunction);
             socket.on('error', function (er) {
-                outlet.onCommunicationError(" unknown error ");
+                outlet.onCommunicationError(" Socket failure!");
             });
 
             socket.on('close', function (er) {
-                outlet.onCommunicationError(" server closing ");
+                outlet.onCommunicationError(" Server closing! ");
             });
             watchSocket(socket, outlet);
             outlet.onHostReady();
@@ -76,111 +105,22 @@ function ClientTcpServer(port, host) {
                 log = er.toString();
                 break;
         }
-        socketOk = false;
+        serverSocketAvailable = false;
         socketDetails = log;
         logErr("Client adapter server error : " + log);
     });
 
     this.server.on('close', function (er) {
-        socketOk = false;
+        serverSocketAvailable = false;
         socketDetails = "Server closed.";
         logErr("Client adapter close .");
     });
 }
 
-
-adapterStateCheck = function (data) {
-    return {ok: socketOk, details: socketDetails, requireRestart: !socketOk};
-}
-
-
-/**
- * Check if the data looks like a policy file, flash request. Write the answer
- * @param utfData
- * @return {Boolean}
- */
-function checkPolicy(utfData, socket) {
-    if (utfData.indexOf("<policy-file-request/>") != -1) {
-        writePolicy(socket);
-        return true;
-    }
-    return false;
-}
-
-
 /*
- var net = require("net");
- var policySocket = net.createServer(
- function (socket) {
- writePolicy(socket);
- }
- );
-
- policySocket.once('error', function (error) {
- logErr('PolicySocket[843] error\n');
- logErr(error);
- });
-
- policySocket.listen(843);
+    Useful for monitoring this type of adapaters
  */
-
-makeCall = function (authorisationToken, successCallBack, failedCallBack) {
-
-    var http = require('http');
-    var config = getMyConfig("Core");
-    var authServiceURL = config['authPath'] ? config['authPath'] : '';
-    authServiceURL = authServiceURL.replace('[token]', authorisationToken);
-
-    var params = {
-        host: config['authHost'],
-        port: config['authPort'],
-        path: authServiceURL,
-        method: 'GET'
-    };
-
-    var request = http.request(params, function (response) {
-        var buffers = [];
-
-        response.addListener('data', function (chunk) {
-            buffers.push(chunk);
-        });
-
-        response.addListener('end', function () {
-            var responseData = Buffer.concat(buffers);
-            try {
-                var authResponse = JSON.parse(responseData.toString());
-
-                if (authResponse.hasOwnProperty('error')) {
-                    failedCallBack(responseData);
-                } else {
-                    successCallBack(authResponse);
-                    /*this.isOk = true;
-
-                     this.authorization = authResponse;
-                     this.forceSessionId = authResponse['token'];
-
-                     this.swarm("renameSession");*/
-                }
-            } catch (err) {
-                failedCallBack(responseData);
-            }
-        }.bind(this));
-
-        response.addListener('error', function (error) {
-            failedCallBack(responseData);
-        }.bind(this));
-    });
-
-    request.addListener('error', function (error) {
-        failedCallBack(responseData);
-    }.bind(this));
-
-    request.end();
+adapterStateCheck = function (data) {
+    return {ok: serverSocketAvailable, details: socketDetails, requireRestart: !serverSocketAvailable};
 }
 
-
-//return false for failing
-adapterSecurtyStartSwarmCheck = function (swarm){
-    //console.log("Checking " + swarm.meta.swarmingName + ":" + swarm.meta.currentPhase + " in " + swarm.meta.sessionId);
-    return true;
-}

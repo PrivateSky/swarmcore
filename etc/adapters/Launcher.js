@@ -1,7 +1,8 @@
 /**********************************************************************************************
  * Init
  **********************************************************************************************/
-require('swarmutil').createAdapter("Launcher", onReadyCallback);
+var core = require ("../../lib/SwarmCore.js");
+core.createAdapter("Launcher");
 
 
 /**********************************************************************************************
@@ -21,11 +22,9 @@ var config, checkInterval, mailInterval;
  * Functions
  **********************************************************************************************/
 
+var MAX_RESTART_LEVEL = 10000;
 
-init();
-
-
-function init() {
+(function init() {
     var i, len, adaptorList, localDelay, adapter;
 
     localDelay = 0;
@@ -35,7 +34,7 @@ function init() {
     mailInterval = parseInt(config.mailInterval);
 
     if (!checkInterval) {
-        checkInterval = 60000;
+        checkInterval = 1000;
     }
     if (!mailInterval) {
         mailInterval = 61000;
@@ -82,7 +81,7 @@ function init() {
         sendMessages();
     }, mailInterval);
 
-}
+})();
 
 
 function createAdaptor(adaptorConfig) {
@@ -104,7 +103,6 @@ function createAdaptor(adaptorConfig) {
     }
 }
 
-
 function runAll(adaptorConfig, instanceCount) {
     var i, fork;
     for (i = 0; i < instanceCount; i++) {
@@ -112,7 +110,6 @@ function runAll(adaptorConfig, instanceCount) {
         adaptorForks[fork.name] = fork;
     }
 }
-
 
 function createFork(adaptorConfig, index, maxIndex) {
     var fork;
@@ -127,7 +124,6 @@ function createFork(adaptorConfig, index, maxIndex) {
     if (index) {
         fork.name = '[' + index + '] ' + fork.name;
     }
-
     return fork;
 }
 
@@ -136,7 +132,8 @@ function killFork(fork) {
         fork.removeAllListeners();
         fork.disconnect();
         fork.kill();
-    } catch (err) {
+        } catch (err) {
+        console.log(err);
     }
 }
 
@@ -153,10 +150,6 @@ function bindClosure(adaptorConfig, instanceCount) {
     }
 }
 
-
-function onReadyCallback() {
-    //startSwarm("LaunchingTest.js", "start");
-}
 
 
 function listenForks() {
@@ -199,7 +192,6 @@ function checkForksState() {
     var fork, lastMessage, key, i, len;
     var forRestart = [];
 
-
     for (key  in adaptorForks) {
         lastMessage = null;
         fork = adaptorForks[key];
@@ -231,7 +223,7 @@ function checkForksState() {
             }
             restartCount[fork.name] = restartCount[fork.name] + 1;
 
-            if (restartCount[fork.name] < 51) {
+            if (restartCount[fork.name] < MAX_RESTART_LEVEL) {
                 logEvent(fork.name + " need restart[" + restartCount[fork.name] + "]." + fork.restartDetails);
                 restartFork(fork);
             }
@@ -239,9 +231,8 @@ function checkForksState() {
                 killFork(fork);
                 adaptorForks[fork.name] = null;
                 delete adaptorForks[fork.name];
-                logEvent(fork.name + " restarted 50 times We stop the process.");
+                logEvent(fork.name + " restarted " + MAX_RESTART_LEVEL + " times We stop the process as probably is something very wrong.");
             }
-
         }
     }
 }
@@ -278,6 +269,7 @@ function killAllForks() {
             killFork(fork);
         }
     } catch (e) {
+        console.log(e);
     }
 }
 

@@ -42,7 +42,18 @@
     }
   ],
   "_id": "swarmcore@2.0.1",
-  "dependencies": {},
+  "dependencies" : {
+    "swarmutil" : ">=1.0.9",
+    "asynchron" : ">=1.0.3",
+    "redsindex" : ">=0.1.0",
+    "clone" : ">=0.1.8",
+    "MD5" : ">=1.2.0",
+    "nodemailer" : ">=0.5.2",
+    "node-uuid" : ">=1.4.0",
+    "q" : ">=1.0.0",
+    "redis" : ">=0.9.1",
+    "ws" : ">=0.4.31"
+  },
   "optionalDependencies": {},
   "_engineSupported": true,
   "_npmVersion": "2.0.1",

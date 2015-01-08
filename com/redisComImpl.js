@@ -37,6 +37,14 @@ function RedisComImpl(){
         errLog("Redis error", error);
     }
 
+    bindAllMembers = function(object){
+        for(var property in object){
+            if(typeof object[property] == 'function'){
+                object[property] = object[property].bind(object);
+            }
+        }
+    }
+
     function onCmdRedisReady(error){
         console.log("Node " + thisAdapter.nodeName + " ready for swarms!");
         bindAllMembers(redisClient);
