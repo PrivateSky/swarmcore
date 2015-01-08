@@ -230,14 +230,13 @@ function SwarmClient(host, port, userId, authToken, tenantId, loginCtor, securit
     }
 
     function waitingForIdentity(data) {
-        lprint(data);
         if (data.meta && data.meta.command == "identity") {
             currentFunction = waitingForLogin;
             sessionId = data.meta.sessionId;
             apiVersion = data.meta.apiVersion;
 
             if (apiVersion !== "2.0") {
-                lprint("Api version don't match !", "Api version error");
+                lprint("Api version doesn't match !", "Api version error, 2.0 expected");
             }
 
             doLogin(userId, authToken, tenantId, loginCtor);

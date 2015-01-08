@@ -40,7 +40,7 @@ disableOutlet = function(swarm){
 
 function sendFunction(socket, data) {
     dprint("Sending: " + M(data));
-    socket.send(J(data));
+    socket.send(data);
 }
 
 function closeFunction(socket) {
