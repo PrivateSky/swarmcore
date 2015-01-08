@@ -3,8 +3,6 @@ SwarmCore
 
 Swarm 2.0 implementation
 
-
-
 SwarmCore includes core functionality for working with swarms version 2.0. Is a refactored version of the SwarmUtil module.
 
 ## Install for some small tests and quick play
@@ -26,10 +24,21 @@ SwarmCore includes core functionality for working with swarms version 2.0. Is a 
     6. create your new Adapters, tests, swarms
     7. you should start adapters from SwarmCore (from etc/adapters ) like Core.js, DefaultLogger.js, PhaseMonitor.js
 
+
+How to:
 ## Create a new Swarm node (Adapter)
 
-    thisAdapter = require('swarmcore').createAdapter("<<adapterName>>",false,false,true);
+    var core = require ("../../lib/SwarmCore.js");  //check your relative paths accordingly with your conventions
+    thisAdapter = core.createAdapter("Give_Me_A_Name");
+    /*  now add your functions and they could be called by executing swarms */
 
-The "true" parameter enable verbose output and is usefull for debugging.
+    /*l
+        Notice: The name yu gave is the name of a group of nodes doing similar tasks. "swarm" primitive is doing load distribution by implementation.
+        You can start as many nodes in the same group and they will be used.
+        For normal cases, load distribution is similar with load balancing as is trying to not overload already busy nodes
+        and is doing something like Round Robin strategy when choosing nodes.
+        For tasks that are not taking comparable amounts of time to execute, you could be in need to implement your own balancing strategies
+    */
 
+## Create a new Swarm node (Adapter)
 

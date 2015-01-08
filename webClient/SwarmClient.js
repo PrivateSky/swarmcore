@@ -1,6 +1,6 @@
 
 /**********************************************************************************************
- * SwarmClient Class: web browser client, usig websockets
+ * SwarmClient Class: web browser client, using websockets
  **********************************************************************************************/
 var useSocketIo = true;
 
@@ -38,17 +38,16 @@ function SwarmClient(host, port, userId, authToken, tenantId, loginCtor, securit
         return sessionId;
     }
 
-
     createSocket();
-
-
 
     function createSocket() {
         lprint("Creating a new socket");
         isConnected = false;
         if(useSocketIo){
             if(socket){
-                socket = io.connect(null, {'force new connection':true});
+
+                socket = io.connect(null, {transports: ['websocket', 'polling', 'flashsocket'],
+                                            'force new connection':true});
             } else {
                 //TODO:implement all handlers
                 /*
@@ -64,6 +63,7 @@ function SwarmClient(host, port, userId, authToken, tenantId, loginCtor, securit
                 socket = io.connect(connectionString);
                 socket.on('connect', socket_onConnect);
                 socket.on('data', socket_onStreamData);
+                socket.on('message', socket_onStreamData);
                 socket.on('error', socket_onError);
                 socket.on('disconnect', socket_onDisconnect);
                 socket.on('retry', socket_onRetry);
@@ -170,9 +170,6 @@ function SwarmClient(host, port, userId, authToken, tenantId, loginCtor, securit
                 }
             }
         }, 1000);
-
-
-
     }
 
     function socket_onRetry() {
@@ -191,11 +188,10 @@ function SwarmClient(host, port, userId, authToken, tenantId, loginCtor, securit
             lprint("Wtf!?????????????????????");
         } else {
             data.swarmDataGotProcessed = true;
-            lprint("Got swarm ", data.meta.swarmingName, " phase ", data.meta.currentPhase);
+            lprint("Got swarm ", data);
             currentFunction(data);
         }
     }
-
 
     this.tryLogin = function(__userId, __authToken, __tenantId, __loginCtor, recreateConnection){
 
@@ -234,12 +230,13 @@ function SwarmClient(host, port, userId, authToken, tenantId, loginCtor, securit
     }
 
     function waitingForIdentity(data) {
+        lprint(data);
         if (data.meta && data.meta.command == "identity") {
             currentFunction = waitingForLogin;
             sessionId = data.meta.sessionId;
             apiVersion = data.meta.apiVersion;
 
-            if (apiVersion !== "1.1") {
+            if (apiVersion !== "2.0") {
                 lprint("Api version don't match !", "Api version error");
             }
 
@@ -385,10 +382,11 @@ function SwarmClient(host, port, userId, authToken, tenantId, loginCtor, securit
     }
 
     this.writeObject = function (value) {
-        lprint("Swarm ctor: ", value.meta.swarmingName, "  ", value.meta.ctor);
+
         if(useSocketIo ){
             if (socket) {
-                socket.emit('data', value);
+                lprint("Emiting: ", value);
+                socket.emit('message', value);
             }
         } else {
             socket.send(J(value));
@@ -396,16 +394,3 @@ function SwarmClient(host, port, userId, authToken, tenantId, loginCtor, securit
     }
 }
 
-/**********************************************************************************************
- * Util Functions
- **********************************************************************************************/
-
-function decimalToHex(d, padding) {
-    var hex = Number(d).toString(16);
-    padding = typeof (padding) === "undefined" || padding === null ? padding = 8 : padding;
-
-    while (hex.length < padding) {
-        hex = "0" + hex;
-    }
-    return "0x" + hex;
-}

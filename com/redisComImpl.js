@@ -532,9 +532,9 @@ function RedisComImpl(){
             } else {
                 callback(null,"null");
                 if(groupName != "Logger"){
-                    errLog("Missing any node in group [" + groupName + "]")
+                    errLog("Missing any node in group [" + groupName + "]\n")
                 } else{
-                    localLog("missing","Error: Missing logger nodes!!!");
+                    localLog("missing","Error: Missing any logger!!!\n");
                 }
             }
         }).wait(values);
