@@ -7,7 +7,7 @@ function SwarmHub(swarmConnection){
         if(o){
             var myCall = o[swarm.meta.currentPhase];
             if(!myCall){
-                wprint("Warning: Nobody listens for swarm or phase " + swarm.meta.swarmingName + " " + swarm.meta.currentPhase);
+                cprint("Warning: Nobody listens for swarm " + swarm.meta.swarmingName + " and phase " + swarm.meta.currentPhase);
             } else {
                 try{
                     if(myCall instanceof Array){
@@ -23,7 +23,7 @@ function SwarmHub(swarmConnection){
 
             }
         } else {
-            wprint("Warning: Nobody listens for swarm or phase " + swarm.meta.swarmingName + " " + swarm.meta.currentPhase);
+            cprint("Warning: Nobody listens for swarm " + swarm.meta.swarmingName + " and phase " + swarm.meta.currentPhase);
         }
     }
 

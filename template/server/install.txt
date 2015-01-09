@@ -1,0 +1,2 @@
+Get  SwarmCore from github.com/salboaie/SwarmCore and follow the install instructions
+

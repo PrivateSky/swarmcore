@@ -2,16 +2,15 @@
 
 var adapterPort         = 3000;
 var adapterHost         = "localhost";
-var util                = require("swarmutil");
+globalVerbosity = true;
 var assert              = require('assert');
 
-globalVerbosity = true;
-swarmSettings.authentificationMethod    = "testCtor";
-var client                              = util.createClient(adapterHost, adapterPort, "testLoginUser", "ok","testTenant");
+var util       = require("../../nodeClient/nodeClient.js");
+var client     = util.createClient(adapterHost, adapterPort, "testLoginUser", "ok","testTenant", "testCtor");
 
 client.startSwarm("LaunchingTest.js","clientCtor");
 
-client.on("LaunchingTest.js",getGreetings);
+swarmHub.on("LaunchingTest.js","onClient", getGreetings);
 
 var msg = "none";
 function getGreetings(obj){

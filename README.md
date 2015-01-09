@@ -2,8 +2,27 @@ SwarmCore
 =========
 
 Swarm 2.0 implementation
-
 SwarmCore includes core functionality for working with swarms version 2.0. Is a refactored version of the SwarmUtil module.
+
+## What is new
+   1. Improved error handling:
+   - "do" block: ensure that a phase is executed at least once
+   - transaction blocks: mechanism to implement distributed transactions for swarms (not stable)
+   - better monitoring and error handling (store data in redis)
+   2. better semantic for swarm primitive
+   - swarm is doing load distribution. You can nou launch many Adapters of the same type and they will balance the loading
+   - broadcast primitive implementation to send swarm to all members of a group
+
+## Work in progress
+   - implement long live processes using the swarm paradigm (equivalent in expressing workflow (BPM code) or rule engines)
+   - UI to: display real time monitoring data, thresholds,etc
+   - use swarms with docker. The plan is to create a very simple UI to launch and configure new docker containers executing swarms.
+
+
+Warning: this is an experimental version. It is not yet ready for production if you are not a swarm core developer.
+For production code, you could use the old SwarmESB and SwarmUtil module.
+
+SwarmCore will become a module in npm, but for now follow use the following install instructions:
 
 ## Install for some small tests and quick play
 
@@ -40,5 +59,9 @@ How to:
         For tasks that are not taking comparable amounts of time to execute, you could be in need to implement your own balancing strategies
     */
 
-## Create a new Swarm node (Adapter)
+## Create a new swarm file or a new folder with your swarms
+    Create a folder for swarms in your folder, copy one example and add your ctors and phases.
+    Don't forget to modify the etc/config to add in Core/path section your folder.
 
+## Launch multiple adapters
+    The Launcher adapter can be configured to launch multiple Adapters. When one adapter is crushing, the Launcher is restarting it automatically.

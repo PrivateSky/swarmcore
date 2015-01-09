@@ -9,10 +9,16 @@
  */
 
 
-//make swarmHub variable available (for the last client open only, usually enough ..)
+/*
+make swarmHub global variable available (for the last client open only, usually enough ..)
+*/
+
 require("../webClient/SwarmHub.js");
 
-var util = require("swarmutil");
+var tcpUtil = require("../lib/TCPSockUtil.js");
+var debug = require("../lib/SwarmDebug.js");
+thisAdapter.nodeName = "Client";
+
 var net = require("net");
 
 var sys = require('util'),
@@ -45,12 +51,15 @@ exports.createClient = function(host, port, user, pass, tenantId, ctor) {
  */
 
 function SwarmClient ( host, port, user, pass, tenantId, loginCtor) {
-    this.cmdParser  = util.createFastParser(this.resolveMessage.bind(this));
+    this.cmdParser  = tcpUtil.createFastParser(this.resolveMessage.bind(this));
     this.sock       =  net.createConnection(port, host);
     this.pendingCmds   = new Array();
     this.user = user;
     this.pass = pass;
     this.tenantId = tenantId;
+    if(!loginCtor){
+        loginCtor = "authenticate";
+    }
     this.loginCtor = loginCtor;
 
     this.sock.setEncoding("UTF8");
@@ -64,7 +73,7 @@ function SwarmClient ( host, port, user, pass, tenantId, loginCtor) {
                 ctor		 	 : 'authenticate'
             }
         };
-        util.writeObject(this.sock,cmd);
+        tcpUtil.writeObject(this.sock,cmd);
 
     }.bind(this));
 
@@ -110,7 +119,7 @@ SwarmClient.prototype.startSwarm = function (swarmName, constructor) {
         util.writeObject(this.sock,cmd);
     }
     else {
-        dprint("Preserving pending command " + J(cmd));
+        dprint("Preserving pending command " + JSON.stringify(cmd));
         this.pendingCmds.push(cmd);
     }
 }
@@ -173,7 +182,7 @@ SwarmClient.prototype.resolveMessage = function (object) {
         for (var i = 0; i < this.pendingCmds.length; i++) {
             this.pendingCmds[i].meta.sessionId = this.sessionId;
             dprint("Writing pending command " + J(this.pendingCmds[i]));
-            util.writeObject(this.sock,this.pendingCmds[i]);
+            tcpUtil.writeObject(this.sock,this.pendingCmds[i]);
         }
         this.pendingCmds = null;
     }
@@ -197,6 +206,6 @@ SwarmClient.prototype.login = function (sessionId,user,pass) {
         }
     };
 
-    util.writeObject(this.sock,cmd);
+    tcpUtil.writeObject(this.sock,cmd);
 }
 

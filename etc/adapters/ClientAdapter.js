@@ -8,9 +8,8 @@ var serverSocketAvailable = false;
 
 thisAdapter = require ("../../lib/SwarmCore.js").createAdapter("ClientAdapter");
 
-globalVerbosity = false;
+globalVerbosity = true;
 thisAdapter.loginSwarmingName = "login.js";
-thisAdapter.joinGroup("@ClientAdapters");
 
 /* for monitoring*/
 var socketDetails = "";

@@ -188,7 +188,7 @@ function RedisComImpl(){
         }
         assertNodeInGroup(specificNode,groupNode);
         var redisKey = makeRedisKey("groupMembers",groupNode);
-        console.log("Modifying for ", redisKey, specificNode, offset);
+        console.log("Modifying counter: ", redisKey, specificNode, offset);
         redisClient.hincrby.async(redisKey,specificNode, offset);
     }
 
@@ -434,6 +434,8 @@ function RedisComImpl(){
     function sendSwarm(swarm){
 
         function doSend(specificNodeName){
+            dprint("Sending swarm towards " + specificNodeName + " swarm:" + M(swarm));
+
             swarm.meta.targetNodeName = specificNodeName;
             if(dslUtil.handleErrors(swarm)){
                 persistSwarmState.async(swarm);
