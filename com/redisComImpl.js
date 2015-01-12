@@ -447,20 +447,20 @@ function RedisComImpl(){
                     var success = waitToForceblyCleanNode.async(specificNodeName);
                     (function(success){
                             if(!success){
-                                errLog("Dropping swarm targeted towards dead node or group: " + swarm.meta.targetNodeName + M(swarm));
+                                errLog("Dropping swarm " + swarm.meta.swarmingName + " targeted towards dead node or group: " + swarm.meta.targetNodeName);
                                 return ;
                             }
                             if(swarm.meta.targetGroup){
                                 var alternative = chooseOneFromGroup.async(swarm.meta.targetGroup);
                                 (function(alternative){
                                     if(alternative  == "null"){
-                                        errLog("Dropping swarm targeted towards dead node: " + specificNodeName);
+                                        errLog("Dropping swarm " + swarm.meta.swarmingName + " targeted towards dead node: " + specificNodeName);
                                     } else {
                                         doSend(alternative);
                                     }
                                 }).wait(alternative);
                             } else {
-                                errLog("Dropping swarm targeted towards dead node: " + specificNodeName);
+                                errLog("Dropping swarm " + swarm.meta.swarmingName + " targeted towards dead node: " + specificNodeName);
                             }
                     }).wait(success);
                 }
