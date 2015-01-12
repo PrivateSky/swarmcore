@@ -23,5 +23,20 @@
                         {"node":"../../SwarmCore/etc/adapters/WSServer.js",              "enabled":false  },
                         {"node":"../../SwarmCore/adapters/UsersRepo.js",                 "enabled":false  }
             ]
-   }
+   },
+
+   "MySqlAdapter":{
+            "host": "localhost",
+            "port": "3306",
+            "user": "admin",
+            "pass": " ",
+            "database":"SwarmTest"
+       },
+    "Analytics":{
+        metrics: "ga:users",
+        clientId: ".apps.googleusercontent.com",
+        serviceEmail: "@developer.gserviceaccount.com",
+        key: "google-services-private-key.pem" ,
+        ids: "ga:14779140"
+      }
 }

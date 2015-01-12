@@ -20,7 +20,7 @@ function countReturns(obj){
         setTimeout (
             function(){
                 assert.equal(counter, 3);
-                process.exit(1);
+                process.exit(0);
             }, 2000);
     }
 }

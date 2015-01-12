@@ -20,6 +20,6 @@ function getGreetings(obj){
 setTimeout (
     function(){
         assert.equal(msg,"success");
-        process.exit(1);
+        process.exit(0);
     },
     50000);

@@ -6,6 +6,7 @@ globalVerbosity = true;
 var assert              = require('assert');
 
 var util       = require("../../nodeClient/nodeClient.js");
+
 var client     = util.createClient(adapterHost, adapterPort, "testLoginUser", "ok","testTenant", "testCtor");
 
 client.startSwarm("LaunchingTest.js","clientCtor");
@@ -20,7 +21,7 @@ function getGreetings(obj){
 setTimeout (
     function(){
         assert.equal(msg,"Client swarming!");
-        process.exit(1);
+        process.exit(0);
     },
     1000);
 

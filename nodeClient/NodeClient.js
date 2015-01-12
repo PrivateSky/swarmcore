@@ -65,8 +65,7 @@ function SwarmClient ( host, port, user, pass, tenantId, loginCtor) {
     this.sock.setEncoding("UTF8");
 
     this.sock.addListener ("connect", function(data) {
-        var cmd =
-        {
+        var cmd = {
             meta: {
                 swarmingName     : 'login.js',
                 command          : 'getIdentity',

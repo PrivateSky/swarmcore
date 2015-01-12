@@ -1,8 +1,7 @@
 
 var adapterPort      = 3000;
 var adapterHost      = "localhost";
-var util = require("swarmutil");
-var assert = require('assert');
+var util                = require("../../nodeClient/nodeClient.js");var assert = require('assert');
 globalVerbosity = true;
 swarmSettings.authentificationMethod = "testCtor";
 
@@ -43,7 +42,7 @@ setTimeout (
     function(){
         assert.equal(countLogins,3);
         assert.equal(closedLogins,1);
-        process.exit(1);
+        process.exit(0);
     },
     2000);
 
