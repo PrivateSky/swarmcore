@@ -19,8 +19,12 @@ var logGAData =
         node:"Analytics",
         do : function (){
             console.log("doCrawl");
-            this.result = doAnalytics();
-            this.swarm("doMetrics");
+            var self = this;
+            var result = doAnalytics.async();
+            (function(result){
+                self.result = result;
+                self.swarm("doMetrics");
+            }).swait(result);
         }
     },
     doMetrics: { //phase that should be replaced. Use your own logging logic
