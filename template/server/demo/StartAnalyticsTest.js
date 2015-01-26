@@ -1,6 +1,6 @@
 var adapterPort         = 3000;
 var adapterHost         = "localhost";
-var util                = require("../../../SwarmCore/nodeClient/nodeClient.js");
+var util                = require("../../../SwarmCore/nodeClient/NodeClient.js");
 var assert              = require('assert');
 var client             = util.createClient(adapterHost, adapterPort, "TestUser", "ok","genericTenant", "testCtor");
 globalVerbosity = true;
@@ -17,5 +17,5 @@ var success = false;
 setTimeout (
     function(){
         assert.equal(success, true);
-        process.exit(1);
+        process.exit(0);
     }, 2000);

@@ -1,7 +1,7 @@
 var core = require ("../../../SwarmCore/lib/SwarmCore.js");
 thisAdapter = core.createAdapter("MySqlAdapter");
 
-var Q = require("Q");
+var Q = require("q");
 var cfg = getMyConfig("MySqlAdapter");
 
 var Sequelize = require('sequelize')
