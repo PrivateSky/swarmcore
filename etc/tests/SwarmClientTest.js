@@ -3,12 +3,11 @@ var adapterPort      = 3000;
 var adapterHost      = "localhost";
 var util                = require("../../nodeClient/nodeClient.js");var assert = require('assert');
 globalVerbosity = true;
-swarmSettings.authentificationMethod = "testCtor";
 
-var client2 = util.createClient(adapterHost, adapterPort, "Client2", "ok","SwarmClientTest");
-var client1 = util.createClient(adapterHost, adapterPort, "Client1", "ok","SwarmClientTest");
-var client3 = util.createClient(adapterHost, adapterPort, "Client3", "ok","SwarmClientTest");
-var client4 = util.createClient(adapterHost, adapterPort, "Client4", "!ok","SwarmClientTest");
+var client2 = util.createClient(adapterHost, adapterPort, "Client2", "ok","SwarmClientTest", "testCtor");
+var client1 = util.createClient(adapterHost, adapterPort, "Client1", "ok","SwarmClientTest", "testCtor");
+var client3 = util.createClient(adapterHost, adapterPort, "Client3", "ok","SwarmClientTest", "testCtor");
+var client4 = util.createClient(adapterHost, adapterPort, "Client4", "!ok","SwarmClientTest", "testCtor");
 
 client1.on("login.js",successLogin);
 client1.on("close",onClose);

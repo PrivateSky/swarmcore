@@ -18,7 +18,7 @@ function SwarmHub(swarmConnection){
                         myCall(swarm);
                     }
                 } catch(err){
-                    esprint("Error in swarm callback " + err.stack, err);
+                    cprint("Error in swarm callback " + err.stack, err);
                 }
 
             }

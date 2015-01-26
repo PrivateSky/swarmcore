@@ -14,6 +14,15 @@ function RedisComImpl(){
     var self = this;
     var redisHost = thisAdapter.config.Core.redisHost;
     var redisPort = thisAdapter.config.Core.redisPort;
+    var RateLimiter = require('limiter2').RateLimiter;
+
+    var throttlerConfig = {
+        limit:10000,
+        timeUnit:"minutes"
+    };
+
+    loadThrottlerConfig(throttlerConfig, "Core");
+    loadThrottlerConfig(throttlerConfig, thisAdapter.mainGroup);
 
     var MAX_REBORNCOUNTER = 100;
 
@@ -34,6 +43,13 @@ function RedisComImpl(){
     });
 
     var pendingInitialisationCalls = [];
+
+    var limiter = new RateLimiter(throttlerConfig.limit, throttlerConfig.timeUnit);
+    this.resetThrottler = function(limit, timeUnit){
+        throttlerConfig.limit = limit;
+        throttlerConfig.timeUnit = timeUnit;
+        limiter = new RateLimiter(limit, timeUnit);
+    }
 
     function onRedisError(error){
         errLog("Redis error", error);
@@ -402,9 +418,13 @@ function RedisComImpl(){
     var totalPhaseCounter = 0;
     /* pottentia to add additional locking/verifications before executing a received swarm */
     this.asyncExecute = function(swarm, callback){
-        totalPhaseCounter++;
-        saveHistoricNodeInfo(thisAdapter.nodeName, "executedPhasesCounter", totalPhaseCounter);
-        callback.apply(swarm);
+        if(limiter.accept(1)){
+            totalPhaseCounter++;
+            saveHistoricNodeInfo(thisAdapter.nodeName, "executedPhasesCounter", totalPhaseCounter);
+            callback.apply(swarm);
+        } else {
+            logErr("Limit exceeded, throttling requests!");
+        }
     }
 
     var homeHandler;

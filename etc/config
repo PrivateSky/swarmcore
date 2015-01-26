@@ -4,15 +4,25 @@
  "pingTimeout":500,
  "Core":{
      "coreId":"TestCore",
+     "systemId":"Default(127.0.0.1)"
      "redisHost":"localhost",
      "redisPort":6379,
+     "throttler":{
+        "limit":1000,
+        "timeUnit":"minute"
+     },
      "paths":[
         {"folder":"etc/coreSwarms"      ,"enabled":true},
 	    {"folder":"etc/xSwarms"      ,"enabled":true},
         {"folder":"etc/testSwarms"      ,"enabled":true}
-     ]
+     ,]
   },
- "Logger":{},
+ "Logger":{
+    "throttler":{
+            "limit":1000000,
+            "timeUnit":"minute"
+         }
+ },
  "Launcher":{
             "autorun":[
                         {"node":"etc/adapters/PhasesMonitor.js"  ,       "enabled":false   },
@@ -23,5 +33,15 @@
                         {"node":"adapters/UsersRepo.js",                 "enabled":false  }
 
             ]
-   }
+   },
+   "ClientAdapter":{
+    "startSwarmThrottler":{
+               "limit":1000,
+               "timeUnit":"minute"
+            },
+    "outletThrottler":{
+               "limit":100,
+               "timeUnit":"minute"
+            }
+    }
 }

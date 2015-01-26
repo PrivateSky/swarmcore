@@ -16,8 +16,14 @@ var redisClient = function(){
         - retruneaza un obiect cu diferite informatii bune de afisat
         - tine informatii si despre adaptoarele oprite
 
+ - functie in toate adaptoarele sa limiteze numarul de executii de faze posibile
+     usage:  thisAdpater.nativeMiddleware.resetThrottler(limit, timeUnit) // see npm module limiter2
+
+ - functie in ClientAdapter care sa limiteze numarul de swarm-uri noi lansate (cu startSwarm)
+ usage:  resetStartSwarmThrottler(limit, timeUnit) // see npm module limiter2
+
  //NEXT:
- - functie in toate adaptoarele sa limiteze numarul de swarmuri pornite dintr-un anumit nod
+
  - eveniment pt reject swarm - standardizare faza reject, primitiva reject
  //optional
  - concept de broadcast in camera

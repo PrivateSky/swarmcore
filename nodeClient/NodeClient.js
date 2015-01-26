@@ -115,7 +115,7 @@ SwarmClient.prototype.startSwarm = function (swarmName, constructor) {
         }
     };
     if(this.pendingCmds == null) {
-        util.writeObject(this.sock,cmd);
+        tcpUtil.writeObject(this.sock,cmd);
     }
     else {
         dprint("Preserving pending command " + JSON.stringify(cmd));
