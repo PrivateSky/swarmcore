@@ -587,11 +587,13 @@ function RedisComImpl(){
     }
 
     this.joinGroup = function(groupName, isMain){
-        incGroupsUse(groupName);
+
         if(self.redisReady){
+            incGroupsUse(groupName);
             doJoin(groupName, isMain);
         } else {
          pendingInitialisationCalls.push(function(){
+             incGroupsUse(groupName);
              doJoin(groupName, isMain);
          });
         }

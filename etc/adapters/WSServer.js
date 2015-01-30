@@ -4,7 +4,7 @@ var go      = require('../../lib/GenericOutlet.js');
 sessionsRegistry  = require("../../lib/SessionRegistry.js").getRegistry();
 globalVerbosity = true;
 
-var serverSocketAvailable = false;
+var serverSocketAvailable = true;
 
 thisAdapter = require ("../../lib/SwarmCore.js").createAdapter("WSServer");
 

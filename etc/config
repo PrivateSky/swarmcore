@@ -4,7 +4,7 @@
  "pingTimeout":500,
  "Core":{
      "coreId":"TestCore",
-     "systemId":"Default(127.0.0.1)"
+     "systemId":"Default(127.0.0.1)",
      "redisHost":"localhost",
      "redisPort":6379,
      "throttler":{
@@ -13,13 +13,13 @@
      },
      "paths":[
         {"folder":"etc/coreSwarms"      ,"enabled":true},
-	    {"folder":"etc/xSwarms"      ,"enabled":true},
+	    {"folder":"etc/xSwarms"         ,"enabled":true},
         {"folder":"etc/testSwarms"      ,"enabled":true}
-     ,]
+     ]
   },
  "Logger":{
     "throttler":{
-            "limit":1000000,
+            "limit":100000,
             "timeUnit":"minute"
          }
  },
