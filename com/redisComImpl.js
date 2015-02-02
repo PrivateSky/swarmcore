@@ -34,7 +34,7 @@ function RedisComImpl(){
     pubsubRedisClient.on("error", onRedisError);
     pubsubRedisClient.on("ready", function(){
         redisClient = redis.createClient(redisPort, redisHost);
-        this.privateRedisClient = redisClient;
+        self.privateRedisClient = redisClient;
         redisClient.retry_delay = 2000;
         redisClient.max_attempts = 20;
         redisClient.on("error", onRedisError);
@@ -748,6 +748,22 @@ function RedisComImpl(){
         (function (swarmCode) {
             dslUtil.repository.compileSwarm(swarmName, swarmCode);
         }).wait(swarmCode);
+    }
+
+
+
+    this.observeGlobal = function(globalId, swarm, phaseName, target){
+       var key =  makeRedisKey("globalChannels", globalId);
+       var observer = {
+                "swarm":swarm,
+                "phaseName":phaseName,
+                "target":target
+            };
+        var swarmCode = redisClient.hget.async(makeRedisKey("system", "code"), swarmName);
+    }
+
+    this.notifyGlobal = function(globalId){
+
     }
 }
 

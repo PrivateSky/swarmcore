@@ -14,22 +14,15 @@
 
  */
 
+var fileBus = require("../lib/FileBusUtil.js");
+
 var http = require('http');
 var querystring = require('querystring');
 var request = require('request');
 
-var cfg = getConfig();
-if(!cfg.server){
-    cfg.server = "localhost";
-}
+var cfgFileSizeLimit = getConfigProperty("fileSizeLimit", 100*1024*1024);//100 mega
 
-if(!cfg.port){
-    cfg.port = 3001;
-}
 
-if(!cfg.limit){
-    cfg.limit = 100*1024*1024; //100 mega
-}
 
 function processPost(request, response, callback) {
     var queryData = "";
@@ -59,9 +52,16 @@ function processPost(request, response, callback) {
 
 var requestCallbacks = {};
 
-exports.storageName = function(storageName, httpServer){
+exports.initFileBusNode = function(storageName, cfgBindAddress, cfgPort){
+    if(!cfgPort)        {
+        cfgPort      = getConfigProperty("port", 3001);
+    }
 
-    var http = require("http", cfg.server, cfg.port);
+    if(!cfgBindAddress) {
+        cfgBindAddress = getConfigProperty("fbBindAddress", "localhost");
+    }
+
+    var http = require("http");
 
     http.createServer(function(request, response) {
         if(request.method == 'POST') {
@@ -69,7 +69,7 @@ exports.storageName = function(storageName, httpServer){
             var requestUID = request.query; // TODO: get and validate the UID
             var temporaryFilePath = requestUID; //TODO: generate temporary file
             processPost(request, response, function() {
-                swarmEvent("FileTransferBus.js", requestUID, {"filePath", temporaryFilePath});
+                swarmEvent("FileTransferBus.js", requestUID, {"filePath": temporaryFilePath});
                 console.log(request.post);
                 // Use request.post here
                 response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
@@ -79,12 +79,11 @@ exports.storageName = function(storageName, httpServer){
             response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
             response.end();
         }
+    }).listen(cfgPort, cfgBindAddress);
 
-    }).listen(cfg.port);
-
-    //registerSwarmFileTransferBus(storageName, "http", connectionString);
+    var fileBusInstance = fileBus.initFileBusNode(storageName, "http",cfgBindAddress, cfgPort, connectionString);
     return {
-        transferFile : function(localFilePath, otherStorageName){
+        transferFile : function(localFilePath, otherStorageName, swarm, phase, target){
             var requestUUID = generateUUID();
             var url = getStorageUrl(otherStorageName)+"/"+requestUUID;
             fs.createReadStream(localFilePath).pipe(request.put(url));
