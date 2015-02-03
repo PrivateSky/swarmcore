@@ -18,6 +18,7 @@ var broadcastBenchmark =
         this.totalCount = phases;
         this.tickChunk = tickChunk;
         this.useSwarm   = useSwarm;
+        console.log("Starting benchmark:", phases, tickChunk, useSwarm);
 
         this.swarm("counterInit");
     },
@@ -46,8 +47,9 @@ var broadcastBenchmark =
         code : function (){
             this.totalCount         = parseInt(this.totalCount);
             var testAdaptersCounter = parseInt(this.testAdaptersCounter);
-            console.log("Found a total of ", testAdaptersCounter, " TestAdapter nodes currently alive");
+            console.log("Found a total of ", testAdaptersCounter, " TestAdapter nodes currently alive",this.useSwarm);
             if(this.useSwarm){
+                console.log("using swarm!!!!!");
                 for(var i = 0; i < this.totalCount; i++ ){
                     this.swarm("tick");
                 }
