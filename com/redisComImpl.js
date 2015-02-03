@@ -542,6 +542,8 @@ function RedisComImpl(){
         return queueName[0] == '_';
     }
 
+    var roundRobinIndex = 0;
+
     function chooseOneFromGroup(groupName, callback){
         if(groupName == thisAdapter.mainGroup){
             //allays send to the same node if a message is requested for the same group from the same group
@@ -555,14 +557,22 @@ function RedisComImpl(){
             var sortable = [];
             for (var v in values){
                 if(v != groupName){
-                    sortable.push([v, values[v]]);
+                    sortable.push([v, parseInt(values[v])]);
                 } else {
                     console.log("Group found as member in group...")
                 }
             }
             if(sortable.length >0){
                 sortable.sort(function(a, b) {return a[1] - b[1]});
-                callback(null,sortable[0][0]);
+                var smallerValue = sortable[0][1];
+                var c = 0;
+                while(c < sortable.length && sortable[c][1] == smallerValue){
+                    c++;
+                }
+                roundRobinIndex++;
+                roundRobinIndex%=c;
+                //console.log("Choosing ", roundRobinIndex);
+                callback(null,sortable[roundRobinIndex][0]);
             } else {
                 callback(null,"null");
                 if(groupName != "Logger"){
