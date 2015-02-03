@@ -5,7 +5,7 @@ var util                = require("../../nodeClient/nodeClient.js");
 
 var client             = util.createClient(adapterHost, adapterPort, "BenchmarkUser", "ok","BenchmarkTest", "testCtor");
 
-client.startSwarm("BroadcastBenchMark.js","start",2000, 50);
+client.startSwarm("BroadcastBenchMark.js","start",2000, 50, true);
 
 client.on("BroadcastBenchMark.js",getGreetings);
 

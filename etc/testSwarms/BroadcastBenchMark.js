@@ -12,11 +12,12 @@ var broadcastBenchmark =
         tickTackCount:0,
         debug:false
     },
-    start:function(phases, tickChunk){
+    start:function(phases, tickChunk, useSwarm){
         cprint("Starting Benchmark");
         this.startTime = Date.now();
         this.totalCount = phases;
         this.tickChunk = tickChunk;
+        this.useSwarm   = useSwarm;
 
         this.swarm("counterInit");
     },
@@ -46,8 +47,14 @@ var broadcastBenchmark =
             this.totalCount         = parseInt(this.totalCount);
             var testAdaptersCounter = parseInt(this.testAdaptersCounter);
             console.log("Found a total of ", testAdaptersCounter, " TestAdapter nodes currently alive");
-            for(var i = 0; i < this.totalCount/testAdaptersCounter; i++ ){
-                this.broadcast("tick");
+            if(this.useSwarm){
+                for(var i = 0; i < this.totalCount; i++ ){
+                    this.swarm("tick");
+                }
+            } else {
+                for(var i = 0; i < this.totalCount/testAdaptersCounter; i++ ){
+                    this.broadcast("tick");
+                }
             }
         }
     },
