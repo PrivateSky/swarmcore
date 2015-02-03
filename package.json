@@ -52,7 +52,8 @@
     "q" : ">=1.0.0",
     "redis" : ">=0.9.1",
     "socket.io" : ">=1.2.1",
-    "limiter2":">=1.1.0"
+    "limiter2":">=1.1.0",
+    "request":">=2.53.0"
   },
   "optionalDependencies": {},
   "_engineSupported": true,

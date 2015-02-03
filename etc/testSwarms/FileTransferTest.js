@@ -5,22 +5,24 @@
  */
 var fileTransferTest = {
     startFileTransfer:function () {
-        this.swarm("node1");
+        this.swarm("node1Phase");
     },
     generateTmp:function(){
-
+        var filename = swarmTempFile();
+        fs.writeFileSync(filename, "Test file. Dont generate such files in production");
     },
-    node1:{
+    node1Phase:{
         node:"Node1",
         code:function () {
-            var fileName = this.generateTmp();
-            fileBus.transferFile(fileName, this, "node2");
+            this.fileName = this.generateTmp();
+            fileBus.transferFile(this.fileName, "FB_Node2",this, "node2Confirm");
         }
     },
-    node2:{
+    node2Confirm:{
         node:"Node2",
-        code:function () {
+        do:function () {
             //waked up when transfer was done
+            console.log("File: ", this.fileName, " from node1 is now copied in node2 in ", this.__payload);
         }
     }
 }

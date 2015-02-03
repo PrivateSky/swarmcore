@@ -753,17 +753,22 @@ function RedisComImpl(){
 
 
     this.observeGlobal = function(globalId, swarm, phaseName, target){
-       var key =  makeRedisKey("globalChannels", globalId);
-       var observer = {
+        var storageKey =  makeRedisKey("globalObservers");
+        var observer = {
                 "swarm":swarm,
                 "phaseName":phaseName,
                 "target":target
             };
-        var swarmCode = redisClient.hget.async(makeRedisKey("system", "code"), swarmName);
+        redisClient.hset(storageKey, globalId, J(observer));
     }
 
-    this.notifyGlobal = function(globalId){
-
+    this.notifyGlobal = function(globalId, __payload){
+        var storageKey =  makeRedisKey("globalObservers");
+        var observer = redisClient.hget.jasync(storageKey, globalId);
+        (function (observer) {
+            observer.__payload = __payload;
+            continueSwarm(observer.swarm, observer.phaseName, observer.target);
+        }).wait(observer);
     }
 }
 
