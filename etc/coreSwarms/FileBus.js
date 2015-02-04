@@ -27,7 +27,10 @@ var FileBus = {
     notifyAll:{
         node:"All",
         code : function (){
-            notifyNewSwarmFileTransferNode(this.storageName, this.protocol, this.server, this.port, this.connectionString, this.nodeName);
+            if(thisAdapter.fileBus){
+                thisAdapter.fileBus.acknowledgeNewSwarmFileTransferNode(this.storageName, this.protocol, this.server, this.port, this.connectionString, this.nodeName);
+            }
+
             this.adapterForStorage = thisAdapter.nodeName;
             this.swarm("notifyEachOne",this.nodeName);
         }
@@ -35,7 +38,9 @@ var FileBus = {
     notifyEachOne:{
         node:"initial node name",
         code : function (){
-            notifyNewSwarmFileTransferNode(this.storageName, this.protocol, this.server, this.port, this.connectionString, this.adapterForStorage);
+            if(thisAdapter.fileBus) {
+                thisAdapter.fileBus.acknowledgeNewSwarmFileTransferNode(this.storageName, this.protocol, this.server, this.port, this.connectionString, this.adapterForStorage);
+            }
         }
     }
 

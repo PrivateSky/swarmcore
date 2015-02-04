@@ -43,7 +43,7 @@ var broadcastBenchmark =
         }
     },
     doParallelSwarm:{          //launch as many parallel swarms as possible
-        node:"Launcher",
+        node:"ClientAdapter",
         code : function (){
             this.totalCount         = parseInt(this.totalCount);
             var testAdaptersCounter = parseInt(this.testAdaptersCounter);
@@ -69,7 +69,7 @@ var broadcastBenchmark =
     },
     tick:{  //phase
         node:"TestAdapter",
-        code : function (){
+        do : function (){
             var chunckSize = parseInt(this.tickChunk);
             var ctxt = getLocalContext("benchmark"); //not shared between adapters!
             ctxt.counter++;

@@ -7,15 +7,18 @@ var fileTransferTest = {
     startFileTransfer:function () {
         this.swarm("node1Phase");
     },
-    generateTmp:function(){
-        var filename = swarmTempFile();
-        fs.writeFileSync(filename, "Test file. Dont generate such files in production");
-    },
     node1Phase:{
         node:"Node1",
         code:function () {
-            this.fileName = this.generateTmp();
-            fileBus.transferFile(this.fileName, "FB_Node2",this, "node2Confirm");
+            console.log("Visiting Node1 ");
+            var filename = swarmTempFile.async();
+            (function(filename){
+                this.fileName =  filename;
+                this.fileContent = "Test content";
+                require("fs").writeFileSync(filename, this.fileContent);
+                thisAdapter.fileBus.transferFile(this.fileName, "FB_Node2",this, "node2Confirm");
+            }).swait(filename);
+
         }
     },
     node2Confirm:{
@@ -23,6 +26,13 @@ var fileTransferTest = {
         do:function () {
             //waked up when transfer was done
             console.log("File: ", this.fileName, " from node1 is now copied in node2 in ", this.__payload);
+            if(require(fs).readFileSync(this.__payload) == this.fileContent){
+                this.result = "Passed";
+                console.log();
+            } else {
+                this.result = "Failed";
+            }
+            this.home("result");
         }
     }
 }

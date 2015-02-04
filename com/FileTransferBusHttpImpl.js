@@ -22,8 +22,6 @@ var request = require('request');
 
 var cfgFileSizeLimit = getConfigProperty("fileSizeLimit", 100*1024*1024);//100 mega
 
-
-
 function processPost(request, response, callback) {
     var queryData = "";
     if(typeof callback !== 'function') return null;
@@ -81,7 +79,7 @@ exports.initFileBusNode = function(storageName, cfgBindAddress, cfgPort){
         }
     }).listen(cfgPort, cfgBindAddress);
 
-    var fileBusInstance = fileBus.initFileBusNode(storageName, "http",cfgBindAddress, cfgPort, connectionString);
+    var fileBusInstance = fileBus.initFileBusNode(storageName, "http",cfgBindAddress, cfgPort, "");
     return {
         transferFile : function(localFilePath, otherStorageName, swarm, phase, target){
             var requestUUID = generateUUID();

@@ -73,7 +73,9 @@ function RedisComImpl(){
             self.reloadAllSwarms();
         }
         self.redisReady = true;
+
         self.joinGroup(thisAdapter.mainGroup, true);
+
         saveHistoricNodeInfo(thisAdapter.nodeName, "startTime",Date.now());
         saveHistoricNodeInfo(thisAdapter.nodeName, "mainGroup",thisAdapter.mainGroup);
         saveHistoricNodeInfo(thisAdapter.nodeName, "systemId",thisAdapter.systemId);
@@ -748,7 +750,7 @@ function RedisComImpl(){
             for (var i in swarmCode) {
                 dslUtil.repository.compileSwarm(i, swarmCode[i]);
             }
-
+            callWaitingForReady();
             registerInSharedDB();
         }).wait(swarmCode);
     }
@@ -779,6 +781,21 @@ function RedisComImpl(){
             observer.__payload = __payload;
             continueSwarm(observer.swarm, observer.phaseName, observer.target);
         }).wait(observer);
+    }
+
+    var readyWaiting = [];
+    function callWaitingForReady(){
+        readyWaiting.map(function(c){
+            c();
+        });
+        readyWaiting = null;
+    }
+    this.onReady = function(callback){
+        if(readyWaiting == null){
+            callback();
+        } else {
+            readyWaiting.push(callback);
+        }
     }
 }
 
