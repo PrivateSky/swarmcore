@@ -691,6 +691,19 @@ function RedisComImpl(){
     }
 
     function uploadDescriptionsImpl() {
+        function validJsFile(fullFileName){
+            try{
+                var content = fs.readFileSync(fullFileName).toLocaleString();
+                var obj = eval(content);
+                //console.log(obj);
+                return true;
+            }catch(err){
+                //console.log("Got error:",err.code,  err)
+                return false;
+            }
+            return true;
+        }
+
         var folders = thisAdapter.config.Core.paths;
         for (var i = 0; i < folders.length; i++) {
             if (folders[i].enabled == undefined || folders[i].enabled == true) {
@@ -699,14 +712,11 @@ function RedisComImpl(){
                 var files = fs.readdirSync(getSwarmFilePath(descriptionsFolder));
                 files.forEach(function (fileName, index, array) {
                     var fullFileName = getSwarmFilePath(descriptionsFolder + "/" + fileName);
-
                     fs.watch(fullFileName, function (event, chFileName) {
-                        if(event != "change") return;
-                        if (uploadFile(fullFileName, fileName)) {
+                        if (validJsFile(fullFileName) &&  uploadFile(fullFileName, fileName)) {
                             startSwarm("CoreWork.js", "swarmChanged", fileName);
                         }
                     });
-
                     uploadFile(fullFileName, fileName);
                 });
             }

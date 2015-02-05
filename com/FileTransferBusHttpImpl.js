@@ -15,6 +15,7 @@
  */
 
 var fileBus = require("../lib/FileBusUtil.js");
+var fs = require("fs");
 
 var http = require('http');
 var querystring = require('querystring');
@@ -62,13 +63,14 @@ exports.initFileBusNode = function(storageName, cfgBindAddress, cfgPort){
     var http = require("http");
 
     http.createServer(function(request, response) {
-        if(request.method == 'POST') {
-
-            var requestUID = request.query; // TODO: get and validate the UID
+        console.log("Request:", request);
+        if(request.method == 'PUT') {
+            console.log("Receiving PUT request:", request);
+            var requestUID = request.url.substring(1); // remove the /
             var temporaryFilePath = requestUID; //TODO: generate temporary file
             processPost(request, response, function() {
-                swarmEvent("FileTransferBus.js", requestUID, {"filePath": temporaryFilePath});
-                console.log(request.post);
+                startSwarm("FileBus.js", "waitTransfer", requestUID );
+
                 // Use request.post here
                 response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
                 response.end();
@@ -80,16 +82,17 @@ exports.initFileBusNode = function(storageName, cfgBindAddress, cfgPort){
     }).listen(cfgPort, cfgBindAddress);
 
     var fileBusInstance = fileBus.initFileBusNode(storageName, "http",cfgBindAddress, cfgPort, "");
-    return {
-        transferFile : function(localFilePath, otherStorageName, swarm, phase, target){
-            var requestUUID = generateUUID();
-            var url = getStorageUrl(otherStorageName)+"/"+requestUUID;
-            fs.createReadStream(localFilePath).pipe(request.put(url));
-            return requestUUID;
-        },
-        onTransferReady: function(requestUUID, callback){
-            requestCallbacks[requestUUID] = callback;
-        }
+    fileBusInstance.transferFile = function(localFilePath, otherStorageName, swarm, phase, target){
+
+        var requestUUID = generateUUID();
+        var url = fileBusInstance.getStorageUrl(otherStorageName)+"/"+requestUUID;
+        fs.createReadStream(localFilePath).pipe(request.put(url));
+        return requestUUID;
     }
 
+    fileBusInstance.onTransferReady = function(requestUUID, callback){
+        requestCallbacks[requestUUID] = callback;
+    }
+
+    return fileBusInstance;
 }

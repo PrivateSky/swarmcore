@@ -5,20 +5,20 @@
  */
 var fileTransferTest = {
     startFileTransfer:function () {
+        console.log("Starting fileTransferTest");
         this.swarm("node1Phase");
     },
     node1Phase:{
         node:"Node1",
         code:function () {
-            console.log("Visiting Node1 ");
             var filename = swarmTempFile.async();
+            var self = this;
             (function(filename){
-                this.fileName =  filename;
-                this.fileContent = "Test content";
-                require("fs").writeFileSync(filename, this.fileContent);
-                thisAdapter.fileBus.transferFile(this.fileName, "FB_Node2",this, "node2Confirm");
+                self.fileName =  filename;
+                self.fileContent = "Test content";
+                require("fs").writeFileSync(filename, self.fileContent);
+                thisAdapter.fileBus.transferFile(self.fileName, "FB_Node2",self, "node2Confirm");
             }).swait(filename);
-
         }
     },
     node2Confirm:{
