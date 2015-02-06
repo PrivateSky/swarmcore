@@ -788,7 +788,7 @@ function RedisComImpl(){
         var storageKey =  makeRedisKey("globalObservers");
         var observer = redisClient.hget.jasync(storageKey, globalId);
         (function (observer) {
-            observer.__payload = __payload;
+            observer.swarm.__payload = __payload;
             continueSwarm(observer.swarm, observer.phaseName, observer.target);
         }).wait(observer);
     }

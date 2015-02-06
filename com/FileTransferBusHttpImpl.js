@@ -23,30 +23,21 @@ var request = require('request');
 
 var cfgFileSizeLimit = getConfigProperty("fileSizeLimit", 100*1024*1024);//100 mega
 
-function processPost(request, response, callback) {
-    var queryData = "";
-    if(typeof callback !== 'function') return null;
-
-    if(request.method == 'POST') {
+function processDownload(request, response, temporaryFilePath, callback) {
         var requestId = 0; // getRequestid(request)
         request.on('data', function(data) {
-            queryData += data;
-            if(queryData.length > cfg.limit) {
+            fs.appendFile.async(temporaryFilePath,data);
+            /*if(queryData.length > cfg.limit) {
                 queryData = "";
                 response.writeHead(413, {'Content-Type': 'text/plain'}).end();
                 request.connection.destroy();
-            }
+            }*/
         });
 
         request.on('end', function() {
-            request.post = querystring.parse(queryData);
+            //request.post = querystring.parse(queryData);
             callback();
         });
-
-    } else {
-        response.writeHead(405, {'Content-Type': 'text/plain'});
-        response.end();
-    }
 }
 
 var requestCallbacks = {};
@@ -61,20 +52,20 @@ exports.initFileBusNode = function(storageName, cfgBindAddress, cfgPort){
     }
 
     var http = require("http");
-
     http.createServer(function(request, response) {
-        console.log("Request:", request);
+        //console.log("Request:", request);
         if(request.method == 'PUT') {
-            console.log("Receiving PUT request:", request);
-            var requestUID = request.url.substring(1); // remove the /
-            var temporaryFilePath = requestUID; //TODO: generate temporary file
-            processPost(request, response, function() {
-                startSwarm("FileBus.js", "waitTransfer", requestUID );
-
-                // Use request.post here
-                response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
-                response.end();
-            });
+            var requestUUID = request.url.substring(1); // remove the /
+            dprint("Downloading content for: ", requestUUID);
+            var temporaryFilePath = swarmTempFile.async();
+            (function(temporaryFilePath){
+                processDownload(request, response, temporaryFilePath, function() {
+                    console.log("Finishing transfer: ", requestUUID, " in ", temporaryFilePath);
+                    thisAdapter.notifyGlobal(requestUUID, temporaryFilePath);
+                    response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
+                    response.end();
+                });
+            }).wait(temporaryFilePath);
         } else {
             response.writeHead(200, "OK", {'Content-Type': 'text/plain'});
             response.end();
@@ -85,6 +76,8 @@ exports.initFileBusNode = function(storageName, cfgBindAddress, cfgPort){
     fileBusInstance.transferFile = function(localFilePath, otherStorageName, swarm, phase, target){
 
         var requestUUID = generateUUID();
+        console.log("Starting transfer: ", requestUUID);
+        thisAdapter.observeGlobal(requestUUID,swarm, phase);
         var url = fileBusInstance.getStorageUrl(otherStorageName)+"/"+requestUUID;
         fs.createReadStream(localFilePath).pipe(request.put(url));
         return requestUUID;

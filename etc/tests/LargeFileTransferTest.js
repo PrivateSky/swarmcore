@@ -5,9 +5,9 @@ var util                = require("../../nodeClient/nodeClient.js");
 
 var client             = util.createClient(adapterHost, adapterPort, "BenchmarkUser", "ok","BenchmarkTest", "testCtor");
 
-client.startSwarm("FileTransferTest.js","startFileTransfer");
+client.startSwarm("LargeFileTransferTest.js","startFileTransfer");
 
-client.on("FileTransferTest.js",getGreetings);
+client.on("LargeFileTransferTest.js",getGreetings);
 
 var msg = "none";
 function getGreetings(obj){
