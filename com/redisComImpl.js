@@ -711,6 +711,7 @@ function RedisComImpl(){
 
                 var files = fs.readdirSync(getSwarmFilePath(descriptionsFolder));
                 files.forEach(function (fileName, index, array) {
+                    if(fileName == ".DS_Store") return;
                     var fullFileName = getSwarmFilePath(descriptionsFolder + "/" + fileName);
                     fs.watch(fullFileName, function (event, chFileName) {
                         if (validJsFile(fullFileName) &&  uploadFile(fullFileName, fileName)) {
@@ -761,7 +762,9 @@ function RedisComImpl(){
         (function (swarmCode) {
             for (var i in swarmCode) {
                 try{
-                    dslUtil.repository.compileSwarm(i, swarmCode[i]);
+                    if(i != ".DS_Store"){
+                        dslUtil.repository.compileSwarm(i, swarmCode[i]);
+                    }
                 } catch(err){
                     console.log("Ignoring:", err);
                 }
