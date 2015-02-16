@@ -5,7 +5,7 @@ var adapterHost         = "localhost";
 globalVerbosity = true;
 var assert              = require('assert');
 
-var util       = require("../../nodeClient/nodeClient.js");
+var util       = require("../../nodeClient/NodeClient.js");
 
 var client     = util.createClient(adapterHost, adapterPort, "testLoginUser", "ok","testTenant", "testCtor");
 

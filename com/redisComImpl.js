@@ -744,8 +744,10 @@ function RedisComImpl(){
         try {
             var content = fs.readFileSync(fullFileName).toString();
             dprint("Uploading swarm: " + fullFileName);
-            redisClient.hset.async(makeRedisKey("system", "code"), fileName, content);
-            dslUtil.repository.compileSwarm(fileName, content);
+
+            if(dslUtil.repository.compileSwarm(fileName, content)){
+                redisClient.hset.async(makeRedisKey("system", "code"), fileName, content);
+            }
         }
         catch (err) {
             logErr("Failed uploading swarm file ", err);
@@ -758,7 +760,11 @@ function RedisComImpl(){
         var swarmCode = redisClient.hgetall.async(makeRedisKey("system", "code"));
         (function (swarmCode) {
             for (var i in swarmCode) {
-                dslUtil.repository.compileSwarm(i, swarmCode[i]);
+                try{
+                    dslUtil.repository.compileSwarm(i, swarmCode[i]);
+                } catch(err){
+                    console.log("Ignoring:", err);
+                }
             }
             callWaitingForReady();
             registerInSharedDB();
