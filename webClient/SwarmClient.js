@@ -251,7 +251,7 @@ function SwarmClient(host, port, userId, authToken, tenantId, loginCtor, securit
         var len;
 
         connectionInProgress = false;
-        loginOk = data.isOk;
+        loginOk = data.authenticated;
 
         if (loginOk) {
             outletId = data.meta.outletId;
@@ -292,9 +292,16 @@ function SwarmClient(host, port, userId, authToken, tenantId, loginCtor, securit
             for (var i = 0, len = callbackList.length; i < len; i++) {
                 var callback = callbackList[i];
                 try {
-                    shapePubSub.blockCallBacks();
+                    if(shapePubSub){  //shape specific code
+                        shapePubSub.blockCallBacks();
+                    }
+
                     callback(data);
-                    shapePubSub.releaseCallBacks();
+
+                    if(shapePubSub){
+                        shapePubSub.releaseCallBacks();
+                    }
+
                 }
                 catch (e) {
                     eprint(e + " in swarm generated callback: " + callback ,e );
