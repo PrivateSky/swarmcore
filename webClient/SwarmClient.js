@@ -400,3 +400,9 @@ function SwarmClient(host, port, userId, authToken, tenantId, loginCtor, securit
     }
 }
 
+
+if(typeof(objectIsShapeSerializable) == "undefined"){
+    objectIsShapeSerializable = function(){
+        return false;
+    }
+}
