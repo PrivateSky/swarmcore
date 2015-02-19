@@ -826,3 +826,7 @@ exports.implemenation = (function(){
         return swarmComImpl;
     })();
 
+
+redisClient = function(){
+    return thisAdapter.nativeMiddleware.privateRedisClient;
+}
