@@ -15,55 +15,71 @@
 
  */
 
-var aclModule = require("magical");
+var acl = require("acl-magical");
 
 
-exports.getSwarmAcl = function(){
-        var acl = aclModule.create(redis, redisClient());
+exports.getSwarmAcl = function(redisClient){
 
+    var cache = acl.createCache(5*60*100); //5 minutes cache
+    var persistence =  acl.createRedisPersistence(redisClient, cache);
+
+
+    var defaultAllow = false;
+    persistence.getProperty("defaultAllow", function(err, value){
+        defaultAllow = value;
+    }) ;
+
+    var forbiddenExecution = acl.createConcern("SwarmExecutionControl");
+
+    /*
+        by default
+     */
+    var execution = acl.createConcern("SwarmExecutionControl",persistence,
+        function(zone, resource, callback){
+            dprint("Checking permissions for ", zone, resource);
+        },
+        function(zone, resource, callback){
+            //if forbidden return false else return true
+            forbiddenExecution.allow(zone, resource, function(err,res){
+                if(res){
+                    callback(null, false);
+                } else {
+                    callback(null, defaultAllow);
+                }
+            });
+        }
+    )
+
+        function mkResourceKey(swarmName, phaseName){
+            return swarmName+"/"+phaseName;
+        }
         /*
 
          */
-        this.checkStartSwarm = function(swarmName,ctor){
+        this.allow = function(swarmName,ctorOrPhase, callback){
             var userId = getCurrentuser();
-            return acl.allowed(userId,swarmName+"/"+ctor);
+            return execution.allow(userId, mkResourceKey(swarmName, ctorOrPhase));
         }
 
-        this.checkPhaseExecution = function(swarmName, phaseName){
-            var userId = getCurrentuser();
-            return acl.allowed(userId,swarmName+"/"+phaseName);
+        this.grant = function(role, swarmName, list){
+            list.forall(function(element){
+                execution.grant(role,mkResourceKey(swarmName, element))
+            })
         }
 
-
-        this.allowSwarm = function(role, swarmName, ctorList, phasesList){
-            var childs = ctorList.concat(phasesList);
-            acl.allow(role, swarmName, phasesList)
-        }
-
-        this.forbidSwarm = function(role, swarmName, ctorList, phasesList){
-
-        }
-
-
-        this.allow = function(role, resourceURI, accessType){
-
-        }
-
-        /*
-         Available only from swarm contexts
-
-         */
-        this.isAllowed = function(resourceURI, accessType){
-
+        this.forbidden = function(role, swarmName, ctorList, list){
+            forbiddenExecution.forall(function(element){
+                execution.grant(role,mkResourceKey(swarmName, element))
+            })
         }
 
 
         this.addRole = function(user, role){
-
+            persistence.addZoneParent(user, role);
         }
 
         this.delRole = function(user, role){
-
+            persistence.delZoneParent(user, role);
         }
 }
 
