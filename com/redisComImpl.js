@@ -7,6 +7,7 @@ var redis   = require("redis");
 var dslUtil = require("../lib/SwarmDSL.js");
 var fs = require("fs");
 
+
 /* encapsulate as many details about communication, error recovery and distributed transactions
 *  different communication middleware and different tradeoffs on error recovery and transactions could be implemented
 * */
@@ -15,6 +16,8 @@ function RedisComImpl(){
     var redisHost = thisAdapter.config.Core.redisHost;
     var redisPort = thisAdapter.config.Core.redisPort;
     var RateLimiter = require('limiter2').RateLimiter;
+
+    this.swarmACL = null;
 
     var throttlerConfig = {
         limit:10000,
@@ -85,6 +88,7 @@ function RedisComImpl(){
             call();
         }
         pendingInitialisationCalls = null;
+        callResetCallBacks();
     }
 
     function onRedisReconnecting(event) {
@@ -830,3 +834,4 @@ exports.implemenation = (function(){
 redisClient = function(){
     return thisAdapter.nativeMiddleware.privateRedisClient;
 }
+
