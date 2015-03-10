@@ -133,7 +133,7 @@ function RedisComImpl(){
             while(pendingSwarms.length > 0 ){
                 var arr = pendingSwarms.slice(0);
                 emptyPending();
-                arr.map(function (swarm){
+                arr.forEach(function (swarm){
                     if(dslUtil.handleErrors(swarm)){
                         persistSwarmState.async(swarm);
                     }
@@ -353,7 +353,7 @@ function RedisComImpl(){
         }
 
         (function(groups){
-            groups.map(function(g){
+            groups.forEach(function(g){
                 var g = getNodeNameFromKey(g);
                 var key = makeRedisKey("savedCurrentlyExecutingPhases", g);
                 var phases = redisClient.hgetall.async(key);
@@ -808,7 +808,7 @@ function RedisComImpl(){
 
     var readyWaiting = [];
     function callWaitingForReady(){
-        readyWaiting.map(function(c){
+        readyWaiting.forEach(function(c){
             c();
         });
         readyWaiting = null;
