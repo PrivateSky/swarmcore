@@ -7,19 +7,21 @@ var VisitUser = {
     vars:{
         debug:true
     },
-    response:function(userName, callingSwarm, phaseName, errorSwarm,errorSwarmPhaseName )  {
-        this.errorSwarm = errorSwarm;
-        this.errorSwarmPhaseName = errorSwarmPhaseName;
-        this.callingSwarm  = callingSwarm;
-        this.userName = userName;
-        this.phaseName = phaseName;
-        this.swarm("onResponse");
-
+    transport:function(userId, callingSwarmSerialisation, phaseName)  {
+        this.callingSwarm   = callingSwarmSerialisation;
+        this.userId         = userId;
+        this.phaseName      = phaseName;
+        this.broadcast("findOutlet", "@ClientAdapters");
     },
-    onResponse:{
-        node:"SessionsRegistry",
+    findOutlet:{
+        node:"@ClientAdapters",
         code : function (){
-            sendSwarmToUser(this.userName, this.callingSwarm, this.phaseName, this.errorSwarm, this.errorSwarmPhaseName);
+            var outlets = sessionsRegistry.findOutletsForUser(this.userId);
+            if(outlets){
+                for(var v in outlets){
+                    reviveSwarm(this.callingSwarm, this.phaseName, thisAdapter.nodeName, true, outlets[v]);
+                }
+            }
         }
     }
 };

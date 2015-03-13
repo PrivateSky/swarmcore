@@ -43,7 +43,7 @@
   ],
   "_id": "swarmcore@2.0.3",
   "dependencies" : {
-    "asynchron" :     ">=1.0.3",
+    "asynchron" :     ">=1.0.10",
     "apersistence" : ">=1.0.4",
     "acl-magic" :    ">=1.0.7",
     "redsindex" :    ">=0.1.0",
