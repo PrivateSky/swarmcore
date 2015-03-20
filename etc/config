@@ -43,5 +43,10 @@
                "limit":100,
                "timeUnit":"minute"
             }
-    }
+    },
+    "WSServer":{
+            "host":"localhost',
+            "port":"8000',
+
+       }
 }

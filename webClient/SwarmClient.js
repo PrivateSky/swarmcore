@@ -292,16 +292,7 @@ function SwarmClient(host, port, userId, authToken, tenantId, loginCtor, securit
             for (var i = 0, len = callbackList.length; i < len; i++) {
                 var callback = callbackList[i];
                 try {
-                    if(shapePubSub){  //shape specific code
-                        shapePubSub.blockCallBacks();
-                    }
-
                     callback(data);
-
-                    if(shapePubSub){
-                        shapePubSub.releaseCallBacks();
-                    }
-
                 }
                 catch (e) {
                     eprint(e + " in swarm generated callback: " + callback ,e );
@@ -406,3 +397,5 @@ if(typeof(objectIsShapeSerializable) == "undefined"){
         return false;
     }
 }
+
+
