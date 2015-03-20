@@ -181,7 +181,7 @@ SwarmClient.prototype.resolveMessage = function (object) {
         for (var i = 0; i < this.pendingCmds.length; i++) {
             this.pendingCmds[i].meta.sessionId = this.sessionId;
             dprint("Writing pending command " + J(this.pendingCmds[i]));
-            tcpUtil.writeObject(this.sock,this.pendingCmds[i]);
+            tcpUtil.writeObject(this.sock, this.pendingCmds[i]);
         }
         this.pendingCmds = null;
     }

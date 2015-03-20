@@ -1,7 +1,7 @@
 {
   "name": "swarmcore",
   "description": "Elements for creating swarm 2.0 adapters .",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "homepage": "https://github.com/salboaie/swarmcore",
   "author": {
     "name": "Alboaie Sinica",
@@ -29,7 +29,7 @@
     "node": ">=0.6.0"
   },
   "devDependencies": {
-    "tap": "0.2"
+    "mocha": "0.2"
   },
   "scripts": {
     "test": "tap test/*.js"
@@ -41,17 +41,16 @@
       "url": "http://www.gnu.org/licenses/lgpl.html"
     }
   ],
-  "_id": "swarmcore@2.0.4",
+  "_id": "swarmcore@2.0.5",
   "dependencies" : {
+    "q" : "=1.2.0"  ,
     "asynchron" :     ">=1.0.10",
     "apersistence" : ">=1.0.4",
     "acl-magic" :    ">=1.0.7",
-    "redsindex" :    ">=0.1.0",
     "clone" : ">=0.1.8",
     "MD5" : ">=1.2.0",
     "nodemailer" : ">=0.5.2",
     "node-uuid" : ">=1.4.0",
-    "q" : "=1.2.0",
     "redis" : ">=0.9.1",
     "socket.io" : ">=1.2.1",
     "limiter2":">=1.1.0",
