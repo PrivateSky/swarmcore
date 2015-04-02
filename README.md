@@ -1,7 +1,7 @@
 SwarmCore
 =========
 
-Swarm 2.0 implementation of teh SwarmESB project. SwarmESB is a light ESB for node.js.
+Swarm 2.0 implementation of the SwarmESB (http://github.com/salboaie/SwarmESB) project. SwarmESB is a light ESB for node.js.
 SwarmCore includes core functionality for working with swarms version 2.0. Is a refactored version of the SwarmUtil module and will not need SwarmESB project. It depends on asynchron, apersistence and acl-magic modules.
 
 ## What is new
