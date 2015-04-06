@@ -215,7 +215,7 @@ function RedisComImpl(){
         }
         assertNodeInGroup(specificNode,groupNode);
         var redisKey = makeRedisKey("groupMembers",groupNode);
-        console.log("Modifying counter: ", redisKey, specificNode, offset);
+        //console.log("Modifying counter: ", redisKey, specificNode, offset);
         redisClient.hincrby.async(redisKey,specificNode, offset);
     }
 

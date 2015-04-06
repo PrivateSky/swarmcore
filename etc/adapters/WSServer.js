@@ -98,6 +98,8 @@ var serverPort = 8080;
 var serverHost = "localhost";
 var __wwwroot = "/tmp";
 
+
+
 if (myCfg.port != undefined) {
     serverPort = myCfg.port;
 }
@@ -106,6 +108,7 @@ if (myCfg.wwwroot != undefined) {
     __dirname = myCfg.wwwroot;
 }
 
+console.log("Listening on port", serverPort);
 /*     if (myCfg.bindAddress != undefined) {
             serverHost = myCfg.bindAddress;
             serverHost = serverHost.trim();

@@ -1,6 +1,5 @@
 /*
-  Reusable Adapter capable of starting periodically swarms
-
+  Adapter capable of starting periodically scheduled swarms. Experimental implementation. Should work together with Swarm Monitor
 */
 
 var core = require ("../../lib/SwarmCore.js");
