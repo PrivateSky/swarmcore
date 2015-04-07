@@ -717,7 +717,7 @@ function RedisComImpl(){
                 files.forEach(function (fileName, index, array) {
                     if(fileName == ".DS_Store") return;
                     var fullFileName = getSwarmFilePath(descriptionsFolder + "/" + fileName);
-                    fs.watch(fullFileName, function (event, chFileName) {
+                    fs.watchFile(fullFileName, function (event, chFileName) {
                         if (validJsFile(fullFileName) &&  uploadFile(fullFileName, fileName)) {
                             startSwarm("CoreWork.js", "swarmChanged", fileName);
                         }
