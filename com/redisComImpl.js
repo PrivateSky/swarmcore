@@ -422,7 +422,7 @@ function RedisComImpl(){
 
 
     var totalPhaseCounter = 0;
-    /* pottentia to add additional locking/verifications before executing a received swarm */
+    /* pottential to add additional locking/verifications before executing a received swarm */
     this.asyncExecute = function(swarm, callback){
         if(limiter.accept(1)){
             totalPhaseCounter++;

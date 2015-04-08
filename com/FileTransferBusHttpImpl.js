@@ -42,7 +42,7 @@ function processDownload(request, response, temporaryFilePath, callback) {
 
 var requestCallbacks = {};
 
-exports.initFileBusNode = function(storageName, cfgBindAddress, cfgPort){
+exports.initFileBusNode = function(storageName, cfgBindAddress, cfgPort, tempFolder){
     if(!cfgPort)        {
         cfgPort      = getConfigProperty("port", 3001);
     }
@@ -57,7 +57,11 @@ exports.initFileBusNode = function(storageName, cfgBindAddress, cfgPort){
         if(request.method == 'PUT') {
             var requestUUID = request.url.substring(1); // remove the /
             dprint("Downloading content for: ", requestUUID);
-            var temporaryFilePath = swarmTempFile.async();
+            var temporaryFilePath = tempFolder + "/"+ requestUUID;
+            if(!tempFolder){
+                temporaryFilePath = swarmTempFile.async();
+            }
+
             (function(temporaryFilePath){
                 processDownload(request, response, temporaryFilePath, function() {
                     console.log("Finishing transfer: ", requestUUID, " in ", temporaryFilePath);
@@ -73,12 +77,13 @@ exports.initFileBusNode = function(storageName, cfgBindAddress, cfgPort){
     }).listen(cfgPort, cfgBindAddress);
 
     var fileBusInstance = fileBus.initFileBusNode(storageName, "http",cfgBindAddress, cfgPort, "");
-    fileBusInstance.transferFile = function(localFilePath, otherStorageName, swarm, phase, target){
+    fileBusInstance.transferFile = function(localFilePath, otherStorageName, swarm, phase, targetNode){
 
         var requestUUID = generateUUID();
-        console.log("Starting transfer: ", requestUUID);
-        thisAdapter.observeGlobal(requestUUID,swarm, phase);
+
+        thisAdapter.observeGlobal(requestUUID, swarm, phase, targetNode);
         var url = fileBusInstance.getStorageUrl(otherStorageName)+"/"+requestUUID;
+        console.log("Starting transfer: ", requestUUID, " to ", url);
         fs.createReadStream(localFilePath).pipe(request.put(url));
         return requestUUID;
     }
