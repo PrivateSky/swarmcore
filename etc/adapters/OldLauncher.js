@@ -245,7 +245,7 @@ function logEvent(event) {
 }
 
 
-function sendMessages() {
+function sendMessages(email) {
     if (!mailMessages.length) {
         return;
     }
