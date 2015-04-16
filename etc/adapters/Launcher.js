@@ -4,7 +4,7 @@
  * new Launcher for usage from
  **********************************************************************************************/
 var core = require ("SwarmCore");
-var childForker = require('child_process');
+
 
 var config, forkOptions;
 
@@ -28,7 +28,8 @@ function NodeConfig(key){
 }
 
 function configure(){
-    config = getMyConfig();
+
+    config = getMyConfig("Launcher");
     forkOptions = {
         cwd: process.cwd(),
         env: process.env
@@ -47,15 +48,16 @@ function configure(){
         config.responseTimeout = 1000; //1 second
     }
 
-
     var watch = config.watch;
-    if(!watch || typeof watch !== "array"){
+    if(!watch || watch.length <= 0){
         console.log("Watch sections missing or not an array. Exiting...");
         process.exit(-1);
     }
 
     for(var i = 0, len = watch.length; i < len; i++ ){
+
         var p = watch[i];
+
         var name = p.node;
         var path;
 
@@ -64,6 +66,7 @@ function configure(){
             path = core.getCorePath() + name;
         } else {
             path = core.getSwarmFilePath(name);
+            console.log("Path:", path);
         }
         if(!name){
             console.log("Ignoring watch configuration, missing node or core property ", p);

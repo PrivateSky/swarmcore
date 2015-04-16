@@ -1,4 +1,6 @@
 
+var childForker = require('child_process');
+
 function executionMonitor(forkOptions, config){
     var adaptorForks = {};
 
@@ -9,6 +11,7 @@ function executionMonitor(forkOptions, config){
             fork.name = fork.path.substring(fork.path.lastIndexOf('/') + 1, fork.path.length - 3);
             fork.alive = false;
             fork.messages = [];
+            index = fork.index;
             if (index) {
                 fork.name = '[' + index + '] ' + fork.name;
             }
@@ -31,7 +34,7 @@ function executionMonitor(forkOptions, config){
     }
 
     this.createFork = function(itemConfig) {
-        fork.config = itemConfig;
+
         var swarmPath = itemConfig.path;
 
         function monitorSingleFork(){
@@ -66,6 +69,7 @@ function executionMonitor(forkOptions, config){
         var maxIndex = itemConfig.instances;
         for(var index = 0; index < maxIndex; index++){
             var fork = {};
+            fork.config = itemConfig;
             fork.index = index;
             fork.path = swarmPath;
             if(createSingleFork(fork)){

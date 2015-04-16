@@ -6,6 +6,7 @@
 var redis   = require("redis");
 var dslUtil = require("../lib/SwarmDSL.js");
 var fs = require("fs");
+var getSwarmESBCorePath = require("../index.js").getCorePath;
 
 
 /* encapsulate as many details about communication, error recovery and distributed transactions
@@ -712,7 +713,10 @@ function RedisComImpl(){
         for (var i = 0; i < folders.length; i++) {
             if (folders[i].enabled == undefined || folders[i].enabled == true) {
                 var descriptionsFolder = folders[i].folder;
-
+                if(!descriptionsFolder){
+                    descriptionsFolder = getSwarmESBCorePath(folders[i].core);
+                }
+                console.log("Uploading folder ", descriptionsFolder);
                 var files = fs.readdirSync(getSwarmFilePath(descriptionsFolder));
                 files.forEach(function (fileName, index, array) {
                     if(fileName == ".DS_Store") return;
