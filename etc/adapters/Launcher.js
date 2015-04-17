@@ -124,6 +124,7 @@ process.on('SIGTERM',   monitor.killAllForks);
 process.on('SIGHUP',    monitor.killAllForks);
 process.on('SIGINT',    monitor.killAllForks);
 startAdapters(monitor, function(){
+    console.log("Finally creating launcher adapter...");
     core.createAdapter("Launcher");
     monitor.monitorForks();
 });

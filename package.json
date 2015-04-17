@@ -1,5 +1,5 @@
 {
-  "name": "SwarmCore",
+  "name": "swarmcore",
   "description": "Elements for creating swarm 2.0 adapters .",
   "version": "2.1.2",
   "homepage": "https://github.com/salboaie/swarmcore",
@@ -41,7 +41,7 @@
       "url": "http://www.gnu.org/licenses/lgpl.html"
     }
   ],
-  "_id": "SwarmCore@2.1.2",
+  "_id": "swarmcore@2.1.2",
   "dependencies" : {
     "q" : "=1.2.0"  ,
     "asynchron" :     ">=1.0.10",

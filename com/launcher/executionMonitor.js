@@ -8,8 +8,15 @@ function executionMonitor(forkOptions, config){
     function createSingleFork(fork){
         try{
             fork.proc = childForker.fork(fork.path, null, forkOptions);
+            fork.proc.on('message', function (data) {
+                fork.alive = true;
+                //console.log(adaptorFork.name + " " + JSON.stringify(data));
+                if (!data.ok) {
+                    fork.messages.push(data);
+                }
+            });
             fork.name = fork.path.substring(fork.path.lastIndexOf('/') + 1, fork.path.length - 3);
-            fork.alive = false;
+            fork.alive = true;
             fork.messages = [];
             index = fork.index;
             if (index) {
@@ -29,7 +36,7 @@ function executionMonitor(forkOptions, config){
         if(fork.failOnStart){
          console.log("Unable to refork ", fork.path, fork.startErr);
         } else {
-            fork.proc = createSingleFork(fork);
+            createSingleFork(fork);
         }
     }
 
@@ -41,14 +48,6 @@ function executionMonitor(forkOptions, config){
             var self = this;
             try {
                 this.alive = false;
-                this.proc.removeAllListeners();
-                this.proc.on('message', function (data) {
-                    self.alive = true;
-                    //console.log(adaptorFork.name + " " + JSON.stringify(data));
-                    if (!data.ok) {
-                        self.messages.push(data);
-                    }
-                });
                 this.proc.send({data: 'Are you ok?'});
             }
             catch (err) {
@@ -56,12 +55,8 @@ function executionMonitor(forkOptions, config){
             }
 
             setTimeout(function () {
-                if(self.alive){
-                    setTimeout(function(){
-                        self.monitorFork();
-                    }, config.pingTimeout)
-                } else {
-                 restartFork(self);
+                if(!self.alive){
+                    restartFork(self);
                 }
             }, config.responseTimeout);
         }
@@ -91,9 +86,14 @@ function executionMonitor(forkOptions, config){
 
 
     this.monitorForks = function () {
+        var self = this;
         for (var key  in adaptorForks) {
             adaptorForks[key].monitorFork();
         }
+        setTimeout(function(){
+            process.stdout.write(".");
+            self.monitorForks();
+        }, config.pingTimeout)
     };
 
 
