@@ -670,6 +670,7 @@ function RedisComImpl(){
             for(var v in nodes){
                 if(nodes[v] == "mainGroup"){
                     callback(null,v);
+                    return ;
                 }
             }
             callback(new Error("No main group for " + nodeName), null);

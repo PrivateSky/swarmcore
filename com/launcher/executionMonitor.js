@@ -1,5 +1,6 @@
 
 var childForker = require('child_process');
+var fs = require("fs");
 
 function executionMonitor(forkOptions, config){
     var adaptorForks = {};
@@ -8,6 +9,12 @@ function executionMonitor(forkOptions, config){
     function createSingleFork(fork){
         try{
             fork.proc = childForker.fork(fork.path, null, forkOptions);
+            console.log("Watching ", fork.path);
+            fs.watchFile(fork.path, function(event, fileName){
+                console.log("File change detected, killing and restarting ", fork.path);
+                killFork(fork);
+            });
+
             fork.proc.on('message', function (data) {
                 fork.alive = true;
                 //console.log(adaptorFork.name + " " + JSON.stringify(data));
@@ -91,7 +98,7 @@ function executionMonitor(forkOptions, config){
             adaptorForks[key].monitorFork();
         }
         setTimeout(function(){
-            process.stdout.write(".");
+            //process.stdout.write(".");
             self.monitorForks();
         }, config.pingTimeout)
     };

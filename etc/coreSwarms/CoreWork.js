@@ -31,7 +31,7 @@ var codeUpdateSwarming = {
     reloadSwarm:{ //running in all adapters
         node:"All",
         code : function (){
-            console.log("Reloading ", this.reloadingSwarmName);
+            console.log("Reloading ", this.reloadingSwarmName + " in ", thisAdapter.nodeName);
             thisAdapter.nativeMiddleware.reloadSwarm(this.reloadingSwarmName);
         }
     }
