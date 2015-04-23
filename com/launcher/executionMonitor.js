@@ -10,10 +10,14 @@ function executionMonitor(forkOptions, config){
         try{
             fork.proc = childForker.fork(fork.path, null, forkOptions);
             console.log("Watching ", fork.path);
-            fs.watchFile(fork.path, function(event, fileName){
-                console.log("File change detected, killing and restarting ", fork.path);
-                killFork(fork);
-            });
+            if(!fork.watched){
+                fork.watched = true;
+                fs.watchFile(fork.path, function(event, fileName){
+                    console.log("File change detected, killing and restarting ", fork.path);
+                    killFork(fork);
+                });
+            }
+
 
             fork.proc.on('message', function (data) {
                 fork.alive = true;
