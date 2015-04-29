@@ -9,6 +9,9 @@ var fs = require("fs");
 var getSwarmESBCorePath = require("../index.js").getCorePath;
 
 
+var container = require("semantic-firewall").container;
+
+
 /* encapsulate as many details about communication, error recovery and distributed transactions
 *  different communication middleware and different tradeoffs on error recovery and transactions could be implemented
 * */
@@ -56,6 +59,7 @@ function RedisComImpl(){
     }
 
     function onRedisError(error){
+        container.outOfService('redisConnection');
         errLog("Redis error", error);
     }
 
@@ -76,6 +80,8 @@ function RedisComImpl(){
         } else {
             self.reloadAllSwarms();
         }
+
+
         self.redisReady = true;
 
         self.joinGroup(thisAdapter.mainGroup, true);
@@ -89,15 +95,15 @@ function RedisComImpl(){
             call();
         }
         pendingInitialisationCalls = null;
-        callResetCallBacks();
+
+        container.resolve("redisConnection",redisClient);
     }
 
     function onRedisReconnecting(event) {
         //cprint("Redis reconnecting attempt [" + event.attempt + "] with delay [" + event.delay + "] !");
-        pubsubRedisClient.retry_delay += 1000;
-        //TODO: add in configuration
-        if(event.attempt > 50){
-            process.exit(-3);
+
+        if(pubsubRedisClient.retry_delay < 30000){
+            pubsubRedisClient.retry_delay += 1000;
         }
         localLog("redis", "Redis reconnecting attempt [" + event.attempt + "] with delay [" + event.delay + "] !", event);
     }
@@ -297,7 +303,7 @@ function RedisComImpl(){
             redisClient.hdel.async(redisKey,swarm.meta.phaseIdentity);
             decNodeUse(group,swarm.meta.targetNodeName);
         } else {
-            errLog("Failed to remove saved swarm execution");
+            logger.error("Failed to remove saved swarm execution");
         }
     }
 
@@ -321,7 +327,7 @@ function RedisComImpl(){
             if(counter < MAX_REBORNCOUNTER){
                 sendSwarm(state);
             } else {
-                errLog("Exceptional error: a swarm got restarted ", MAX_REBORNCOUNTER, " times and will not be restarted anymore. Developer intervention is required to understand what happens!");
+                logger.error("Exceptional error: a swarm got restarted ", MAX_REBORNCOUNTER, " times and will not be restarted anymore. Developer intervention is required to understand what happens!");
             }
         }).wait(swarm);
     }
@@ -369,7 +375,7 @@ function RedisComImpl(){
                                 o.targetNodeName = undefined;
                                 handleStale(g, p, o.meta.stage);
                             }catch(err){
-                                errLog("Wrong swarm serialisation of " + oldPrevious[g][p], err);
+                                logger.error("Wrong swarm serialisation of " + oldPrevious[g][p], err);
                             }
                         }
                     }
@@ -430,7 +436,7 @@ function RedisComImpl(){
             saveHistoricNodeInfo(thisAdapter.nodeName, "executedPhasesCounter", totalPhaseCounter);
             callback.apply(swarm);
         } else {
-            logErr("Limit exceeded, throttling requests!");
+            logger.throttling("Limit exceeded, throttling requests!");
         }
     }
 
@@ -451,7 +457,7 @@ function RedisComImpl(){
                 var msg = JSON.parse(message);
 
             } catch(err){
-                errLog("Malformed JSON response received\n" + message, err );
+                logger.error("Malformed JSON response received\n" + message, err );
             }
 
             try{
@@ -461,7 +467,7 @@ function RedisComImpl(){
                     callback(msg);
                 }
             }catch(err){
-                errLog("Unknown error when executing\n" + message, err );
+                logger.error("Unknown error when executing\n" + message, err );
             }
 
         });
@@ -486,20 +492,20 @@ function RedisComImpl(){
                     var success = waitToForceblyCleanNode.async(specificNodeName);
                     (function(success){
                             if(!success){
-                                errLog("Dropping swarm " + swarm.meta.swarmingName + " targeted towards dead node or group: " + swarm.meta.targetNodeName);
+                                logger.logError("Dropping swarm " + swarm.meta.swarmingName + " targeted towards dead node or group: " + swarm.meta.targetNodeName);
                                 return ;
                             }
                             if(swarm.meta.targetGroup){
                                 var alternative = chooseOneFromGroup.async(swarm.meta.targetGroup);
                                 (function(alternative){
                                     if(alternative  == "null"){
-                                        errLog("Dropping swarm " + swarm.meta.swarmingName + " targeted towards dead node: " + specificNodeName);
+                                        logger.logError("Dropping swarm " + swarm.meta.swarmingName + " targeted towards dead node: " + specificNodeName);
                                     } else {
                                         doSend(alternative);
                                     }
                                 }).wait(alternative);
                             } else {
-                                errLog("Dropping swarm " + swarm.meta.swarmingName + " targeted towards dead node: " + specificNodeName);
+                                logger.logError("Dropping swarm " + swarm.meta.swarmingName + " targeted towards dead node: " + specificNodeName);
                             }
                     }).wait(success);
                 }
@@ -583,9 +589,10 @@ function RedisComImpl(){
             } else {
                 callback(null,"null");
                 if(groupName != "Logger"){
-                    errLog("Missing any node in group [" + groupName + "]\n")
+                    logger.logError("Missing any node in group [" + groupName + "]\n")
                 } else{
-                    localLog("missing","Error: Missing any logger!!!\n");
+                    container.outOfService("networkLogger");
+                    //localLog("missing","Error: Missing any logger!!!\n");
                 }
             }
         }).wait(values);
@@ -760,7 +767,7 @@ function RedisComImpl(){
             }
         }
         catch (err) {
-            logErr("Failed uploading swarm file ", err);
+            logger.hardError("Failed uploading swarm file ", err);
         }
         return true;
     }
@@ -828,6 +835,7 @@ function RedisComImpl(){
 }
 
 var swarmComImpl = null;
+
 exports.implemenation = (function(){
         if(!swarmComImpl){
         swarmComImpl = new RedisComImpl();
@@ -840,3 +848,7 @@ redisClient = function(){
     return thisAdapter.nativeMiddleware.privateRedisClient;
 }
 
+
+container.service("swarmingIsWorking", ['redisConnection'], function(outofService, connection){
+
+})

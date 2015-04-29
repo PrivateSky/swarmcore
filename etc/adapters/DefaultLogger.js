@@ -4,7 +4,6 @@
 var core = require ("../../lib/SwarmCore.js");
 thisAdapter = core.createAdapter("Logger");
 
-doLog = function(level, nodeName, message){
- console.log(level, nodeName, message);
- localLog("NetworkLog",message);
+recordLog = function(record){
+ localLog("NetworkLog",record);
 }

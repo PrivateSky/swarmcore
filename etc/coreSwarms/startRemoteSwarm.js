@@ -34,7 +34,7 @@ var startRemoteSwarm =
         this.arguments      = arguments;
 
         if(!this.meta.outletId){
-            logErr("No outletId was given when starting remote swarm " + swarmingName);
+            logger.info("No outletId was given when starting remote swarm " + swarmingName);
         }
 
         this.swarm("findTenant");
@@ -48,7 +48,7 @@ var startRemoteSwarm =
                 cprint("Launching remote swarm " + this.swarmingName + " in " + this.targetAdapter);
                 this.swarm("launch", this.targetAdapter);
             } else{
-                logErr("Dropping the request of starting swarm \"" +  this.swarmingName + "\" in a unknown session " + this.targetSession);
+                logger.error("Dropping the request of starting swarm \"" +  this.swarmingName + "\" in a unknown session " + this.targetSession);
             }
         }
     },

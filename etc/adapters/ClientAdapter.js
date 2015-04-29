@@ -108,13 +108,13 @@ function ClientTcpServer(port, host) {
         }
         serverSocketAvailable = false;
         socketDetails = log;
-        logErr("Client adapter server error : " + log);
+        logger.info("Client adapter server error : " + log);
     });
 
     this.server.on('close', function (er) {
         serverSocketAvailable = false;
         socketDetails = "Server closed.";
-        logErr("Client adapter close .");
+        logger.info("Client adapter close .");
     });
 }
 

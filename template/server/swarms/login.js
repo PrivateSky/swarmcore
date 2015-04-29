@@ -54,7 +54,7 @@ var loginSwarming = {
         node:"EntryPoint",
         code : function (){
             sessionsRegistry.disableOutlet(this.meta.outletId);
-            logInfo("Failed login for " + this.userId );
+            logger.info("Failed login for " + this.userId );
             this.home("failed");
         }
     }, 

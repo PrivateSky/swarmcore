@@ -29,7 +29,7 @@ var benchmark =     //benchmark example!
         node:"Launcher",
         code : function (){
             this.totalCount = parseInt(this.totalCount);
-            logInfo("Starting benchmark for " + this.totalCount + " phases!");
+            cprint("Starting benchmark for " + this.totalCount + " phases!");
             var phases = this.totalCount /8; //launch in 4 nodes 2 consecutive phases
             this.maxCount = this.totalCount / 2;
 
