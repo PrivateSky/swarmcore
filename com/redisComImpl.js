@@ -499,7 +499,7 @@ function RedisComImpl(){
                                 var alternative = chooseOneFromGroup.async(swarm.meta.targetGroup);
                                 (function(alternative){
                                     if(alternative  == "null"){
-                                        logger.logError("Dropping swarm " + swarm.meta.swarmingName + " targeted towards dead node: " + specificNodeName);
+                                        logger.warning("Dropping swarm " + swarm.meta.swarmingName + " targeted towards dead node: " + specificNodeName);
                                     } else {
                                         doSend(alternative);
                                     }
@@ -572,7 +572,7 @@ function RedisComImpl(){
                 if(v != groupName){
                     sortable.push([v, parseInt(values[v])]);
                 } else {
-                    console.log("Group found as member in group...")
+                    logger.warning("Group " + v + " found as member in group: " + groupName );
                 }
             }
             if(sortable.length >0){
@@ -592,6 +592,7 @@ function RedisComImpl(){
                     logger.logError("Missing any node in group [" + groupName + "]\n")
                 } else{
                     container.outOfService("networkLogger");
+                    console.log("Warning: Logger adapter is out of service...");
                     //localLog("missing","Error: Missing any logger!!!\n");
                 }
             }
