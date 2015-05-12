@@ -83,7 +83,7 @@ exports.initFileBusNode = function(storageName, cfgBindAddress, cfgPort, tempFol
 
         thisAdapter.observeGlobal(requestUUID, swarm, phase, targetNode);
         var url = fileBusInstance.getStorageUrl(otherStorageName)+"/"+requestUUID;
-        console.log("Starting transfer: ", requestUUID, " to ", url);
+        console.log("Starting transfer of file : ",localFilePath,  " to ", url);
         fs.createReadStream(localFilePath).pipe(request.put(url));
         return requestUUID;
     }
