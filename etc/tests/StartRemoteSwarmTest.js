@@ -5,7 +5,7 @@
 
 var adapterPort         = 3000;
 var adapterHost         = "localhost";
-var util                = require("swarmutil");
+var util                = require("../../nodeClient/nodeClient.js");
 var assert              = require('assert');
 
 globalVerbosity = true;
