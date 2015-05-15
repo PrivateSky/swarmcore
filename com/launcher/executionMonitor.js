@@ -8,7 +8,7 @@ function executionMonitor(forkOptions, config){
 
     function createSingleFork(fork){
         try{
-            fork.proc = childForker.fork(fork.path, null, forkOptions);
+            fork.proc = childForker.fork(fork.path, fork.forkArgs, forkOptions);
             console.log("Watching ", fork.path);
             if(!fork.watched){
                 fork.watched = true;
@@ -78,6 +78,7 @@ function executionMonitor(forkOptions, config){
             fork.config = itemConfig;
             fork.index = index;
             fork.path = swarmPath;
+            fork.forkArgs = itemConfig.args;
             if(createSingleFork(fork)){
                 adaptorForks[fork.name] = fork;
                 fork.monitorFork = monitorSingleFork.bind(fork);

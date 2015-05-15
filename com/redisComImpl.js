@@ -60,7 +60,7 @@ function RedisComImpl(){
 
     function onRedisError(error){
         container.outOfService('redisConnection');
-        errLog("Redis error", error);
+        logger.error("Redis error", error);
     }
 
     bindAllMembers = function(object){
@@ -589,7 +589,7 @@ function RedisComImpl(){
             } else {
                 callback(null,"null");
                 if(groupName != "Logger"){
-                    logger.logError("Missing any node in group [" + groupName + "]\n")
+                    logger.info("Missing any node in group [" + groupName + "]\n")
                 } else{
                     container.outOfService("networkLogger");
                     console.log("Warning: Logger adapter is out of service...");
