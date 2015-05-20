@@ -523,7 +523,9 @@ function RedisComImpl(){
                 (function(nodeMainGroup){
                     swarm.meta.targetGroup = nodeMainGroup;
                     doSend(swarm.meta.targetNodeName);
-                }).wait(nodeMainGroup);
+                }).wait(nodeMainGroup, function(err){
+                        console.log("Failing to send swarm ", swarm.meta.swarmingName,"towards invalid node ", swarm.meta.targetNodeName);
+                    });
             } else {
                 assertNodeInGroup(swarm.meta.targetNodeName, swarm.meta.targetGroup);
                 doSend(swarm.meta.targetNodeName);
