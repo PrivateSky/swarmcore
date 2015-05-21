@@ -98,7 +98,7 @@ function startAdapters(monitor, endCallback){
             var items = executionSteps[currentStep];
             if(items){
                 for(var v = 0, len = items.length; v < len;v++){
-                    monitor.createFork(items[v]);
+                    monitor.createFork(items[v], v);
                 }
                 setTimeout(doNextStep, config.stepsDelay);
             } else {

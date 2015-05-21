@@ -5,8 +5,8 @@ var fs = require("fs");
 function executionMonitor(forkOptions, config){
     var adaptorForks = {};
 
-
-    function createSingleFork(fork){
+    var forkCounter = 0;
+    function createSingleFork(fork, position){
         try{
             fork.proc = childForker.fork(fork.path, fork.forkArgs, forkOptions);
             console.log("Watching ", fork.path);
@@ -26,10 +26,11 @@ function executionMonitor(forkOptions, config){
                     fork.messages.push(data);
                 }
             });
-            fork.name = fork.path.substring(fork.path.lastIndexOf('/') + 1, fork.path.length - 3);
+            fork.name = "Fork[" + forkCounter + "]" + fork.path.substring(fork.path.lastIndexOf('/') + 1, fork.path.length - 3);
             fork.alive = true;
             fork.messages = [];
             index = fork.index;
+
             if (index) {
                 fork.name = '[' + index + '] ' + fork.name;
             }
@@ -51,7 +52,7 @@ function executionMonitor(forkOptions, config){
         }
     }
 
-    this.createFork = function(itemConfig) {
+    this.createFork = function(itemConfig, position) {
 
         var swarmPath = itemConfig.path;
 
@@ -79,7 +80,8 @@ function executionMonitor(forkOptions, config){
             fork.index = index;
             fork.path = swarmPath;
             fork.forkArgs = itemConfig.args;
-            if(createSingleFork(fork)){
+            forkCounter++;
+            if(createSingleFork(fork, position)){
                 adaptorForks[fork.name] = fork;
                 fork.monitorFork = monitorSingleFork.bind(fork);
             }

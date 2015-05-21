@@ -1,7 +1,7 @@
 {
   "name": "swarmcore",
   "description": "Elements for creating swarm 2.0 adapters .",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "homepage": "https://github.com/salboaie/swarmcore",
   "author": {
     "name": "Alboaie Sinica",
@@ -41,7 +41,7 @@
       "url": "http://www.gnu.org/licenses/lgpl.html"
     }
   ],
-  "_id": "swarmcore@2.2.5",
+  "_id": "swarmcore@2.2.6",
   "dependencies" : {
     "q" : "=1.2.0"  ,
     "asynchron" :     ">=1.0.10",
