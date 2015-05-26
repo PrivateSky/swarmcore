@@ -21,7 +21,7 @@ SwarmCore includes core functionality for working with swarms version 2.0. Is a 
 
 
 Warning: this is an experimental version. It is not yet ready for production if you are not a swarm core developer.
-For production code, you could use the old SwarmESB and SwarmUtil module.
+For production code, you could use the old SwarmESB and SwarmUtil module (check branches).
 
 SwarmCore will become a module in npm, but for now follow use the following install instructions:
 

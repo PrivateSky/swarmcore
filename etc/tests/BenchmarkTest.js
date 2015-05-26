@@ -1,6 +1,5 @@
 var adapterPort         = 3000;
 var adapterHost         = "localhost";
-var util                = require("swarmutil");
 var assert              = require('assert');
 var util                = require("../../nodeClient/nodeClient.js");
 
