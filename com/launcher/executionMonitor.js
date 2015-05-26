@@ -2,7 +2,7 @@
 var childForker = require('child_process');
 var fs = require("fs");
 
-function executionMonitor(forkOptions, config){
+function executionMonitor(forkOptions, config, onRestartCallback){
     var adaptorForks = {};
 
     var forkCounter = 0;
@@ -34,6 +34,7 @@ function executionMonitor(forkOptions, config){
             if (index) {
                 fork.name = '[' + index + '] ' + fork.name;
             }
+            console.log("New Launcher fork: ", fork.name);
             return true;
         }catch(err){
             fork.failOnStart = true;
@@ -44,6 +45,7 @@ function executionMonitor(forkOptions, config){
     }
 
     function restartFork(fork) {
+        onRestartCallback(fork);
         killFork(fork);
         if(fork.failOnStart){
          console.log("Unable to refork ", fork.path, fork.startErr);
@@ -100,14 +102,17 @@ function executionMonitor(forkOptions, config){
 
 
     this.monitorForks = function () {
+        var counter = 0;
         var self = this;
         for (var key  in adaptorForks) {
             adaptorForks[key].monitorFork();
+            counter++;
         }
         setTimeout(function(){
             //process.stdout.write(".");
             self.monitorForks();
         }, config.pingTimeout)
+        return counter;
     };
 
 
@@ -125,8 +130,8 @@ function executionMonitor(forkOptions, config){
 }
 
 
-exports.createExecutionMonitor = function(forkOptions, config){
-    return new executionMonitor(forkOptions, config);
+exports.createExecutionMonitor = function(forkOptions, config, onRestartCallback){
+    return new executionMonitor(forkOptions, config, onRestartCallback);
 }
 
 

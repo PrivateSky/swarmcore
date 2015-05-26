@@ -116,9 +116,15 @@ function startAdapters(monitor, endCallback){
     Start Launcher
  */
 
+var subprocessesCounter = 0;
+var globalAdaptersRestartsCounter = 0;
+function onRestart(fork){
+    globalAdaptersRestartsCounter++;
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> restart:", globalAdaptersRestartsCounter);
+}
 
 config = configure();
-var monitor = require ("../../com/launcher/executionMonitor.js").createExecutionMonitor(forkOptions, config);
+var monitor = require ("../../com/launcher/executionMonitor.js").createExecutionMonitor(forkOptions, config, onRestart);
 process.on('exit',      monitor.killAllForks);
 process.on('SIGTERM',   monitor.killAllForks);
 process.on('SIGHUP',    monitor.killAllForks);
@@ -126,5 +132,15 @@ process.on('SIGINT',    monitor.killAllForks);
 startAdapters(monitor, function(){
     console.log("Finally creating launcher adapter...");
     core.createAdapter("Launcher");
-    monitor.monitorForks();
+    subprocessesCounter = monitor.monitorForks();
 });
+
+
+
+getLauncherStatus = function(){
+    return {
+        "launcherId":thisAdapter.nodeName,
+        "adaptersCounter": subprocessesCounter,
+        "restartsCounter": globalAdaptersRestartsCounter
+    }
+}
