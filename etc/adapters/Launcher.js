@@ -136,7 +136,6 @@ startAdapters(monitor, function(){
 });
 
 
-
 getLauncherStatus = function(){
     return {
         "launcherId":thisAdapter.nodeName,
@@ -144,3 +143,5 @@ getLauncherStatus = function(){
         "restartsCounter": globalAdaptersRestartsCounter
     }
 }
+
+console.log("Launcher: ", getLauncherStatus , process.env.SWARM_PATH);

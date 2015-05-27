@@ -208,3 +208,13 @@ SwarmClient.prototype.login = function (sessionId,user,pass) {
     tcpUtil.writeObject(this.sock,cmd);
 }
 
+
+/**
+ *
+ * @param sessionId
+ * @param user
+ * @param pass
+ */
+SwarmClient.prototype.logout = function () {
+    this.sock.end();
+}
