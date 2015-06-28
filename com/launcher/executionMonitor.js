@@ -61,7 +61,7 @@ function executionMonitor(forkOptions, config, onRestartCallback){
         function monitorSingleFork(){
             var self = this;
             try {
-                this.alive = false;
+                this.alive = true;
                 this.proc.send({data: 'Are you ok?'});
             }
             catch (err) {
