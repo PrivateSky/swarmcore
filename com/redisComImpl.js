@@ -790,6 +790,7 @@ function RedisComImpl(){
             }
             callWaitingForReady();
             registerInSharedDB();
+            container.resolve("swarmsLoaded", {ready:true});
         }).wait(swarmCode);
     }
 
@@ -852,6 +853,6 @@ redisClient = function(){
 }
 
 
-container.service("swarmingIsWorking", ['redisConnection'], function(outofService, connection){
+container.service("swarmingIsWorking", ['redisConnection', 'swarmsLoaded'], function(outofService, connection){
 
 })

@@ -13,7 +13,7 @@
 make swarmHub global variable available (for the last client open only, usually enough ..)
 */
 
-require("../webClient/SwarmHub.js");
+require("./SwarmHub.js");
 
 var tcpUtil = require("../lib/TCPSockUtil.js");
 var debug = require("../lib/SwarmDebug.js");
