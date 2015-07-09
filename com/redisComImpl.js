@@ -704,7 +704,7 @@ function RedisComImpl(){
         } else {
             self.uploadDescriptionsRequired = true;
         }
-    }
+    };
 
     function uploadDescriptionsImpl() {
         function validJsFile(fullFileName){
@@ -792,14 +792,14 @@ function RedisComImpl(){
             registerInSharedDB();
             container.resolve("swarmsLoaded", {ready:true});
         }).wait(swarmCode);
-    }
+    };
 
     this.reloadSwarm = function(swarmName){
         var swarmCode = redisClient.hget.async(makeRedisKey("system", "code"), swarmName);
         (function (swarmCode) {
             dslUtil.repository.compileSwarm(swarmName, swarmCode);
         }).wait(swarmCode);
-    }
+    };
 
 
 
@@ -811,7 +811,7 @@ function RedisComImpl(){
                 "target":target
             };
         redisClient.hset(storageKey, globalId, J(observer));
-    }
+    };
 
     this.notifyGlobal = function(globalId, __payload){
         var storageKey =  makeRedisKey("globalObservers");
@@ -820,7 +820,7 @@ function RedisComImpl(){
             observer.swarm.__payload = __payload;
             continueSwarm(observer.swarm, observer.phaseName, observer.target);
         }).wait(observer);
-    }
+    };
 
     var readyWaiting = [];
     function callWaitingForReady(){
