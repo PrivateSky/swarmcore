@@ -144,4 +144,4 @@ getLauncherStatus = function(){
     }
 }
 
-console.log("Launcher: ", getLauncherStatus , process.env.SWARM_PATH);
+//console.log("Launcher: ", getLauncherStatus , process.env.SWARM_PATH);

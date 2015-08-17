@@ -1,6 +1,6 @@
 /**
  *
- * Swarm used by WebClientAdapter to send responses back
+ * Obsolete! use the newest file bus mechanism implemenetd with RedisRelay. This files is planed to be deleted soon...
  *
  */
 var FileBus = {

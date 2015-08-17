@@ -3,7 +3,7 @@
 
  */
 
-var fileBus = require("../lib/FileBusUtil.js");
+var fileBus = require("../../lib/FileBusUtil.js");
 var fs = require("fs");
 
 var http = require('http');

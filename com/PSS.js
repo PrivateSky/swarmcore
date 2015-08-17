@@ -1,6 +1,9 @@
 /**
- * Created by salbo_000 on 04/11/2014.
+ * Created by salbo_000 on 04/11/2014. (swarmComImpl)
+ * Modified to use PubSubShare module (PSS) to implement executable choreographies between organisations
  */
+
+
 //All proper adapters using SwarmCore should provide a set of functions in the globalObject: swarmComImpl
 
 var redis   = require("redis");
@@ -11,16 +14,21 @@ var getSwarmESBCorePath = require("../index.js").getCorePath;
 
 var container = require("semantic-firewall").container;
 
+var pss = require("pubsubshare");
+
 
 /* encapsulate as many details about communication, error recovery and distributed transactions
 *  different communication middleware and different tradeoffs on error recovery and transactions could be implemented
 * */
-function RedisComImpl(){
+function CommunicationImpl(){
     var self = this;
+
     var redisHost = thisAdapter.config.Core.redisHost;
     var redisPort = thisAdapter.config.Core.redisPort;
-    var RateLimiter = require('limiter2').RateLimiter;
+    var redisPass = thisAdapter.config.Core.redisPass;
 
+    var RateLimiter = require('limiter2').RateLimiter;
+    var redisClient = null;
     this.swarmACL = null;
 
     var throttlerConfig = {
@@ -31,23 +39,11 @@ function RedisComImpl(){
     loadThrottlerConfig(throttlerConfig, "Core");
     loadThrottlerConfig(throttlerConfig, thisAdapter.mainGroup);
 
-    var MAX_REBORNCOUNTER = 100;
+    var MAX_REBORNCOUNTER = 100; //how many times a swarm is restarted...
 
-    var pubsubRedisClient = redis.createClient(redisPort, redisHost);
-    var redisClient  = null;
+    var keysFolder = process.env.SWARM_PATH + "/keys";
 
-    pubsubRedisClient.retry_delay = 1000;
-    pubsubRedisClient.max_attempts = 100;
-    pubsubRedisClient.on("error", onRedisError);
-    pubsubRedisClient.on("ready", function(){
-        redisClient = redis.createClient(redisPort, redisHost);
-        self.privateRedisClient = redisClient;
-        redisClient.retry_delay = 2000;
-        redisClient.max_attempts = 20;
-        redisClient.on("error", onRedisError);
-        redisClient.on("reconnecting", onRedisReconnecting);
-        redisClient.on("ready", onCmdRedisReady);
-    });
+    var pubsubRedisClient = pss.createClient(redisPort, redisHost, redisPass, keysFolder, onCmdRedisReady);
 
     var pendingInitialisationCalls = [];
 
@@ -58,10 +54,6 @@ function RedisComImpl(){
         limiter = new RateLimiter(limit, timeUnit);
     }
 
-    function onRedisError(error){
-        container.outOfService('redisConnection');
-        logger.error("Redis error", error);
-    }
 
     bindAllMembers = function(object){
         for(var property in object){
@@ -71,7 +63,24 @@ function RedisComImpl(){
         }
     }
 
-    function onCmdRedisReady(error){
+    this.shareFile = function (filePath, callback) {
+        pubsubRedisClient.shareFile(filePath, callback);
+    }
+
+
+    this.download = function (transferId, filePath, callback) {
+        pubsubRedisClient.download(transferId, filePath, callback);
+    }
+
+    function onCmdRedisReady(error, connection){
+
+        if(error){
+            console.log("Unexpected REDIS connection error:", error, error.stack);
+            container.outOfService("redisConnection");
+            return ;
+        }
+        redisClient = connection;
+
         console.log("Node " + thisAdapter.nodeName + " ready for swarms!");
         bindAllMembers(redisClient);
         if(self.uploadDescriptionsRequired){
@@ -99,16 +108,7 @@ function RedisComImpl(){
         container.resolve("redisConnection",redisClient);
     }
 
-    function onRedisReconnecting(event) {
-        //cprint("Redis reconnecting attempt [" + event.attempt + "] with delay [" + event.delay + "] !");
 
-        if(pubsubRedisClient.retry_delay < 30000){
-            pubsubRedisClient.retry_delay += 1000;
-        }
-        localLog("redis", "Redis reconnecting attempt [" + event.attempt + "] with delay [" + event.delay + "] !", event);
-    }
-
-    pubsubRedisClient.on("reconnecting", onRedisReconnecting);
 
     /* generate swarm message identity*/
     this.createPhaseIdentity = function(swarm){
@@ -447,19 +447,21 @@ function RedisComImpl(){
 
     /* wait for swarms on the queue named uuidName*/
     this.subscribe = function(uuidName, callback){
-        pubsubRedisClient.subscribe(uuidName);
-        pubsubRedisClient.on("subscribe", function(){
+        pubsubRedisClient.subscribe(uuidName, function (message, channel){
 
-        });
-
-        pubsubRedisClient.on("message", function (channel, message){
+            var msg = message;
+            /*
+            console.log("Got message in ", channel, message, typeof(message));
             try{
                 var msg = JSON.parse(message);
 
             } catch(err){
                 logger.error("Malformed JSON response received\n" + message, err );
-            }
+            }*/
 
+            if(!message){
+                throw new Error("Wrong message from " + channel);
+            }
             try{
                 if(homeHandler && msg.meta.honeyRequest){
                     homeHandler(msg);
@@ -469,7 +471,6 @@ function RedisComImpl(){
             }catch(err){
                 logger.error("Unknown error when executing\n" + message, err );
             }
-
         });
     }
 
@@ -486,7 +487,7 @@ function RedisComImpl(){
                 persistSwarmState.async(swarm);
                 incNodeUse(swarm.meta.targetGroup, specificNodeName);
             }
-            redisClient.publish(specificNodeName, J(swarm), function(error,result){
+            pubsubRedisClient.publish(specificNodeName, J(swarm), function(error,result){
                 if(result == 0){
                     // the node is down, force cleaning and retry the send
                     var success = waitToForceblyCleanNode.async(specificNodeName);
@@ -842,17 +843,19 @@ var swarmComImpl = null;
 
 exports.implemenation = (function(){
         if(!swarmComImpl){
-        swarmComImpl = new RedisComImpl();
+        swarmComImpl = new CommunicationImpl();
         }
         return swarmComImpl;
     })();
 
 
 redisClient = function(){
-    return thisAdapter.nativeMiddleware.privateRedisClient;
+    return swarmComImpl.privateRedisClient;
 }
 
 
-container.service("swarmingIsWorking", ['redisConnection', 'swarmsLoaded'], function(outofService, connection, swarmsLoaded){
-        return connection && swarmsLoaded;
+container.service("swarmingIsWorking", ['redisConnection', 'swarmsLoaded'], function(outofService, redisConnection, swarmsLoaded){
+    swarmComImpl.privateRedisClient = redisConnection;
+    return redisConnection && swarmsLoaded;
 })
+

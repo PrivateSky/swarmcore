@@ -1,3 +1,5 @@
+/* OBSOLETE, for review and proposed for deletion */
+
 var adapterPort         = 3000;
 var adapterHost         = "localhost";
 var assert              = require('assert');

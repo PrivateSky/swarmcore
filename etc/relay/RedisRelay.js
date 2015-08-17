@@ -11,7 +11,7 @@
 
 
 
-var psc = require("pubsubchor");
+var psc = require("pubsubshare");
 
 var program = require('commander');
 
@@ -24,23 +24,46 @@ program
     .option('-u,-url <url>', 'public url, eg www.example.com:3000')
     .option('-f,-folder <folder>', 'keys folder')
     .option('-s,-share <share>', 'share folder')
+    .option('-w,-passWord <share>', 'redis password')
     .parse(process.argv);
 
 
-if(!program.Name || !program.Redis || !program.Port || !program.url || !program.folder || !program.share){
-    console.log(program);
+if(!program.Name || !program.Redis || !program.Port || !program.Url){
+    //console.log(program);
     program.help();
     process.exit();
 }
 
-var arr = progam.Url.split(":");
+var keysFolder = program.Folder;
+var shareFolder = program.Share;
+var redisPassword = program.PassWord;
+
+var baseFolder = process.env.SWARM_PATH;
+if(!baseFolder){
+    baseFolder = "./";
+}
+
+if(!program.Folder){
+    keysFolder = baseFolder+ "/keys";
+}
+
+if(!program.Share){
+    shareFolder = baseFolder+ "/sharedFolder";
+}
+
+var arr = program.Url.split(":");
 var publicHost = arr[0];
 var publicPort = arr[1];
 if(!publicPort){
     publicPort = 80;
 }
 
-console.log(program.Name, program.Redis, program.Port, publicPort, publicHost, program.Folder, program.Share);
-//psc.createRelay(program.Name, program.Redis, program.Port, publicPort, publicHost, program.Folder, program.Share);
+console.log("Starting a redis relay for swarm communication between nodes. Public url is: ", program.Url);
+/* eyJ1cmwiOiJsb2NhbGhvc3Q6MzMwMDAiLCJjb2RlIjoiUmpZeksxazVWMmRGTjFGT1lXYzlQUW89Iiwia2V5IjoiVjNkTlVEYzVWemhZZEc0d2QzYzlQUW89In0= */
+psc.createRelay(program.Name, program.Redis, program.Port, program.Password, publicHost, publicPort, keysFolder, shareFolder, function(err){
+    if(err){
+        console.log("Redis Relay error:", err);
+    }
+});
 
 

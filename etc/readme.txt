@@ -8,4 +8,4 @@ log.js for logging.
 
 
 
-For more advanced cases of customisation, check our comercial offer.
+For more advanced cases of customisation, check our commercial offer.
