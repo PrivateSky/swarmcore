@@ -9,8 +9,6 @@ var codeUpdateSwarming = {
         name:"CoreWork.js",
         debug:false
     },
-    vars:{
-    },
     swarmChanged:function(swarmName){
         this.reloadingSwarmName = swarmName;
         this.broadcast("reloadSwarm");
@@ -35,6 +33,6 @@ var codeUpdateSwarming = {
             thisAdapter.nativeMiddleware.reloadSwarm(this.reloadingSwarmName);
         }
     }
-};  /* s */
+};
 
 codeUpdateSwarming;

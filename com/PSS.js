@@ -43,7 +43,7 @@ function CommunicationImpl(){
 
     var keysFolder = process.env.SWARM_PATH + "/keys";
 
-    var pubsubRedisClient = pss.createClient(redisPort, redisHost, redisPass, keysFolder, onCmdRedisReady);
+    var pubsubRedisClient = pss.createClient(redisHost, redisPort, redisPass, keysFolder, onCmdRedisReady);
 
     var pendingInitialisationCalls = [];
 
@@ -72,6 +72,11 @@ function CommunicationImpl(){
         pubsubRedisClient.download(transferId, filePath, callback);
     }
 
+    this.unshare = function (transferId, callback) {
+        pubsubRedisClient.unshare(transferId, callback);
+    }
+
+
     function onCmdRedisReady(error, connection){
 
         if(error){
@@ -86,6 +91,7 @@ function CommunicationImpl(){
         if(self.uploadDescriptionsRequired){
             uploadDescriptionsImpl();
             registerInSharedDB();
+            container.resolve("swarmsLoaded", {ready:true});
         } else {
             self.reloadAllSwarms();
         }
@@ -734,6 +740,7 @@ function CommunicationImpl(){
                     if(fileName == ".DS_Store") return;
                     var fullFileName = getSwarmFilePath(descriptionsFolder + "/" + fileName);
                     fs.watchFile(fullFileName, function (event, chFileName) {
+
                         if (validJsFile(fullFileName) &&  uploadFile(fullFileName, fileName)) {
                             startSwarm("CoreWork.js", "swarmChanged", fileName);
                         }
@@ -780,6 +787,9 @@ function CommunicationImpl(){
     this.reloadAllSwarms = function () {
         var swarmCode = redisClient.hgetall.async(makeRedisKey("system", "code"));
         (function (swarmCode) {
+
+
+
             for (var i in swarmCode) {
                 try{
                     if(i != ".DS_Store"){
@@ -854,8 +864,7 @@ redisClient = function(){
 }
 
 
-container.service("swarmingIsWorking", ['redisConnection', 'swarmsLoaded'], function(outofService, redisConnection, swarmsLoaded){
+container.service("swarmingIsWorking", ['redisConnection', 'swarmsLoaded'], function(outOfService, redisConnection, swarmsLoaded){
     swarmComImpl.privateRedisClient = redisConnection;
-    return redisConnection && swarmsLoaded;
 })
 
