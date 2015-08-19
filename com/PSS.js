@@ -338,6 +338,15 @@ function CommunicationImpl(){
         }).wait(swarm);
     }
 
+    /*
+            dispatch a message that probably arrived from a relay
+     */
+    this.dispatch = function(channel, message, callback){
+        message.meta.targetGroup = channel;
+        sendSwarm(message);
+        callback(null, 1);
+    }
+
     var previousKnown = {};
     /*
         detect all swarm phases previously seen
@@ -480,6 +489,10 @@ function CommunicationImpl(){
         });
     }
 
+    function isFromAnotherOrganisation(name){
+        return name.trim()[0] == '!';
+    }
+
     /*
      * publish a swarm in the required queue
      * */
@@ -518,6 +531,20 @@ function CommunicationImpl(){
                 }
             });
         }
+
+        try{
+            if(swarm.meta.targetGroup && isFromAnotherOrganisation(swarm.meta.targetGroup)){
+                pubsubRedisClient.publish(swarm.meta.targetGroup, J(swarm), function(err,res){
+                    if(err){
+                        console.log("Failing to send a swarm towards remote organisation node: ", swarm.meta.targetGroup);
+                    }
+                })
+                return;
+            }
+        } catch(err){
+             console.log(err);
+        }
+
 
         if(!swarm.meta.targetNodeName){
             var targetNodeName  = chooseOneFromGroup.async(swarm.meta.targetGroup);

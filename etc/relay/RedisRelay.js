@@ -60,10 +60,23 @@ if(!publicPort){
 
 console.log("Starting a redis relay for swarm communication between nodes. Public url is: ", program.Url);
 /* eyJ1cmwiOiJsb2NhbGhvc3Q6MzMwMDAiLCJjb2RlIjoiUmpZeksxazVWMmRGTjFGT1lXYzlQUW89Iiwia2V5IjoiVjNkTlVEYzVWemhZZEc0d2QzYzlQUW89In0= */
-psc.createRelay(program.Name, program.Redis, program.Port, program.Password, publicHost, publicPort, keysFolder, shareFolder, function(err){
+var relay = psc.createRelay(program.Name, program.Redis, program.Port, program.Password, publicHost, publicPort, keysFolder, shareFolder, function(err){
     if(err){
         console.log("Redis Relay error:", err);
     }
 });
 
+var core = require ("../../lib/SwarmCore.js");
+thisAdapter = core.createAdapter("RedisChoreographyRelay");
+
+relay.doDispatch =  function(redis, channel, message, callback){
+    console.log("Dispatching for", channel);
+    try{
+        thisAdapter.nativeMiddleware.dispatch(channel, JSON.parse(message), callback);
+    } catch(err){
+        console.log("Invalid message from https server:", err.stack, message);
+    }
+
+    //redis.publish(channel, message, callback);
+}
 
