@@ -14,21 +14,21 @@
 var psc = require("pubsubshare");
 
 var program = require('commander');
+var ha   = require ('https-auto');
 
 program
     .version('1.0.1')
     .usage('[options] ')
-    .option('-n,-name <name>', 'organisation name')
     .option('-r,-redis <redis>', 'redis host name')
     .option('-p,-port <port>', 'redis port')
-    .option('-u,-url <url>', 'public url, eg www.example.com:3000')
+    .option('-o,-publicPort <publicPort>', 'publicPort ex: 9000')
     .option('-f,-folder <folder>', 'keys folder')
     .option('-s,-share <share>', 'share folder')
     .option('-w,-passWord <share>', 'redis password')
     .parse(process.argv);
 
 
-if(!program.Name || !program.Redis || !program.Port || !program.Url){
+if(!program.Redis || !program.Port || !program.PublicPort){
     //console.log(program);
     program.help();
     process.exit();
@@ -51,16 +51,10 @@ if(!program.Share){
     shareFolder = baseFolder+ "/sharedFolder";
 }
 
-var arr = program.Url.split(":");
-var publicHost = arr[0];
-var publicPort = arr[1];
-if(!publicPort){
-    publicPort = 80;
-}
+var organizationName = ha.getOrganizationName(keysFolder);
 
-console.log("Starting a redis relay for swarm communication between nodes. Public url is: ", program.Url);
-/* eyJ1cmwiOiJsb2NhbGhvc3Q6MzMwMDAiLCJjb2RlIjoiUmpZeksxazVWMmRGTjFGT1lXYzlQUW89Iiwia2V5IjoiVjNkTlVEYzVWemhZZEc0d2QzYzlQUW89In0= */
-var relay = psc.createRelay(program.Name, program.Redis, program.Port, program.Password, publicHost, publicPort, keysFolder, shareFolder, function(err){
+console.log("Starting a redis relay for swarm communication between nodes. Public port is: ", program.PublicPort);
+var relay = psc.createRelay(organizationName, program.Redis, program.Port, program.Password, '0.0.0.0', program.PublicPort, keysFolder, shareFolder, function(err){
     if(err){
         console.log("Redis Relay error:", err);
     }
