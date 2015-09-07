@@ -11,6 +11,7 @@ var dslUtil = require("../lib/SwarmDSL.js");
 var fs = require("fs");
 var getSwarmESBCorePath = require("../index.js").getCorePath;
 
+var core = require("../lib/SwarmCore.js");
 
 var container = require("semantic-firewall").container;
 
@@ -41,7 +42,7 @@ function CommunicationImpl(){
 
     var MAX_REBORNCOUNTER = 100; //how many times a swarm is restarted...
 
-    var keysFolder = process.env.SWARM_PATH + "/keys";
+    var keysFolder = core.getSecretFolder();
 
     var pubsubRedisClient = pss.createClient(redisHost, redisPort, redisPass, keysFolder, onCmdRedisReady);
 

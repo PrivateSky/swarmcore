@@ -15,6 +15,7 @@ var psc = require("pubsubshare");
 
 var program = require('commander');
 var ha   = require ('https-auto');
+var core = require ("../../lib/SwarmCore.js");
 
 program
     .version('1.0.1')
@@ -38,20 +39,24 @@ var keysFolder = program.Folder;
 var shareFolder = program.Share;
 var redisPassword = program.PassWord;
 
+var organizationName = ha.getOrganizationName(keysFolder);
 var baseFolder = process.env.SWARM_PATH;
+
+
+
+
 if(!baseFolder){
     baseFolder = "./";
 }
 
 if(!program.Folder){
-    keysFolder = baseFolder+ "/keys";
+    keysFolder = core.getSecretFolder();
 }
 
 if(!program.Share){
     shareFolder = baseFolder+ "/sharedFolder";
 }
 
-var organizationName = ha.getOrganizationName(keysFolder);
 
 console.log("Starting a redis relay for swarm communication between nodes. Public port is: ", program.PublicPort);
 var relay = psc.createRelay(organizationName, program.Redis, program.Port, program.Password, '0.0.0.0', program.PublicPort, keysFolder, shareFolder, function(err){
@@ -60,7 +65,7 @@ var relay = psc.createRelay(organizationName, program.Redis, program.Port, progr
     }
 });
 
-var core = require ("../../lib/SwarmCore.js");
+
 thisAdapter = core.createAdapter("RedisChoreographyRelay");
 
 relay.doDispatch =  function(redis, channel, message, callback){
