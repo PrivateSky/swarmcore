@@ -17,55 +17,36 @@ var program = require('commander');
 var ha   = require ('https-auto');
 var core = require ("../../lib/SwarmCore.js");
 
-
-
-
-/*
 program
     .version('1.0.1')
     .usage('[options] ')
-    .option('-r,-redis <redis>', 'redis host name')
-    .option('-p,-port <port>', 'redis port')
-    .option('-o,-publicPort <publicPort>', 'publicPort ex: 9000')
+    .option('-r,-redisHost <redis>', 'redis host name')
+    .option('-p,-redisPort <port>', 'redis port')
+    .option('-o,-relayPort <publicPort>', 'publicPort ex: 9000')
     .option('-f,-folder <folder>', 'keys folder')
     .option('-s,-share <share>', 'share folder')
     .option('-w,-passWord <share>', 'redis password')
     .parse(process.argv);
 
-*/
-
-
-/*
-if(!program.Redis || !program.Port || !program.PublicPort){
+if(!program.RedisHost || !program.RedisPort || !program.RelayPort){
     //console.log(program);
     program.help();
     process.exit();
 }
-*/
-
 var baseFolder = process.env.SWARM_PATH;
 if(!baseFolder){
     baseFolder = "./";
 }
+
 var keysFolder = core.getSecretFolder();
 var shareFolder= baseFolder+'/sharedFolder';
-
 var organizationName = ha.getOrganizationName(keysFolder);
-
-var config = ha.getConfigByName(keysFolder,'RedisRelay',function(err,config){
+console.log("Starting a redis relay for swarm communication between nodes. Relay port is: ", program.RelayPort);
+var relay = psc.createRelay(organizationName, program.RedisHost, program.RedisPort,program.PassWord , '0.0.0.0',program.RelayPort, keysFolder, shareFolder, function(err){
     if(err){
-        //TO be treated appropriately
-        console.log('An error occured while fetching the configuration for RedisRelay\n',err);
-        return;
+        console.log("Redis Relay error:", err);
     }
-    config = JSON.parse(config.toString());
 
-    console.log("Starting a redis relay for swarm communication between nodes. Relay port is: ", config.relayPort);
-    var relay = psc.createRelay(organizationName, config.redisHost, config.redisPort, config.Password, '0.0.0.0', config.relayPort, keysFolder, shareFolder, function(err){
-        if(err){
-            console.log("Redis Relay error:", err);
-        }
-    });
 
     thisAdapter = core.createAdapter("RedisChoreographyRelay");
 
@@ -79,8 +60,4 @@ var config = ha.getConfigByName(keysFolder,'RedisRelay',function(err,config){
 
         //redis.publish(channel, message, callback);
     }
-
 });
-
-
-
