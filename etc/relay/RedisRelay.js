@@ -17,6 +17,10 @@ var program = require('commander');
 var ha   = require ('https-auto');
 var core = require ("../../lib/SwarmCore.js");
 
+
+
+
+/*
 program
     .version('1.0.1')
     .usage('[options] ')
@@ -28,54 +32,55 @@ program
     .option('-w,-passWord <share>', 'redis password')
     .parse(process.argv);
 
+*/
 
+
+/*
 if(!program.Redis || !program.Port || !program.PublicPort){
     //console.log(program);
     program.help();
     process.exit();
 }
+*/
 
-var keysFolder = program.Folder;
-var shareFolder = program.Share;
-var redisPassword = program.PassWord;
-
-var organizationName = ha.getOrganizationName(keysFolder);
 var baseFolder = process.env.SWARM_PATH;
-
-
-
-
 if(!baseFolder){
     baseFolder = "./";
 }
+var keysFolder = core.getSecretFolder();
+var shareFolder= baseFolder+'/sharedFolder';
 
-if(!program.Folder){
-    keysFolder = core.getSecretFolder();
-}
+var organizationName = ha.getOrganizationName(keysFolder);
 
-if(!program.Share){
-    shareFolder = baseFolder+ "/sharedFolder";
-}
-
-
-console.log("Starting a redis relay for swarm communication between nodes. Public port is: ", program.PublicPort);
-var relay = psc.createRelay(organizationName, program.Redis, program.Port, program.Password, '0.0.0.0', program.PublicPort, keysFolder, shareFolder, function(err){
+var config = ha.getConfigByName(keysFolder,'RedisRelay',function(err,config){
     if(err){
-        console.log("Redis Relay error:", err);
+        //TO be treated appropriately
+        console.log('An error occured while fetching the configuration for RedisRelay\n',err);
+        return;
     }
+    config = JSON.parse(config.toString());
+
+    console.log("Starting a redis relay for swarm communication between nodes. Relay port is: ", config.relayPort);
+    var relay = psc.createRelay(organizationName, config.redisHost, config.redisPort, config.Password, '0.0.0.0', config.relayPort, keysFolder, shareFolder, function(err){
+        if(err){
+            console.log("Redis Relay error:", err);
+        }
+    });
+
+    thisAdapter = core.createAdapter("RedisChoreographyRelay");
+
+    relay.doDispatch =  function(redis, channel, message, callback){
+        console.log("Dispatching for", channel);
+        try{
+            thisAdapter.nativeMiddleware.dispatch(channel, JSON.parse(message), callback);
+        } catch(err){
+            console.log("Invalid message from https server:", err.stack, message);
+        }
+
+        //redis.publish(channel, message, callback);
+    }
+
 });
 
 
-thisAdapter = core.createAdapter("RedisChoreographyRelay");
-
-relay.doDispatch =  function(redis, channel, message, callback){
-    console.log("Dispatching for", channel);
-    try{
-        thisAdapter.nativeMiddleware.dispatch(channel, JSON.parse(message), callback);
-    } catch(err){
-        console.log("Invalid message from https server:", err.stack, message);
-    }
-
-    //redis.publish(channel, message, callback);
-}
 
