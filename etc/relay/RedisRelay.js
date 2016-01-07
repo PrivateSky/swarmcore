@@ -25,24 +25,49 @@ program
     .option('-o,-relayPort <publicPort>', 'publicPort ex: 9000')
     .option('-f,-folder <folder>', 'keys folder')
     .option('-s,-share <share>', 'share folder')
-    .option('-w,-passWord <share>', 'redis password')
+    .option('-w,-passWord <passWord>', 'redis password')
+    .option('-n,-orgName <orgName>', 'organization name')
     .parse(process.argv);
 
-if(!program.RedisHost || !program.RedisPort || !program.RelayPort){
+
+if(!program.RedisHost){
+    program.RedisHost="127.0.0.1";
+}
+
+if(!program.RedisPort){
+    program.RedisPort=6379;
+}
+
+if(!program.RelayPort){
+    program.RelayPort=9000;
+}
+
+var code = process.env['HTTPS_AUTOCONFIG_CODE'];
+if(!code && !program.OrgName){
     //console.log(program);
     program.help();
     process.exit();
 }
+
 var baseFolder = process.env.SWARM_PATH;
 if(!baseFolder){
     baseFolder = "./";
 }
 
 var keysFolder = core.getSecretFolder();
-var shareFolder= baseFolder+'/sharedFolder';
-var organizationName = ha.getOrganizationName(keysFolder);
+var shareFolder = baseFolder+'/sharedFolder';
+var organizationName = "OrganizationNotConfigured";
+var httpsEnabled = true;
+if (program.OrgName) {
+    organizationName = program.OrgName;
+    httpsEnabled = false;
+}
+else {
+    organizationName = ha.getOrganizationName(keysFolder);
+}
+
 console.log("Starting a redis relay for swarm communication between nodes. Relay port is: ", program.RelayPort);
-var relay = psc.createRelay(organizationName, program.RedisHost, program.RedisPort,program.PassWord , '0.0.0.0',program.RelayPort, keysFolder, shareFolder, function(err){
+var relay = psc.createRelay(httpsEnabled, organizationName, program.RedisHost, program.RedisPort,program.PassWord , '0.0.0.0',program.RelayPort, keysFolder, shareFolder, function(err){
     if(err){
         console.log("Redis Relay error:", err);
     }
