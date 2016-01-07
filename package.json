@@ -1,7 +1,7 @@
 {
   "name": "swarmcore",
   "description": "Core library for creating swarm 2.0 systems .",
-  "version": "2.3.11",
+  "version": "2.4.2",
   "homepage": "https://github.com/salboaie/swarmcore",
   "author": {
     "name": "Alboaie Sinica",
@@ -40,7 +40,7 @@
       "url": "http://www.gnu.org/licenses/lgpl.html"
     }
   ],
-  "_id": "swarmcore@2.3.11",
+  "_id": "swarmcore@2.4.2",
   "dependencies" : {
     "q"               : "=1.2.0"  ,
     "asynchron"       :     ">=1.0.10",
@@ -51,7 +51,7 @@
     "MD5"             : ">=1.2.0",
     "nodemailer"      : ">=0.5.2",
     "node-uuid"       : ">=1.4.0",
-    "redis"           : ">=0.12.1",
+    "redis"           : "0.12.1",
     "socket.io"       : ">=1.2.1",
     "limiter2"        :">=1.1.0",
     "request"         :">=2.53.0",
