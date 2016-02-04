@@ -96,8 +96,7 @@ function socketIOHandler(socket) {
 var myCfg = getMyConfig("WSServer");
 var serverPort = 8080;
 var serverHost = "localhost";
-var __wwwroot = "/tmp";
-
+var __wwwroot = "admin/public";
 
 
 if (myCfg.port != undefined) {
@@ -120,7 +119,13 @@ console.log("Listening on port", serverPort);
 
 function initSocketIO() {
     function handler (req, res) {
-        fs.readFile(__wwwroot + '/index.html',
+
+        var resource = req.url;
+        if (resource == "/") {
+            resource = "/index.html";
+        }
+
+        fs.readFile(__wwwroot + resource,
             function (err, data) {
                 if (err) {
                     res.writeHead(500);
