@@ -41,7 +41,7 @@ var logSwarming = {
     doPong:{
         node:"*",
         code : function (){
-            require("semantic-firewall").container.resolve("networkLogger", true);
+            require("safebox").container.resolve("networkLogger", true);
         }
     }
 };

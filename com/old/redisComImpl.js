@@ -12,7 +12,7 @@ var fs = require("fs");
 var getSwarmESBCorePath = require("../../index.js").getCorePath;
 
 
-var container = require("semantic-firewall").container;
+var container = require("safebox").container;
 
 
 /* encapsulate as many details about communication, error recovery and distributed transactions

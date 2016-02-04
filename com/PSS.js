@@ -13,7 +13,7 @@ var getSwarmESBCorePath = require("../index.js").getCorePath;
 
 var core = require("../lib/SwarmCore.js");
 
-var container = require("semantic-firewall").container;
+var container = require("safebox").container;
 
 var pss = require("pubsubshare");
 

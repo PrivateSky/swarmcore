@@ -45,7 +45,7 @@
     "q"               : "=1.2.0"  ,
     "asynchron"       :     ">=1.0.10",
     "apersistence"    : ">=1.0.4",
-    "semantic-firewall" : ">=0.5.1",
+    "double-check" : ">=0.5.1",
     "acl-magic"       :    ">=1.0.9",
     "clone"           : ">=0.1.8",
     "MD5"             : ">=1.2.0",
