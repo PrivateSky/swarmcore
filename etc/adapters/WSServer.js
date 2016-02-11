@@ -1,4 +1,4 @@
-var go      = require('../../lib/GenericOutlet.js');
+ var go      = require('../../lib/GenericOutlet.js');
 
 //global sessionsRegistry object
 sessionsRegistry  = require("../../lib/SessionRegistry.js").getRegistry();

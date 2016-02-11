@@ -12,6 +12,7 @@
 
 
 var psc = require("pubsubshare");
+var transformations = require("transrest");
 
 var program = require('commander');
 var ha   = require ('https-auto');
@@ -42,6 +43,17 @@ if(!program.RelayPort){
     program.RelayPort=9000;
 }
 
+var swarmRedisConfig = process.env.SWARM_REDIS;
+if(swarmRedisConfig){
+    var a = swarmRedisConfig.split(":");
+    if(a.length == 2){
+        program.RedisHost = a[0];
+        program.RedisPort = a[1];
+    } else {
+        console.log("Invalid SWARM_REDIS environment variable ",swarmRedisConfig);
+    }
+}
+
 var code = process.env['HTTPS_AUTOCONFIG_CODE'];
 if(!code && !program.OrgName){
     //console.log(program);
@@ -60,7 +72,7 @@ var organizationName = "OrganizationNotConfigured";
 var httpsEnabled = true;
 if (program.OrgName) {
     organizationName = program.OrgName;
-    httpsEnabled = false;
+    //httpsEnabled = false;
 }
 else {
     organizationName = ha.getOrganizationName(keysFolder);
@@ -84,5 +96,25 @@ var relay = psc.createRelay(httpsEnabled, organizationName, program.RedisHost, p
         }
 
         //redis.publish(channel, message, callback);
+    }
+});
+
+
+transformations.restAPI({
+    getConfig: {
+        method:'get',
+        params: ['tenantId', "configName"],
+        path:'/getConfig/$tenantId/$configName',
+        code:function(tenantId,configName){
+            return "Not Implemented yet..." + tenantId + configName;
+        }
+    },
+    getSignedFolder: {
+        method:'get',
+        params: ['folderId'],
+        path:'/getSignedFolder/$folderId',
+        code:function(folderId){
+            return "Not Implemented yet..." + folderId;
+        }
     }
 });
