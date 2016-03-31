@@ -1,7 +1,8 @@
 {
   "name": "swarmcore",
   "description": "Core library for creating swarm 2.0 systems .",
-  "version": "2.4.2",
+  "version": "2.4.3",
+  "_id": "swarmcore@2.4.3",
   "homepage": "https://github.com/salboaie/swarmcore",
   "author": {
     "name": "Alboaie Sinica",
@@ -40,25 +41,25 @@
       "url": "http://www.gnu.org/licenses/lgpl.html"
     }
   ],
-  "_id": "swarmcore@2.4.2",
   "dependencies" : {
     "q"               : "=1.2.0"  ,
-    "asynchron"       :     ">=1.0.10",
+    "asynchron"       : ">=1.0.10",
     "apersistence"    : ">=1.0.4",
-    "double-check" : ">=0.5.1",
-    "acl-magic"       :    ">=1.0.9",
+    "double-check"    : ">=0.5.1",
+    "acl-magic"       : ">=1.0.9",
     "clone"           : ">=0.1.8",
     "MD5"             : ">=1.2.0",
     "nodemailer"      : ">=0.5.2",
     "node-uuid"       : ">=1.4.0",
     "redis"           : "0.12.1",
     "socket.io"       : ">=1.2.1",
-    "limiter2"        :">=1.1.0",
-    "request"         :">=2.53.0",
-    "tmp"             :">=0.0.24",
-    "commander"       :   ">=2.8.1",
-    "pubsubshare"     :   ">=0.6.0",
-    "https-auto"      :   ">=0.5.5"
+    "limiter2"        : ">=1.1.0",
+    "request"         : ">=2.53.0",
+    "tmp"             : ">=0.0.24",
+    "commander"       : ">=2.8.1",
+    "pubsubshare"     : ">=0.6.0",
+    "https-auto"      : ">=0.5.5",
+    "safebox"         : ">=0.2.1"
   },
   "optionalDependencies": {},
   "_engineSupported": true,
