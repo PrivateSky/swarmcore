@@ -1,8 +1,8 @@
 {
-  "name": "swarmcore",
+  "name": "SwarmCore",
   "description": "Core library for creating swarm 2.0 systems .",
   "version": "2.4.2",
-  "homepage": "https://github.com/salboaie/swarmcore",
+  "homepage": "https://github.com/salboaie/SwarmCore",
   "author": {
     "name": "Alboaie Sinica",
     "email": "salboaie@gmail.com"
@@ -15,11 +15,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/salboaie/swarmcore.git"
+    "url": "https://github.com/salboaie/SwarmCore.git"
   },
   "bugs": {
     "email": "salboaie@gmail.com",
-    "url": "https://github.com/salboaie/swarmcore/issues"
+    "url": "https://github.com/salboaie/SwarmCore/issues"
   },
   "directories": {
     "lib": "./lib"
@@ -40,7 +40,7 @@
       "url": "http://www.gnu.org/licenses/lgpl.html"
     }
   ],
-  "_id": "swarmcore@2.4.2",
+  "_id": "SwarmCore@2.4.2",
   "dependencies" : {
     "q"               : "=1.2.0"  ,
     "asynchron"       :     ">=1.0.10",

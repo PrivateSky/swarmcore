@@ -4,14 +4,10 @@
 //All proper adapters using SwarmCore should provide a set of functions in the globalObject: swarmComImpl
 
 
-    dsadas
-
 var redis   = require("redis");
 var dslUtil = require("../../lib/SwarmDSL.js");
 var fs = require("fs");
 var getSwarmESBCorePath = require("../../index.js").getCorePath;
-
-
 var container = require("safebox").container;
 
 

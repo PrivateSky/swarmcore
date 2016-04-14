@@ -1,8 +1,8 @@
 
-if(typeof singleton_swarmCore_module_workaround_for_wired_node_js_caching == 'undefined') {
-    singleton_swarmCore_module_workaround_for_wired_node_js_caching = module;
+if(typeof singleton_SwarmCore_module_workaround_for_wired_node_js_caching == 'undefined') {
+    singleton_SwarmCore_module_workaround_for_wired_node_js_caching = module;
 } else {
-    module.exports = singleton_swarmCore_module_workaround_for_wired_node_js_caching.exports;
+    module.exports = singleton_SwarmCore_module_workaround_for_wired_node_js_caching.exports;
     return;
 }
 

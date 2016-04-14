@@ -96,7 +96,7 @@ function socketIOHandler(socket) {
 var myCfg = getMyConfig("WSServer");
 var serverPort = 8080;
 var serverHost = "localhost";
-var __wwwroot = "admin/public";
+var __wwwroot = "operando/admin";
 
 
 if (myCfg.port != undefined) {

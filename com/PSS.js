@@ -113,6 +113,32 @@ function CommunicationImpl(){
         pendingInitialisationCalls = null;
 
         container.resolve("redisConnection",redisClient);
+
+        console.log("\n\n\n\nPSS is ready to record in database\n\n\n\n")
+        temporaryLogs.forEach(function(record){
+            self.recordLog(record);
+        });
+        temporaryLogs = [];
+    }
+
+    var temporaryLogs = []
+    this.recordLog = function (record) {
+        if(redisClient === null) {
+            temporaryLogs.push(record);
+            return;
+        }
+        console.log("\n\n\nRecording in database\n\n\n\n");
+        redisClient.rpush("RAW_LOGS ",JSON.stringify(record));
+        pubsubRedisClient.publish("LOGGING_CHANNEL","NEW LOG",function(err,result){
+            if(err){
+                console.log("Could not publish in database");
+                //treat this error somehow
+            }
+        })
+    }
+
+    this.subscribeForLogs = function(callback){
+        pubsubRedisClient.subscribe("LOGGING_CHANNEL",callback);
     }
 
 
@@ -840,8 +866,6 @@ function CommunicationImpl(){
         }).wait(swarmCode);
     };
 
-
-
     this.observeGlobal = function(globalId, swarm, phaseName, target){
         var storageKey =  makeRedisKey("globalObservers");
         var observer = {
@@ -894,5 +918,6 @@ redisClient = function(){
 
 container.service("swarmingIsWorking", ['redisConnection', 'swarmsLoaded'], function(outOfService, redisConnection, swarmsLoaded){
     swarmComImpl.privateRedisClient = redisConnection;
+    return outOfService;
 })
 
