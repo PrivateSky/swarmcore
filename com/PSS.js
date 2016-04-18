@@ -899,6 +899,15 @@ function CommunicationImpl(){
             readyWaiting.push(callback);
         }
     }
+
+
+    this.recordLog = function(record){
+        //write in list and publish
+    }
+
+    this.subscribeForLogs = function(callback){
+        //write in list and publish
+    }
 }
 
 var swarmComImpl = null;
@@ -919,5 +928,9 @@ redisClient = function(){
 container.service("swarmingIsWorking", ['redisConnection', 'swarmsLoaded'], function(outOfService, redisConnection, swarmsLoaded){
     swarmComImpl.privateRedisClient = redisConnection;
     return outOfService;
+})
+
+container.service("swarmComImpl", [ 'swarmsLoaded'], function(outOfService, swarmsLoaded){
+    return exports.implemenation();
 })
 
