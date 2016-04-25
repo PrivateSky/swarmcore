@@ -29,7 +29,7 @@ function CommunicationImpl(){
     var redisPass = thisAdapter.config.Core.redisPass;
 
     var RateLimiter = require('limiter2').RateLimiter;
-    var redisClient = null;
+    var redisClient = undefined;
     this.swarmACL = null;
 
     var throttlerConfig = {
@@ -113,33 +113,35 @@ function CommunicationImpl(){
         pendingInitialisationCalls = null;
 
         container.resolve("redisConnection",redisClient);
-
-        console.log("\n\n\n\nPSS is ready to record in database\n\n\n\n")
-        temporaryLogs.forEach(function(record){
-            self.recordLog(record);
-        });
-        temporaryLogs = [];
     }
 
-    var temporaryLogs = []
     this.recordLog = function (record) {
-        if(redisClient === null) {
-            temporaryLogs.push(record);
-            return;
-        }
-        console.log("\n\n\nRecording in database\n\n\n\n");
-        redisClient.rpush("RAW_LOGS ",JSON.stringify(record));
-        pubsubRedisClient.publish("LOGGING_CHANNEL","NEW LOG",function(err,result){
-            if(err){
-                console.log("Could not publish in database");
-                //treat this error somehow
-            }
-        })
+        redisClient.rpush("RAW_LOGS",JSON.stringify(record))
+        pubsubRedisClient.publish("LOGGING_CHANNEL",{message:"NEW LOG"})
     }
 
-    this.subscribeForLogs = function(callback){
-        pubsubRedisClient.subscribe("LOGGING_CHANNEL",callback);
+    this.subscribeForLogs = function(treatNewLog){
+        pubsubRedisClient.subscribe("LOGGING_CHANNEL",function(gotANewLog){getLatestLogs(treatNewLog);});
+        getLatestLogs(treatNewLog)
+        function getLatestLogs(logTreatment) {
+            if (redisClient !== undefined){
+                redisClient.llen("RAW_LOGS", function (err, length) {
+                    for (var log_index = 0; log_index < length; log_index++) {
+                        redisClient.lpop("RAW_LOGS", function (err, log) {
+                            if (err) {
+                                throw err;
+                            } else {
+                                logTreatment(log);
+                            }
+                        })
+                    }
+                })
+            }
+        }
     }
+
+
+
 
 
 
@@ -900,21 +902,13 @@ function CommunicationImpl(){
         }
     }
 
-
-    this.recordLog = function(record){
-        //write in list and publish
-    }
-
-    this.subscribeForLogs = function(callback){
-        //write in list and publish
-    }
 }
 
 var swarmComImpl = null;
 
 exports.implemenation = (function(){
         if(!swarmComImpl){
-        swarmComImpl = new CommunicationImpl();
+            swarmComImpl = new CommunicationImpl();
         }
         return swarmComImpl;
     })();
@@ -925,12 +919,11 @@ redisClient = function(){
 }
 
 
-container.service("swarmingIsWorking", ['redisConnection', 'swarmsLoaded'], function(outOfService, redisConnection, swarmsLoaded){
+container.service("swarmingIsWorking", ['redisConnection'], function(outOfService, redisConnection, swarmsLoaded){
     swarmComImpl.privateRedisClient = redisConnection;
-    return outOfService;
 })
 
 container.service("swarmComImpl", [ 'swarmsLoaded'], function(outOfService, swarmsLoaded){
-    return exports.implemenation();
+    return exports.implemenation;
 })
 
