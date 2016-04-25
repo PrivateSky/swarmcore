@@ -5,7 +5,7 @@
 
 var core = require ("../../lib/SwarmCore.js");
 var fs = require('fs');
-var winston = require('winston');
+var winston = require('swarm-winston');
 
 thisAdapter = core.createAdapter("DefaultLogger");
 
