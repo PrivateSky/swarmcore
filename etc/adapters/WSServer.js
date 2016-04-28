@@ -71,6 +71,7 @@ adapterStateCheck = function (data) {
 
 
 function socketIOHandler(socket) {
+
     cprint("Socket IO new socket");
     socket.getClientIp = function(){
         return socket._socket.remoteAddress;
@@ -98,6 +99,8 @@ var serverPort = 8080;
 var serverHost = "localhost";
 var __wwwroot = "operando/admin";
 
+//var __wwwroot = "admin/public";
+
 
 if (myCfg.port != undefined) {
     serverPort = myCfg.port;
@@ -121,6 +124,10 @@ function initSocketIO() {
     function handler (req, res) {
 
         var resource = req.url;
+        if(resource.indexOf("?") != -1){
+            resource = resource.split("?")[0];
+        }
+
         if (resource == "/") {
             resource = "/index.html";
         }
