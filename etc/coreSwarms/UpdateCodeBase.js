@@ -96,11 +96,11 @@ var updateCode = {
             this.download(this.__transferId,codeLocation,S(onDownload))
 
             function onDownload(err,pathToFile){
+                downloadsPerformed++;
                 if(err){
                     if(downloadsPerformed<10){
-                        downloadsPerformed++;
                         self.download(self.__transferId,codeLocation,S(onDownload));
-                        self['updateStatus'] = "Checksums do not match at "+organisationDisplayName;
+                        return
                     }
                     else{
                         self['error'] = err
