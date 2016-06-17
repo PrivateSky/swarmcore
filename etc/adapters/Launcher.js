@@ -291,14 +291,19 @@ function replaceCode(pathToNewCodeZip,oldCodeLocation){
 
 getLatestCodeVersion = function(callback){
 
-    if (config['codeDownloadLink'] == undefined){
-        callback(new Error("This organization cannot access the code git repository\n" +
-            "Add 'codeDownloadLink' in the launcher configuration of this organization"))
+    if (config['codeDownloadLink'] == undefined && config['codePath']==undefined){
+        callback(new Error("This organization cannot access zip with the latest code version\n" +
+            "Add 'codeDownloadLink' of 'codePath' in the launcher configuration of this organization"))
+        return
+    }
+
+    if(config['codePath']!==undefined){
+        console.log("Latest version of the code is at "+latestCodeVersionPath)
+        callback(null,config['codePath'])
         return
     }
 
     var http = require('http');
-
     var latestCodeVersionPath = process.env.SWARM_PATH+"/tmp/latestCodeVersion.zip"
     var zipFile = fs.createWriteStream(latestCodeVersionPath)
     var downloadRequest = http.get(config['codeDownloadLink'],function(response){
