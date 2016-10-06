@@ -54,7 +54,7 @@ exports.createClient = function(host, port, user, pass, tenantId, ctor) {
 function SwarmClient ( host, port, user, pass, tenantId, loginCtor) {
     this.cmdParser  = tcpUtil.createFastParser(this.resolveMessage.bind(this));
     this.sock       =  net.createConnection(port, host);
-    this.pendingCmds   = new Array();
+    this.pendingCmds = new Array();
     this.user = user;
     this.pass = pass;
     this.tenantId = tenantId;
@@ -104,6 +104,8 @@ sys.inherits(SwarmClient, events.EventEmitter);
 
 SwarmClient.prototype.startSwarm = function (swarmName, constructor) {
 
+    var self = this;
+    var callbacksOnPhases = {};
     var args = Array.prototype.slice.call(arguments,2);
     var cmd = {
         meta                    : {
@@ -117,6 +119,22 @@ SwarmClient.prototype.startSwarm = function (swarmName, constructor) {
             commandArguments    : args
         }
     };
+
+    cmd.onResponse = function(callback){
+        if(!callbacksOnPhases[cmd.meta.swarmId]){
+            callbacksOnPhases[cmd.meta.swarmId] = []
+        }
+        callbacksOnPhases[cmd.meta.swarmId].push(callback);
+    };
+
+    this.emitInternally = function(object){
+        if(callbacksOnPhases[object.meta.swarmId]) {
+            callbacksOnPhases[object.meta.swarmId].forEach(function(callback){
+                callback(object);
+            });
+        }
+    };
+    
     if(this.pendingCmds == null) {
         tcpUtil.writeObject(this.sock,cmd);
     }
@@ -174,22 +192,25 @@ SwarmClient.prototype.resolveMessage = function (object) {
         this.sessionId  = object.meta.sessionId;
         this.outletId   = object.meta.outletId;
         this.login(object.meta.sessionId, this.user, this.pass);
-    }
-    else
-    if(this.pendingCmds == null) {
-        this.emit(object.meta.swarmingName, object);
+        
     }
     else {
-        this.loginOk = true;
-        this.emit(object.meta.swarmingName, object); //if was not closed,it should be a successful login
-        for (var i = 0; i < this.pendingCmds.length; i++) {
-            this.pendingCmds[i].meta.sessionId = this.sessionId;
-            dprint("Writing pending command " + J(this.pendingCmds[i]));
-            tcpUtil.writeObject(this.sock, this.pendingCmds[i]);
+        this.emitInternally(object);
+        if (this.pendingCmds == null) {
+            this.emit(object.meta.swarmingName, object);
         }
-        this.pendingCmds = null;
+        else {
+            this.loginOk = true;
+            this.emit(object.meta.swarmingName, object); //if was not closed,it should be a successful login
+            for (var i = 0; i < this.pendingCmds.length; i++) {
+                this.pendingCmds[i].meta.sessionId = this.sessionId;
+                dprint("Writing pending command " + J(this.pendingCmds[i]));
+                tcpUtil.writeObject(this.sock, this.pendingCmds[i]);
+            }
+            this.pendingCmds = null;
+        }
     }
-}
+};
 
 /**
  *
