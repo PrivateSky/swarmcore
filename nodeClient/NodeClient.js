@@ -16,7 +16,8 @@ make swarmHub global variable available (for the last client open only, usually 
 require("./SwarmHub.js");
 
 var tcpUtil = require("../lib/TCPSockUtil.js");
-var debug = require("../lib/SwarmDebug.js");
+var debug   = require("../lib/SwarmDebug.js");
+var uuid    = require('node-uuid');
 thisAdapter.nodeName = "Client";
 
 var net = require("net");
@@ -100,6 +101,7 @@ sys.inherits(SwarmClient, events.EventEmitter);
  * @param swarmName
  * @param constructor
  */
+
 SwarmClient.prototype.startSwarm = function (swarmName, constructor) {
 
     var args = Array.prototype.slice.call(arguments,2);
@@ -108,6 +110,7 @@ SwarmClient.prototype.startSwarm = function (swarmName, constructor) {
             sessionId           : this.sessionId,
             outletId            : this.outletId,
             tenantId            : this.tenantId,
+            swarmId             : uuid.v1(),
             swarmingName        : swarmName,
             command             : "start",
             ctor                : constructor,
@@ -121,6 +124,7 @@ SwarmClient.prototype.startSwarm = function (swarmName, constructor) {
         dprint("Preserving pending command " + JSON.stringify(cmd));
         this.pendingCmds.push(cmd);
     }
+    return cmd;
 }
 
 /**
