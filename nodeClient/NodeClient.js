@@ -14,7 +14,6 @@ make swarmHub global variable available (for the last client open only, usually 
 */
 
 require("./SwarmHub.js");
-
 var tcpUtil = require("../lib/TCPSockUtil.js");
 var debug   = require("../lib/SwarmDebug.js");
 var uuid    = require('node-uuid');
@@ -102,10 +101,10 @@ sys.inherits(SwarmClient, events.EventEmitter);
  * @param constructor
  */
 
+var internalCallbacks = {};
 SwarmClient.prototype.startSwarm = function (swarmName, constructor) {
 
     var self = this;
-    var callbacksOnPhases = {};
     var args = Array.prototype.slice.call(arguments,2);
     var cmd = {
         meta                    : {
@@ -121,20 +120,12 @@ SwarmClient.prototype.startSwarm = function (swarmName, constructor) {
     };
 
     cmd.onResponse = function(callback){
-        if(!callbacksOnPhases[cmd.meta.swarmId]){
-            callbacksOnPhases[cmd.meta.swarmId] = []
+        if(!internalCallbacks[cmd.meta.swarmId]){
+            internalCallbacks[cmd.meta.swarmId] = []
         }
-        callbacksOnPhases[cmd.meta.swarmId].push(callback);
+        internalCallbacks[cmd.meta.swarmId].push(callback);
     };
 
-    this.emitInternally = function(object){
-        if(callbacksOnPhases[object.meta.swarmId]) {
-            callbacksOnPhases[object.meta.swarmId].forEach(function(callback){
-                callback(object);
-            });
-        }
-    };
-    
     if(this.pendingCmds == null) {
         tcpUtil.writeObject(this.sock,cmd);
     }
@@ -143,7 +134,7 @@ SwarmClient.prototype.startSwarm = function (swarmName, constructor) {
         this.pendingCmds.push(cmd);
     }
     return cmd;
-}
+};
 
 /**
  *
@@ -195,7 +186,13 @@ SwarmClient.prototype.resolveMessage = function (object) {
         
     }
     else {
-        this.emitInternally(object);
+
+        if(internalCallbacks[object.meta.swarmId]) {
+            internalCallbacks[object.meta.swarmId].forEach(function(callback){
+                callback(object);
+            });
+        }
+
         if (this.pendingCmds == null) {
             this.emit(object.meta.swarmingName, object);
         }
