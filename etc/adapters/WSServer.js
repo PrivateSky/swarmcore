@@ -97,17 +97,18 @@ function socketIOHandler(socket) {
 var myCfg = getMyConfig("WSServer");
 var serverPort = 8080;
 var serverHost = "localhost";
-var __wwwroot = "operando/admin";
+var __wwwroot = "admin/public";
 
-//var __wwwroot = "admin/public";
-
+if (myCfg.host != undefined) {
+    serverHost = myCfg.host;
+}
 
 if (myCfg.port != undefined) {
     serverPort = myCfg.port;
 }
 
 if (myCfg.wwwroot != undefined) {
-    __dirname = myCfg.wwwroot;
+    __wwwroot = myCfg.wwwroot;
 }
 
 console.log("Listening on port", serverPort);
