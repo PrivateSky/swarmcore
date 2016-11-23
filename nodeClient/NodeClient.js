@@ -16,7 +16,7 @@ make swarmHub global variable available (for the last client open only, usually 
 require("./SwarmHub.js");
 var tcpUtil = require("../lib/TCPSockUtil.js");
 var debug   = require("../lib/SwarmDebug.js");
-var uuid    = require('node-uuid');
+var uuid    = require('uuid');
 thisAdapter.nodeName = "Client";
 
 var net = require("net");
