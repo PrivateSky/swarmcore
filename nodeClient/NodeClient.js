@@ -52,37 +52,14 @@ exports.createClient = function(host, port, user, pass, tenantId, ctor) {
 
 function SwarmClient ( host, port, user, pass, tenantId, loginCtor) {
     this.cmdParser  = tcpUtil.createFastParser(this.resolveMessage.bind(this));
-    this.sock       =  net.createConnection(port, host);
-    this.pendingCmds = new Array();
     this.user = user;
     this.pass = pass;
     this.tenantId = tenantId;
+    this.pendingCmds = [];
     if(!loginCtor){
         loginCtor = "authenticate";
     }
     this.loginCtor = loginCtor;
-
-    this.sock.setEncoding("UTF8");
-
-    this.sock.addListener ("connect", function(data) {
-        var cmd = {
-            meta: {
-                swarmingName     : 'login.js',
-                command          : 'getIdentity',
-                ctor		 	 : 'authenticate'
-            }
-        };
-        tcpUtil.writeObject(this.sock,cmd);
-
-    }.bind(this));
-
-    this.sock.addListener ("data", function(data) {
-        this.cmdParser.parseNewData(data);
-    }.bind(this));
-
-    this.sock.addListener ("close", function(data) {
-        this.emit("close",this);
-    }.bind(this));
 
     this.getSessionId = function(){
         return this.sessionId;
@@ -90,6 +67,57 @@ function SwarmClient ( host, port, user, pass, tenantId, loginCtor) {
 
     this.onPhase = function(swarm, phaseName, callBack){
 
+    }
+
+
+
+    var self = this;
+    var recconectionAttempts = 0;
+
+    openConnection();
+        
+    function openConnection() {
+        if(self.pendingCmds===null && recconectionAttempts===0) {
+            //on the first recconection attempt start queueing the commands
+            self.pendingCmds = [];
+        }
+        
+        recconectionAttempts++;
+        self.sock       =  net.createConnection(port, host);
+        self.sock.removeAllListeners();
+        self.sock.setEncoding("UTF8");
+        self.sock.addListener("connect", function (data) {
+            var cmd = {
+                meta: {
+                    swarmingName: 'login.js',
+                    command: 'getIdentity',
+                    ctor: 'authenticate'
+                }
+            };
+            recconectionAttempts = 0;
+            tcpUtil.writeObject(self.sock, cmd);
+        }.bind(self));
+
+        self.sock.addListener("data", function (data) {
+            self.cmdParser.parseNewData(data);
+        }.bind(self));
+
+        self.sock.addListener("close", function (data) {
+            var timeout = Math.pow(2, recconectionAttempts);
+            var maxTimeout = 60000; //try a recconection every minute
+            setTimeout(openConnection,(timeout<maxTimeout)?timeout:maxTimeout);
+            self.emit("close", self);
+        }.bind(self));
+
+
+        self.sock.addListener("end", function (data) {
+            console.log("Swarm connection ended...\nAttempting recconection");
+            openConnection();
+        }.bind(self));
+
+        self.sock.addListener("error", function (data) {
+            //console.log("Error"); ---- this error should be logged somewhere
+        }.bind(self));
     }
 }
 
@@ -103,8 +131,6 @@ sys.inherits(SwarmClient, events.EventEmitter);
 
 var internalCallbacks = {};
 SwarmClient.prototype.startSwarm = function (swarmName, constructor) {
-
-    var self = this;
     var args = Array.prototype.slice.call(arguments,2);
     var cmd = {
         meta                    : {
@@ -185,8 +211,8 @@ SwarmClient.prototype.resolveMessage = function (object) {
         this.login(object.meta.sessionId, this.user, this.pass);
         
     }
-    else {
 
+    else {
         if(internalCallbacks[object.meta.swarmId]) {
             internalCallbacks[object.meta.swarmId].forEach(function(callback){
                 callback(object);
