@@ -96,6 +96,7 @@ function SwarmClient ( host, port, user, pass, tenantId, loginCtor) {
             };
             recconectionAttempts = 0;
             tcpUtil.writeObject(self.sock, cmd);
+            self.emit("open", self);
         }.bind(self));
 
         self.sock.addListener("data", function (data) {
@@ -106,12 +107,12 @@ function SwarmClient ( host, port, user, pass, tenantId, loginCtor) {
             var timeout = Math.pow(2, recconectionAttempts);
             var maxTimeout = 60000; //try a recconection every minute
             setTimeout(openConnection,(timeout<maxTimeout)?timeout:maxTimeout);
-            self.emit("close", self);
         }.bind(self));
 
 
         self.sock.addListener("end", function (data) {
             console.log("Swarm connection ended...\nAttempting recconection");
+            self.emit("close", self);
             openConnection();
         }.bind(self));
 
@@ -176,7 +177,7 @@ SwarmClient.prototype.startRemoteSwarm = function (remoteAdapter, swarmName, con
         args.push(arguments[i]);
     }
     this.startSwarm("startRemoteSwarm.js","start", remoteAdapter, this.sessionId, swarmName, constructor, null, args);
-}
+};
 
 
 //TODO: first time when we need it
