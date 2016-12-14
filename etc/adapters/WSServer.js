@@ -66,12 +66,15 @@ function watchSocket(socket, outlet) {
  Useful for monitoring this type of adapters
  */
 adapterStateCheck = function (data) {
-    return {ok: serverSocketAvailable, details: socketDetails, requireRestart: !serverSocketAvailable};
+    return {
+        ok: serverSocketAvailable,
+        details: socketDetails,
+        requireRestart: !serverSocketAvailable
+    };
 }
 
 
 function socketIOHandler(socket) {
-
     cprint("Socket IO new socket");
     socket.getClientIp = function(){
         return socket._socket.remoteAddress;
@@ -111,7 +114,6 @@ if (myCfg.wwwroot != undefined) {
     __wwwroot = myCfg.wwwroot;
 }
 
-console.log("Listening on port", serverPort);
 /*     if (myCfg.bindAddress != undefined) {
             serverHost = myCfg.bindAddress;
             serverHost = serverHost.trim();
@@ -121,66 +123,72 @@ console.log("Listening on port", serverPort);
         }
 */
 
-function initSocketIO() {
-    function handler (req, res) {
+ var connect = require('connect');
+ var server = connect();
+ var fs = require('fs');
+ var transrest = require('transrest');
+ var socketio = require('socket.io');
+ var httpServer = server.listen(serverPort);
+ var io = socketio(httpServer);
 
-        var resource = req.url;
-        if(resource.indexOf("?") != -1){
-            resource = resource.split("?")[0];
-        }
+ console.log("Listening on port", serverPort);
+ server.use(generalServerHandler);
+ io.on('connection', socketIOHandler);
 
-        if (resource == "/") {
-            resource = "/index.html";
-        }
 
-        fs.readFile(__wwwroot + resource,
-            function (err, data) {
-                if (err) {
-                    res.writeHead(500);
-                    return res.end('Error loading index.html');
-                }
+ addRESTTransformation = function(transformation){
+     transrest.restAPI(transformation,server);
+ }
+ 
+ //requests starting with /restAPI will be treated as restREQUESTS
+ function generalServerHandler (req, res,next) {
+     var resource = req.url;
+     if(resource.indexOf("?") != -1){
+         resource = resource.split("?")[0];
+     }
 
-                res.writeHead(200);
-                res.end(data);
-            });
-    }
+     if (resource == "/") {
+         resource = "/index.html";
+     }
 
-    var app = require('http').createServer(handler)
-    var io = require('socket.io')(app);
-    var fs = require('fs');
-    app.listen(serverPort);
-    io.on('connection', socketIOHandler);
+     if(resource.indexOf("restAPI") !== 1) {
+         fs.readFile(__wwwroot + resource,
+             function (err, data) {
+                 if (err) {
+                     res.writeHead(500);
+                     return res.end('Error loading index.html');
+                 }
 
-    /* implementation using ws module (obsolete, not performant!?)
-        var WebSocketServer = require('ws').Server;
-        io = new WebSocketServer({port: serverPort});
-         io.on('connection', wssocketIOHandler);
-     */
-    }
-
-initSocketIO();
-
-/* alternative implementtion
- function wssocketIOHandler(socket) {
- cprint("Socket IO new socket");
- socket.getClientIp = function(){
- return socket._socket.remoteAddress;
- return socket.upgradeReq.connection.remoteAddress;
+                 res.writeHead(200);
+                 res.end(data);
+             });
+     }else{
+         next();
+     }
  }
 
- var outlet = go.newOutlet(socket, sendFunction, closeFunction);
 
- socket.on('error', function(){
- outlet.onCommunicationError(" unknown error");
- });
- socket.on('close', function(){
- outlet.onCommunicationError(" socket closed ");
- });
- socket.on('disconnect', function(){
- outlet.onCommunicationError(" socket disconnect ");
- });
+ /* alternative implementtion
+  function wssocketIOHandler(socket) {
+  cprint("Socket IO new socket");
+  socket.getClientIp = function(){
+  return socket._socket.remoteAddress;
+  return socket.upgradeReq.connection.remoteAddress;
+  }
 
- watchSocket(socket, outlet);
- outlet.onHostReady();
- }
- */
+  var outlet = go.newOutlet(socket, sendFunction, closeFunction);
+
+  socket.on('error', function(){
+  outlet.onCommunicationError(" unknown error");
+  });
+  socket.on('close', function(){
+  outlet.onCommunicationError(" socket closed ");
+  });
+  socket.on('disconnect', function(){
+  outlet.onCommunicationError(" socket disconnect ");
+  });
+
+  watchSocket(socket, outlet);
+  outlet.onHostReady();
+  }
+  */
