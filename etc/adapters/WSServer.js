@@ -130,21 +130,18 @@ if (myCfg.wwwroot != undefined) {
  var pem = require('pem');
  var app = connect();
 
- process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
- pem.createCertificate({days:100,selfSigned:true},function(err,keys) {
-     var httpsOptions = {
-         key: keys.serviceKey,
-         cert: keys.certificate
-     };
+ var httpsOptions = {
+     key:fs.readFileSync("/etc/letsencrypt/live/plusprivacy.com/privkey.pem"),
+     cert: fs.readFileSync("/etc/letsencrypt/live/plusprivacy.com/cert.pem")
+ };
 
-     app.use(generalServerHandler);
-     var httpsServer = https.createServer(httpsOptions, app).listen(serverPort);
-     var io = socketio(httpsServer);
+ app.use(generalServerHandler);
+ var httpsServer = https.createServer(httpsOptions, app).listen(serverPort);
+ var io = socketio(httpsServer);
 
-     console.log("Listening on port", serverPort);
-     io.on('connection', socketIOHandler);
- });
+ console.log("Listening on port", serverPort);
+ io.on('connection', socketIOHandler);
 
 
  addRESTTransformation = function(transformation){
