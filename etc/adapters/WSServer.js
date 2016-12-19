@@ -122,57 +122,36 @@ if (myCfg.wwwroot != undefined) {
             }
         }
 */
- var transrest = require('transrest');
- var socketio = require('socket.io');
+
  var fs = require('fs');
- var https = require('https');
- var connect = require('connect');
- var pem = require('pem');
- var app = connect();
-
-
- var httpsOptions = {
+ const options = {
      key:fs.readFileSync("/etc/letsencrypt/live/plusprivacy.com/privkey.pem"),
      cert: fs.readFileSync("/etc/letsencrypt/live/plusprivacy.com/cert.pem")
  };
-
- app.use(generalServerHandler);
- var httpsServer = https.createServer(httpsOptions, app).listen(serverPort);
- var io = socketio(httpsServer);
-
- console.log("Listening on port", serverPort);
+ var app = require('https').createServer(options,generalServerHandler);
+ var io = require('socket.io')(app);
+ app.listen(serverPort);
  io.on('connection', socketIOHandler);
-
-
- addRESTTransformation = function(transformation){
-     transrest.restAPI(transformation,app);
- };
- 
  //requests starting with /restAPI will be treated as restREQUESTS
  function generalServerHandler (req, res,next) {
      var resource = req.url;
      if(resource.indexOf("?") != -1){
          resource = resource.split("?")[0];
      }
-
      if (resource == "/") {
          resource = "/index.html";
      }
 
-     if(resource.indexOf("restAPI") !== 1) {
-         fs.readFile(__wwwroot + resource,
-             function (err, data) {
-                 if (err) {
-                     res.writeHead(500);
-                     return res.end('Error loading index.html');
-                 }
+     s.readFile(__wwwroot + resource,
+         function (err, data) {
+             if (err) {
+                 res.writeHead(500);
+                 return res.end('Error loading index.html');
+             }
 
-                 res.writeHead(200);
-                 res.end(data);
-             });
-     }else{
-         next();
-     }
+             res.writeHead(200);
+             res.end(data);
+         });
  }
 
 
