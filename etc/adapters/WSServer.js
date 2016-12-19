@@ -142,7 +142,7 @@ if (myCfg.wwwroot != undefined) {
          resource = "/index.html";
      }
 
-     s.readFile(__wwwroot + resource,
+     fs.readFile(__wwwroot + resource,
          function (err, data) {
              if (err) {
                  res.writeHead(500);
