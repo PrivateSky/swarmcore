@@ -122,23 +122,34 @@ if (myCfg.wwwroot != undefined) {
             }
         }
 */
-
- var connect = require('connect');
- var server = connect();
- var fs = require('fs');
  var transrest = require('transrest');
  var socketio = require('socket.io');
- var httpServer = server.listen(serverPort);
- var io = socketio(httpServer);
+ var fs = require('fs');
+ var https = require('https');
+ var connect = require('connect');
+ var pem = require('pem');
+ var app = connect();
 
- console.log("Listening on port", serverPort);
- server.use(generalServerHandler);
- io.on('connection', socketIOHandler);
+ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+ pem.createCertificate({days:100,selfSigned:true},function(err,keys) {
+     var httpsOptions = {
+         key: keys.serviceKey,
+         cert: keys.certificate
+     };
+
+     app.use(generalServerHandler);
+     var httpsServer = https.createServer(httpsOptions, app).listen(serverPort);
+     var io = socketio(httpsServer);
+
+     console.log("Listening on port", serverPort);
+     io.on('connection', socketIOHandler);
+ });
 
 
  addRESTTransformation = function(transformation){
-     transrest.restAPI(transformation,server);
- }
+     transrest.restAPI(transformation,app);
+ };
  
  //requests starting with /restAPI will be treated as restREQUESTS
  function generalServerHandler (req, res,next) {
