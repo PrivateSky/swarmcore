@@ -123,12 +123,16 @@ if (myCfg.wwwroot != undefined) {
         }
 */
 
+
+
  var fs = require('fs');
- const options = {
-     key:fs.readFileSync("/etc/letsencrypt/live/plusprivacy.com/privkey.pem"),
-     cert: fs.readFileSync("/etc/letsencrypt/live/plusprivacy.com/cert.pem")
+ const httpsOptions = {
+     key:fs.readFileSync(process.env.SWARM_PATH+"/"+myCfg.ssl.key),
+     cert: fs.readFileSync(process.env.SWARM_PATH+"/"+myCfg.ssl.cert)
  };
- var app = require('https').createServer(options,generalServerHandler);
+
+
+ var app = require('https').createServer(httpsOptions,generalServerHandler);
  var io = require('socket.io')(app);
  app.listen(serverPort);
  io.on('connection', socketIOHandler);
