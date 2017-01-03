@@ -126,13 +126,18 @@ if (myCfg.wwwroot != undefined) {
 
 
  var fs = require('fs');
- const httpsOptions = {
-     key:fs.readFileSync(process.env.SWARM_PATH+"/"+myCfg.ssl.key),
-     cert: fs.readFileSync(process.env.SWARM_PATH+"/"+myCfg.ssl.cert)
- };
+ var app = undefined;
+ try {
+     httpsOptions = {
+         key: fs.readFileSync(process.env.SWARM_PATH + "/" + myCfg.ssl.key),
+         cert: fs.readFileSync(process.env.SWARM_PATH + "/" + myCfg.ssl.cert)
+     };
+     app = require('https').createServer(httpsOptions,generalServerHandler);
+ }catch(e){
+     app = require('http').createServer(generalServerHandler);
+ }
 
 
- var app = require('https').createServer(httpsOptions,generalServerHandler);
  var io = require('socket.io')(app);
  app.listen(serverPort);
  io.on('connection', socketIOHandler);
