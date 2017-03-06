@@ -841,7 +841,7 @@ var swarmComImpl = null;
 
 exports.implemenation = (function(){
         if(!swarmComImpl){
-        swarmComImpl = new RedisComImpl();
+            swarmComImpl = new RedisComImpl();
         }
         return swarmComImpl;
     })();
