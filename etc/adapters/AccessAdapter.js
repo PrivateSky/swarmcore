@@ -18,6 +18,15 @@ var fundamentalRules = [
         "zone": "NO_USER",
         "action": "execution",
         "type":"white_list"
+    },
+    {
+        "contextType": "swarm",
+        "context": "UserInfo.js",
+        "subcontextType":"ctor",
+        "subcontextValue":"resetPassword",
+        "zone": "NO_USER",
+        "action": "execution",
+        "type":"white_list"
     }
 ];
 
