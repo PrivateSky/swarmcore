@@ -6,8 +6,6 @@ var fundamentalRules = [
     {
         "contextType": "swarm",
         "context": "login.js",
-        "subcontextType": "ctor",
-        "subcontext": "userLogin",
         "zone": "NO_USER",
         "action": "execution",
         "type":"white_list"
