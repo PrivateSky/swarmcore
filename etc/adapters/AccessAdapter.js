@@ -25,6 +25,22 @@ var fundamentalRules = [
         "zone": "NO_USER",
         "action": "execution",
         "type":"white_list"
+    },
+    {
+        "contextType": "swarm",
+        "context": "emails.js",
+        "zone": "emailServer",
+        "action": "execution",
+        "type":"white_list"
+    },
+    {
+        "contextType": "swarm",
+        "context": "identity.js",
+        "zone": "emailServer",
+        "subcontextType":"ctor",
+        "subcontextValue":"getRealEmail",
+        "action": "execution",
+        "type":"white_list"
     }
 ];
 
