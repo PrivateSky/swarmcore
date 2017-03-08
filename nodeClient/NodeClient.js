@@ -138,6 +138,7 @@ SwarmClient.prototype.startSwarm = function (swarmName, constructor) {
             sessionId           : this.sessionId,
             outletId            : this.outletId,
             tenantId            : this.tenantId,
+            userId              : this.user,
             swarmId             : uuid.v1(),
             swarmingName        : swarmName,
             command             : "start",
@@ -210,7 +211,6 @@ SwarmClient.prototype.resolveMessage = function (object) {
         this.sessionId  = object.meta.sessionId;
         this.outletId   = object.meta.outletId;
         this.login(object.meta.sessionId, this.user, this.pass);
-        
     }
 
     else {
