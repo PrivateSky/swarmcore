@@ -54,9 +54,6 @@ addZoneParent = undefined;
 delZoneParent = undefined;
 
 
-
-
-
 container.declareDependency("AccessAdapter",['aclConfigurator'],function(outOfService,aclConfigurator){
     if(!outOfService){
         addRule = aclConfigurator.addRule;
@@ -69,21 +66,28 @@ container.declareDependency("AccessAdapter",['aclConfigurator'],function(outOfSe
                     callback(undefined,fundamentalRules.concat(rules));
                 }
             })
-        }
+        };
         addZoneParent = aclConfigurator.addZoneParent;
         delZoneParent = aclConfigurator.delZoneParent;
         getRuleById = aclConfigurator.getRuleById;
 
         var fs = require('fs');
 
-        init(function (err, result) {
-            if (err) {
-                console.log("Could not initialize AccessAdapter");
-                container.outOfService("AccessAdapter");
-            } else {
-                container.resolve("AccessAdapter");
+        aclConfigurator.flushExistingRules(function(err,result) {
+            if(err){
+                console.log("WARNING:An error occurred while flushing the existing acl rules!");
+                console.log(err.message);
             }
-        });
+
+            init(function (err, result) {
+                if (err) {
+                    console.log("Could not initialize AccessAdapter");
+                    container.outOfService("AccessAdapter");
+                } else {
+                    container.resolve("AccessAdapter");
+                }
+            });
+        })
     }else{
         console.log("AccessAdapter is not available");
     }
@@ -91,7 +95,6 @@ container.declareDependency("AccessAdapter",['aclConfigurator'],function(outOfSe
 
 
 function init(callback){
-
     var fundamentalRulesCnt=0;
     var errors = [];
     fundamentalRules.forEach(function(rule){
