@@ -52,7 +52,7 @@
     "nodemailer"      : ">=0.5.2",
     "node-uuid"       : ">=1.4.0",
     "redis"           : "0.12.1",
-    "socket.io"       : ">=1.2.1",
+    "socket.io"       : "=1.4.6",
     "limiter2"        : ">=1.1.0",
     "request"         : ">=2.53.0",
     "tmp"             : ">=0.0.24",
