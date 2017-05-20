@@ -141,7 +141,7 @@ if (myCfg.wwwroot != undefined) {
  var io = require('socket.io')(app);
  app.listen(serverPort);
  io.on('connection', socketIOHandler);
- //requests starting with /restAPI will be treated as restREQUESTS
+
  function generalServerHandler (req, res,next) {
      var resource = req.url;
      if(resource.indexOf("?") != -1){
@@ -150,10 +150,10 @@ if (myCfg.wwwroot != undefined) {
      if (resource == "/") {
          resource = "/index.html";
      }
-
-     fs.readFile(__wwwroot + resource,
+     fs.readFile(process.env.SWARM_PATH + "/" + __wwwroot + resource,
          function (err, data) {
              if (err) {
+                 console.log(err);
                  res.writeHead(500);
                  return res.end('Error loading index.html');
              }
