@@ -1,5 +1,5 @@
  var go      = require('../../lib/GenericOutlet.js');
-
+var tranrest = require('transrest')
 //global sessionsRegistry object
 sessionsRegistry  = require("../../lib/SessionRegistry.js").getRegistry();
 globalVerbosity = true;
@@ -127,14 +127,19 @@ if (myCfg.wwwroot != undefined) {
 
  var fs = require('fs');
  var app = undefined;
+ var app_connect = require('connect')()
+
+ app_connect.use(generalServerHandler)
+
+
  try {
      httpsOptions = {
          key: fs.readFileSync(process.env.SWARM_PATH + "/" + myCfg.ssl.key),
          cert: fs.readFileSync(process.env.SWARM_PATH + "/" + myCfg.ssl.cert)
      };
-     app = require('https').createServer(httpsOptions,generalServerHandler);
+     app = require('https').createServer(httpsOptions,app_connect);
  }catch(e){
-     app = require('http').createServer(generalServerHandler);
+     app = require('http').createServer(app_connect);
  }
 
 
@@ -152,16 +157,31 @@ if (myCfg.wwwroot != undefined) {
      }
      fs.readFile(process.env.SWARM_PATH + "/" + __wwwroot + resource,
          function (err, data) {
-             if (err) {
-                 console.log(err);
-                 res.writeHead(500);
-                 return res.end('Error loading index.html');
+             if(!err){
+                res.writeHead(200);
+                res.end(data);
+             }else{
+                 next()
              }
-
-             res.writeHead(200);
-             res.end(data);
          });
  }
+
+
+
+ if(myCfg.transformationDirs){
+     myCfg.transformationDirs.forEach(function(dir){
+         fs.readdir(dir,function(err,transformations){
+             transformations.forEach(function(file){
+                 attachTransformationFromFile(process.env.SWARM_PATH+"/"+dir+"/"+file);
+             })
+         })
+     })
+ }
+
+ function attachTransformationFromFile(transformationFile){
+     tranrest.restAPI(require(transformationFile).transformations,app_connect)
+ }
+
 
 
  /* alternative implementtion
