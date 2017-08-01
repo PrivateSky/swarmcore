@@ -77,8 +77,7 @@ adapterStateCheck = function (data) {
 function socketIOHandler(socket) {
     cprint("Socket IO new socket");
     socket.getClientIp = function(){
-        return socket._socket.remoteAddress;
-        return socket.upgradeReq.connection.remoteAddress;
+        return socket.handshake.address;
     }
 
     var outlet = go.newOutlet(socket, sendFunction, closeFunction);
