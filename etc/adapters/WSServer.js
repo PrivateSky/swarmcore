@@ -169,7 +169,7 @@ if (myCfg.wwwroot != undefined) {
 
  if(myCfg.transformationDirs){
      myCfg.transformationDirs.forEach(function(dir){
-         fs.readdir(dir,function(err,transformations){
+         fs.readdir(process.env.SWARM_PATH+"/"+dir,function(err,transformations){
              transformations.forEach(function(file){
                  attachTransformationFromFile(process.env.SWARM_PATH+"/"+dir+"/"+file);
              })
