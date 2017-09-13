@@ -6,7 +6,7 @@
 
 
 var core = require ("swarmcore");
-
+var deployer = require("./Deployer.js").deployer(global_swarmSystem_config);
 
 var config, forkOptions;
 
