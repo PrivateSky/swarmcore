@@ -1,5 +1,6 @@
  var go      = require('../../lib/GenericOutlet.js');
 var tranrest = require('transrest')
+var swarmDispatcher =  require("../../lib/SwarmDispatcher.js");
 //global sessionsRegistry object
 sessionsRegistry  = require("../../lib/SessionRegistry.js").getRegistry();
 globalVerbosity = true;
@@ -35,6 +36,10 @@ thisAdapter.nativeMiddleware.registerHomeSwarmHandler(function(swarm){
 disableOutlet = function(swarm){
     var outlet = sessionsRegistry.findOutletById(swarm.meta.outletId);
     outlet.destroy(outlet);
+}
+
+ getSwarmDispatcher = function(){
+     return swarmDispatcher;
 }
 
 

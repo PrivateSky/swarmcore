@@ -1,8 +1,8 @@
 {
   "name": "swarmcore",
   "description": "Core library for creating swarm 2.0 systems .",
-  "version": "2.4.12",
-  "_id": "swarmcore@2.4.12",
+  "version": "2.4.13",
+  "_id": "swarmcore@2.4.13",
   "homepage": "https://github.com/salboaie/swarmcore",
   "author": {
     "name": "Alboaie Sinica",
