@@ -172,19 +172,38 @@ if (myCfg.wwwroot != undefined) {
 
 
 
- if(myCfg.transformationDirs){
-     myCfg.transformationDirs.forEach(function(dir){
-         fs.readdir(process.env.SWARM_PATH+"/"+dir,function(err,transformations){
-             transformations.forEach(function(file){
-                 attachTransformationFromFile(process.env.SWARM_PATH+"/"+dir+"/"+file);
-             })
-         })
-     })
- }
+ if (myCfg.transformationDirs) {
+    var allTransformations = {};
+    var sequence = Promise.resolve();
 
- function attachTransformationFromFile(transformationFile){
-     tranrest.restAPI(require(transformationFile).transformations,app_connect)
- }
+    myCfg.transformationDirs.forEach(function (dir) {
+        sequence = sequence.then(function () {
+            return new Promise(function (resolve) {
+                fs.readdir(process.env.SWARM_PATH + "/" + dir, function (err, transformations) {
+                    transformations.forEach(function (file) {
+                        var fileTransformations = require(process.env.SWARM_PATH + "/" + dir + "/" + file).transformations;
+                        for (tranformationKey in fileTransformations) {
+                            if (allTransformations[tranformationKey]) {
+                                console.error("Transformation ", tranformationKey, "is already defined!");
+                            }
+                            else {
+                                allTransformations[tranformationKey] = fileTransformations[tranformationKey];
+                            }
+                        }
+                        resolve();
+
+                    })
+                });
+
+
+            });
+        });
+    })
+
+    sequence = sequence.then(function () {
+        tranrest.restAPI(allTransformations, app_connect);
+    })
+}
 
 
 
