@@ -139,7 +139,8 @@ if (myCfg.wwwroot != undefined) {
  try {
      httpsOptions = {
          key: fs.readFileSync(process.env.SWARM_PATH + "/" + myCfg.ssl.key),
-         cert: fs.readFileSync(process.env.SWARM_PATH + "/" + myCfg.ssl.cert)
+         cert: fs.readFileSync(process.env.SWARM_PATH + "/" + myCfg.ssl.cert),
+		 ca: fs.readFileSync(process.env.SWARM_PATH + "/" + myCfg.ssl.ca)
      };
      app = require('https').createServer(httpsOptions,app_connect);
  }catch(e){
